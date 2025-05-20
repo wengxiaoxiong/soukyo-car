@@ -1,392 +1,358 @@
-'use client'
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // 代码已包含 CSS：使用 TailwindCSS , 安装 TailwindCSS 后方可看到布局样式效果
-import React, { useState, useEffect } from "react";
+import React from 'react';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Autoplay, Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-// 横向logo.png
-import logo from "@/public/logo.png";
-import Image from "next/image";
-import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
-
+import { Badge } from "@/components/ui/badge";
 const App: React.FC = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const [i18n, setI18n] = useState("en");
-
-  const i18n_mock = {
-    "en":"english",
-    "zh":"中文",
-    "ja":"日本語",
-    "ko":"한국어",
-    "vi":"Tiếng Việt",
-    "th":"ไทย",
-    "id":"Bahasa Indonesia",
-    "ms":"Bahasa Melayu",
-  }
-
-  // 检测用户设备语言并设置对应语言
-  useEffect(() => {
-    const detectUserLanguage = () => {
-      const browserLang = navigator.language.split('-')[0]; // 获取浏览器语言，例如 'zh-CN' 取 'zh'
-      const supportedLangs = Object.keys(i18n_mock);
-      
-      if (supportedLangs.includes(browserLang)) {
-        setI18n(browserLang);
-      } else {
-        // 如果不支持当前浏览器语言，默认使用英语
-        setI18n("en");
-      }
-    };
-
-    detectUserLanguage();
-  }, []);
-
-  // 租车服务数据
-  const carData = [
-    {
-      title: "保时捷 911 Carrera",
-      price: "12,800円",
-      date: "可租：2024/2/1 - 2024/2/28",
-      image: "https://ai-public.mastergo.com/ai/img_res/5ced5ad86ae5da7130c4a77f6ac1aadf.jpg"
-    },
-    {
-      title: "奔驰 AMG GT",
-      price: "15,600円",
-      date: "可租：2024/2/1 - 2024/2/28",
-      image: "https://ai-public.mastergo.com/ai/img_res/fb93b24a95deba511b65b19a3f34b363.jpg"
-    },
-    {
-      title: "法拉利 F8",
-      price: "28,800円",
-      date: "可租：2024/2/1 - 2024/2/28",
-      image: "https://ai-public.mastergo.com/ai/img_res/988b6fc347e61899b3ae567b1e4c8dab.jpg"
-    },
-    {
-      title: "兰博基尼 Huracan",
-      price: "32,000円",
-      date: "可租：2024/2/1 - 2024/2/28",
-      image: "https://ai-public.mastergo.com/ai/img_res/8d24131fc50b57793e6282557faa5049.jpg"
-    }
-  ];
-
-  // 服务项目数据
-  const serviceData = [
-    {
-      title: "豪华租车",
-      desc: "多款高端车型可选",
-      image: "https://ai-public.mastergo.com/ai/img_res/abaa9fd3d66bd2281348e691a8df8398.jpg"
-    },
-    {
-      title: "精致洗护",
-      desc: "专业团队细致服务",
-      image: "https://ai-public.mastergo.com/ai/img_res/9e20b99ce49ef2c498883dcf3fbb1f7d.jpg"
-    },
-    {
-      title: "二手交易",
-      desc: "严选优质二手车源",
-      image: "https://ai-public.mastergo.com/ai/img_res/03c073538cd33bc97889210b683fee13.jpg"
-    },
-    {
-      title: "改装升级",
-      desc: "打造个性座驾",
-      image: "https://ai-public.mastergo.com/ai/img_res/5754f51e6fcc0bb177836e94e9fe3986.jpg"
-    }
-  ];
-
   return (
-    <div className="min-h-[1024px] w-full mx-auto bg-white">
-      {/* 导航栏 */}
-      <nav className="w-full fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b">
-        <div className="max-w-[1440px] mx-auto flex items-center justify-between h-16 px-4 md:px-8">
-          <div className="flex items-center gap-2">
-              <Image
-                src={logo}
-                alt="Soukyo Logo"
-                height={40}
-              />
-          </div>
-          
-          {/* 桌面端导航 */}
-          <div className="hidden md:flex items-center gap-4 lg:gap-8">
-            <a href="#" className="text-gray-700 hover:text-gray-900 font-medium">{i18n_mock[i18n as keyof typeof i18n_mock]}</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900 font-medium">租车服务</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900 font-medium">洗车美容</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900 font-medium">二手车交易</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900 font-medium">改装服务</a>
-            <Button className="!rounded-button whitespace-nowrap bg-black text-white hover:bg-gray-800">
-              <i className="fab fa-google mr-2"></i>
-              Google 登录
-            </Button>
-          </div>
-          
-          {/* 移动端菜单按钮 */}
-          <button 
-            className="md:hidden flex items-center" 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-        
-        {/* 移动端菜单 */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-white border-b shadow-lg animate-in slide-in-from-top">
-            <div className="flex flex-col p-4 space-y-4">
-              <a href="#" className="text-gray-700 hover:text-gray-900 font-medium py-2">租车服务</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900 font-medium py-2">洗车美容</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900 font-medium py-2">二手车交易</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900 font-medium py-2">改装服务</a>
-              <Button className="!rounded-button whitespace-nowrap w-full bg-black text-white hover:bg-gray-800">
-                <i className="fab fa-google mr-2"></i>
-                Google 登录
+    <div className="min-h-[1024px]">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm">
+        <div className="max-w-[1440px] mx-auto px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-12">
+              <h1 className="text-xl font-bold">Soukyo租车</h1>
+              <nav className="flex items-center gap-8">
+                <a href="#" className="text-gray-600 hover:text-gray-900">首页</a>
+                <a href="#" className="text-gray-600 hover:text-gray-900">车型</a>
+                <a href="#" className="text-gray-600 hover:text-gray-900">门店</a>
+                <a href="#" className="text-gray-600 hover:text-gray-900">关于我们</a>
+              </nav>
+            </div>
+            <div className="flex items-center gap-4">
+              <Button variant="outline" className="!rounded-button whitespace-nowrap">
+                <i className="fas fa-globe mr-2"></i>
+                Language
+              </Button>
+              <Button className="!rounded-button whitespace-nowrap">
+                <i className="fas fa-user mr-2"></i>
+                登录
               </Button>
             </div>
           </div>
-        )}
-      </nav>
-      
-      {/* Hero区域 */}
-      <div className="relative h-[500px] md:h-[700px] mt-16 overflow-hidden">
-        <img
-          src="https://ai-public.mastergo.com/ai/img_res/c67bae70bea3757e7dc46b813509e6ab.jpg"
-          alt="Hero Background"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent">
-          <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8 py-16 md:py-32">
-            <h1 className="text-4xl md:text-7xl font-bold text-white mb-4 md:mb-8 leading-tight animate-fade-in">創挙自動車</h1>
-            <p className="text-lg md:text-2xl text-gray-200 mb-8 md:mb-12 max-w-2xl leading-relaxed">为热爱生活的您，打造专属的在日汽车服务体验。从豪华租赁到专业改装，一站式满足您的品质需求。</p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="!rounded-button whitespace-nowrap bg-white text-black hover:bg-gray-100 px-6 py-5 md:px-8 md:py-6 text-base md:text-lg">
-                立即预约体验
+        </div>
+      </header>
+      {/* Hero Section */}
+      <div className="relative h-[600px] w-full">
+        {/* Hero Background Image */}
+        <div
+          className="absolute inset-0 w-full h-full bg-cover bg-center"
+          style={{
+            backgroundImage: `url('https://ai-public.mastergo.com/ai/img_res/ab15db9d2c399255794e1b782e0095a4.jpg')`
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40"></div>
+        </div>
+        {/* Hero Content */}
+        <div className="relative max-w-[1440px] mx-auto px-8 pt-32">
+          <div className="max-w-2xl">
+            <h1 className="text-5xl font-bold text-white mb-6">探索日本，从这里开始</h1>
+            <p className="text-xl text-white/90 mb-12">便捷的租车服务，让您的旅程更自由</p>
+            {/* Search Box */}
+            <div className="bg-white p-4 rounded-lg shadow-lg">
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <div className="relative">
+                    <i className="fas fa-map-marker-alt absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <Input
+                      className="pl-10 h-12 text-sm border-none"
+                      placeholder="选择取车地点"
+                    />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="relative">
+                    <i className="fas fa-calendar absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <Input
+                      className="pl-10 h-12 text-sm border-none"
+                      placeholder="选择取还车日期"
+                    />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="relative">
+                    <i className="fas fa-users absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <Input
+                      className="pl-10 h-12 text-sm border-none"
+                      type="number"
+                      defaultValue="4"
+                      min="1"
+                      max="9"
+                    />
+                  </div>
+                </div>
+                <Button className="h-12 px-8 !rounded-button whitespace-nowrap" size="lg">
+                  立即查找
+                </Button>
+              </div>
+            </div>
+            {/* Quick Links */}
+            <div className="flex gap-4 mt-6">
+              <Button
+                variant="outline"
+                className="bg-white/20 text-white border-white/30 hover:bg-white/30 !rounded-button whitespace-nowrap"
+              >
+                <i className="fas fa-plane-arrival mr-2"></i>
+                成田机场取车
               </Button>
-              <Button className="!rounded-button whitespace-nowrap bg-transparent border-2 border-white text-white hover:bg-white/10 px-6 py-5 md:px-8 md:py-6 text-base md:text-lg">
-                了解更多服务
+              <Button
+                variant="outline"
+                className="bg-white/20 text-white border-white/30 hover:bg-white/30 !rounded-button whitespace-nowrap"
+              >
+                <i className="fas fa-plane-arrival mr-2"></i>
+                羽田机场取车
               </Button>
             </div>
           </div>
         </div>
       </div>
-      
-      {/* 租车服务卡片 */}
-      <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8 pt-16 md:pt-24">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 md:mb-4">租车服务</h2>
-        <p className="text-gray-600 text-center mb-8 md:mb-16 text-base md:text-lg">多款豪华车型，灵活租赁方案</p>
-        
-        {/* 移动端左右滑动的轮播 */}
-        <div className="sm:hidden relative mb-16">
-          <Swiper
-            modules={[Pagination, Navigation]}
-            pagination={{ clickable: true }}
-            spaceBetween={16}
-            slidesPerView={1.2}
-            centeredSlides={false}
-            className="pb-10"
-          >
-            {carData.map((car, index) => (
-              <SwiperSlide key={index}>
-                <Card className="overflow-hidden h-full">
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={car.image}
-                      alt={car.title}
-                      className="w-full h-full object-cover"
-                    />
+      {/* Featured Cars */}
+      <div className="bg-gray-50">
+        <div className="max-w-[1440px] mx-auto px-8 py-16">
+          <h2 className="text-3xl font-bold mb-12">推荐车型</h2>
+          <div className="grid grid-cols-3 gap-8">
+            {[
+              {
+                name: 'Toyota Crown',
+                type: '豪华轿车',
+                price: '￥688',
+                image: 'https://ai-public.mastergo.com/ai/img_res/e8ecc253a5e6100ab260268be804cff7.jpg',
+                location: '成田机场可取还',
+                seats: '5座',
+                transmission: '自动档'
+              },
+              {
+                name: 'Lexus RX',
+                type: '中型SUV',
+                price: '￥888',
+                image: 'https://ai-public.mastergo.com/ai/img_res/b60edb48f6231afe2377abfabca6df06.jpg',
+                location: '羽田机场可取还',
+                seats: '5座',
+                transmission: '自动档'
+              },
+              {
+                name: 'Mercedes-Benz V-Class',
+                type: '商务车',
+                price: '￥1288',
+                image: 'https://ai-public.mastergo.com/ai/img_res/bb3d7e5a7094b25349c48ee525d7fb60.jpg',
+                location: '池袋店可取还',
+                seats: '7座',
+                transmission: '自动档'
+              }
+            ].map((car, index) => (
+              <Card key={index} className="overflow-hidden">
+                <div className="relative h-56 overflow-hidden">
+                  <img
+                    src={car.image}
+                    alt={car.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <Badge className="bg-white/80 text-black hover:bg-white/90">
+                      {car.type}
+                    </Badge>
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2">{car.title}</h3>
-                    <p className="text-2xl font-bold text-red-600 mb-2">{car.price}<span className="text-sm text-gray-600">/天</span></p>
-                    <p className="text-sm text-gray-600 mb-2">{car.date}</p>
-                    <p className="text-sm text-gray-600 mb-4">成田店/埼玉店</p>
-                    <Button className="w-full !rounded-button whitespace-nowrap bg-black text-white hover:bg-gray-800">
-                      立即预约
-                    </Button>
+                </div>
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2">{car.name}</h3>
+                      <p className="text-gray-600 text-sm">
+                        <i className="fas fa-map-marker-alt mr-2"></i>
+                        {car.location}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-gray-500">起步价/天</div>
+                      <div className="text-xl font-bold text-primary">{car.price}</div>
+                    </div>
                   </div>
-                </Card>
-              </SwiperSlide>
+                  <div className="flex gap-4 mb-6">
+                    <Badge variant="secondary">
+                      <i className="fas fa-user-friends mr-2"></i>
+                      {car.seats}
+                    </Badge>
+                    <Badge variant="secondary">
+                      <i className="fas fa-cog mr-2"></i>
+                      {car.transmission}
+                    </Badge>
+                  </div>
+                  <Button className="w-full !rounded-button whitespace-nowrap">
+                    立即预订
+                  </Button>
+                </div>
+              </Card>
             ))}
-          </Swiper>
+          </div>
         </div>
-        
-        {/* 电脑端网格布局 */}
-        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16 md:mb-24">
-          {carData.map((car, index) => (
+      </div>
+      {/* Store Locations */}
+      <div className="max-w-[1440px] mx-auto px-8 py-16">
+        <h2 className="text-3xl font-bold mb-12">门店网络</h2>
+        <div className="grid grid-cols-3 gap-8">
+          {[
+            {
+              name: '成田机场店',
+              address: '千叉县成田市三里塚字御料牧場1-1',
+              time: '07:00-22:00',
+              image: 'https://ai-public.mastergo.com/ai/img_res/cdf485d92b8e70859685cbb1dc683192.jpg'
+            },
+            {
+              name: '池袋店',
+              address: '东京都丰岛区西池袋1丁目',
+              time: '09:00-20:00',
+              image: 'https://ai-public.mastergo.com/ai/img_res/3152122a6fdd97d2f37d6054f81a3e61.jpg'
+            },
+            {
+              name: '琦玉店',
+              address: '琦玉县さいたま市大宮区桜木町1-7-5',
+              time: '09:00-20:00',
+              image: 'https://ai-public.mastergo.com/ai/img_res/0ac5ab1537398847b6ba818693d78968.jpg'
+            }
+          ].map((store, index) => (
             <Card key={index} className="overflow-hidden">
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-40">
                 <img
-                  src={car.image}
-                  alt={car.title}
+                  src={store.image}
+                  alt={store.name}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">{car.title}</h3>
-                <p className="text-2xl font-bold text-red-600 mb-2">{car.price}<span className="text-sm text-gray-600">/天</span></p>
-                <p className="text-sm text-gray-600 mb-2">{car.date}</p>
-                <p className="text-sm text-gray-600 mb-4">成田店/埼玉店</p>
-                <Button className="w-full !rounded-button whitespace-nowrap bg-black text-white hover:bg-gray-800">
-                  立即预约
+                <h3 className="text-xl font-semibold mb-4">{store.name}</h3>
+                <div className="space-y-2 text-gray-600">
+                  <p className="flex items-start">
+                    <i className="fas fa-map-marker-alt mt-1 mr-3"></i>
+                    <span>{store.address}</span>
+                  </p>
+                  <p className="flex items-center">
+                    <i className="fas fa-clock mr-3"></i>
+                    <span>{store.time}</span>
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  className="w-full mt-6 !rounded-button whitespace-nowrap"
+                >
+                  <i className="fas fa-location-arrow mr-2"></i>
+                  导航前往
                 </Button>
               </div>
             </Card>
           ))}
         </div>
+      </div>
 
-        {/* 一站式汽车服务 */}
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 md:mb-4">一站式汽车服务</h2>
-        <p className="text-gray-600 text-center mb-8 md:mb-16 text-base md:text-lg">专业团队，用心服务，为您的爱车保驾护航</p>
-        
-        {/* 移动端左右滑动的服务轮播 */}
-        <div className="sm:hidden relative mb-16">
-          <Swiper
-            modules={[Pagination, Navigation]}
-            pagination={{ clickable: true }}
-            spaceBetween={16}
-            slidesPerView={1.2}
-            centeredSlides={false}
-            className="pb-10"
-          >
-            {serviceData.map((service, index) => (
-              <SwiperSlide key={index}>
-                <Card className="overflow-hidden group cursor-pointer h-full">
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                      src={service.image}
-                      alt={service.title}
-                      className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                    />
+      {/* Company Information */}
+      <div className="bg-gray-50">
+        <div className="max-w-[1440px] mx-auto px-8 py-16">
+          <div className="grid grid-cols-2 gap-16">
+            {/* Consultation Section */}
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-3xl font-bold mb-4">咨询</h2>
+                <p className="text-gray-600 mb-8">欢迎随时咨询。可通过电话或专用表格进行咨询。</p>
+
+                <div className="grid grid-cols-2 gap-8">
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-semibold">电话咨询</h3>
+                    <p className="text-2xl font-bold text-primary">048-951-1089</p>
+                    <p className="text-gray-600">受理时间：10:00-19:00</p>
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                    <p className="text-gray-600">{service.desc}</p>
+
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-semibold">表格咨询</h3>
+                    <Button className="!rounded-button whitespace-nowrap">
+                      <i className="fas fa-envelope mr-2"></i>
+                      Contact
+                    </Button>
+                    <p className="text-gray-600">24小时受理</p>
                   </div>
-                </Card>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-        
-        {/* 电脑端网格布局 */}
-        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-          {serviceData.map((service, index) => (
-            <Card key={index} className="overflow-hidden group cursor-pointer">
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                />
+                </div>
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                <p className="text-gray-600">{service.desc}</p>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-      
-      {/* 实时动态 */}
-      <div className="bg-gray-50 py-6 mt-16">
-        <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8">
-          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-full shadow-sm">
-              <i className="fas fa-broadcast-tower text-yellow-500"></i>
-              <span className="text-sm font-medium text-gray-900">实时动态</span>
             </div>
-            <div className="w-full">
-              <Swiper
-                modules={[Autoplay]}
-                autoplay={{
-                  delay: 3000,
-                  disableOnInteraction: false,
-                }}
-                direction="vertical"
-                className="h-10"
-              >
-                {[
-                  "刚刚 · 涩谷旗舰店 · 田中先生预约了全新迈巴赫 S680",
-                  "2分钟前 · 银座店 · 山本女士的保时捷 911 完成精致洗护",
-                  "5分钟前 · 新宿店 · 铃木先生的兰博基尼 SVJ 改装完成",
-                  "8分钟前 · 池袋店 · 佐藤先生订购了全新法拉利 SF90",
-                ].map((text, index) => (
-                  <SwiperSlide key={index}>
-                    <p className="text-gray-600 font-medium text-sm md:text-base truncate">{text}</p>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+
+            {/* About Us Section */}
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-3xl font-bold mb-4">关于我们</h2>
+                <p className="text-gray-600 mb-8">
+                  我们始终将客户的满意度放在首位，致力于为每一位客户提供贴心的服务。
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-semibold mb-4">
+                  Business introduction
+                  <span className="block text-base font-normal text-gray-600 mt-1">事业介绍</span>
+                </h3>
+                <div className="text-gray-600 space-y-4">
+                  <p>为全面支持客户的汽车生活，本公司开展了多项业务。</p>
+                  <p>我们以&quot;信赖&quot;&quot;安心&quot;&quot;高品质&quot;为宗旨，将持续为客户提供令人满意的服务。</p>
+                  <p>衷心期待各位的光临。</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      
-      {/* 优惠活动 */}
-      <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8 py-16 md:py-24">
-        <div className="relative overflow-hidden rounded-xl">
-          <img
-            src="https://ai-public.mastergo.com/ai/img_res/70dd2c6cd22d2ecc05a80850adbca7dc.jpg"
-            className="absolute inset-0 w-full h-full object-cover"
-            alt="Promotion Background"
-          />
-          <div className="relative bg-gradient-to-r from-black/90 to-black/50 p-6 md:p-16 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <span className="text-sm font-semibold text-yellow-400 mb-2 md:mb-4 block">限时专享</span>
-              <h2 className="text-2xl md:text-4xl font-bold text-white mb-2 md:mb-4">新客尊享 VIP 洗护服务</h2>
-              <p className="text-base md:text-xl text-gray-300">预约即可享受 9 折优惠，专业团队为您的爱车精心护理</p>
-            </div>
-            <div className="flex flex-col gap-4 w-full md:w-auto">
-              <Button className="!rounded-button whitespace-nowrap bg-white text-black hover:bg-gray-100 px-8 py-5 md:py-6 text-base md:text-lg">
-                立即预约
-              </Button>
-              <p className="text-sm text-gray-400 text-center">优惠名额有限</p>
-            </div>
-          </div>
-        </div>
+
+      {/* Footer */}
+      {/* Customer Service Button */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <Button className="w-14 h-14 rounded-full bg-primary hover:bg-primary/90 shadow-lg !rounded-button" size="icon">
+          <i className="fas fa-headset text-2xl"></i>
+        </Button>
       </div>
-      
-      {/* 页脚 */}
-      <footer className="bg-gray-900 text-gray-300 py-12 md:py-16">
-        <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <footer className="bg-gray-900 text-white mt-16">
+        <div className="max-w-[1440px] mx-auto px-8 py-16">
+          <div className="grid grid-cols-4 gap-8">
             <div>
-              <h3 className="text-white font-bold mb-4">关于我们</h3>
-              <p className="text-sm">Soukyo 致力于为客户提供高品质的汽车生活服务，是您值得信赖的专业伙伴。</p>
+              <h3 className="text-xl font-bold mb-6">Soukyo租车</h3>
+              <p className="text-gray-400">
+                为您提供优质的租车服务，让您的日本之旅更加便捷舒适。
+              </p>
             </div>
             <div>
-              <h3 className="text-white font-bold mb-4">服务项目</h3>
-              <ul className="space-y-2 text-sm">
-                <li>豪华车租赁</li>
-                <li>精致洗护</li>
-                <li>二手车交易</li>
-                <li>改装服务</li>
+              <h4 className="font-semibold mb-4">快速链接</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>关于我们</li>
+                <li>服务条款</li>
+                <li>隐私政策</li>
+                <li>常见问题</li>
               </ul>
             </div>
             <div>
-              <h3 className="text-white font-bold mb-4">联系方式</h3>
-              <ul className="space-y-2 text-sm">
-                <li>电话：03-1234-5678</li>
-                <li>邮箱：info@soukyo.jp</li>
-                <li>地址：东京都涩谷区代々木1-1-1</li>
+              <h4 className="font-semibold mb-4">联系方式</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <i className="fas fa-phone mr-2"></i>
+                  +81 3-1234-5678
+                </li>
+                <li>
+                  <i className="fas fa-envelope mr-2"></i>
+                  contact@soukyo.com
+                </li>
               </ul>
             </div>
             <div>
-              <h3 className="text-white font-bold mb-4">社交媒体</h3>
-              <div className="flex space-x-4">
-                <a href="#" className="hover:text-white"><i className="fab fa-instagram text-xl"></i></a>
-                <a href="#" className="hover:text-white"><i className="fab fa-line text-xl"></i></a>
-                <a href="#" className="hover:text-white"><i className="fab fa-twitter text-xl"></i></a>
+              <h4 className="font-semibold mb-4">关注我们</h4>
+              <div className="flex gap-4">
+                <Button variant="ghost" size="icon" className="!rounded-button">
+                  <i className="fab fa-instagram text-xl"></i>
+                </Button>
+                <Button variant="ghost" size="icon" className="!rounded-button">
+                  <i className="fab fa-twitter text-xl"></i>
+                </Button>
+                <Button variant="ghost" size="icon" className="!rounded-button">
+                  <i className="fab fa-line text-xl"></i>
+                </Button>
               </div>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 md:mt-12 pt-6 md:pt-8 text-sm text-center">
-            <p>© 2024 Soukyo Car Service. All rights reserved.</p>
+          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+            <p>© 2024 Soukyo租车. All rights reserved.</p>
           </div>
         </div>
       </footer>
