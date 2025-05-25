@@ -1,0 +1,354 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户角色枚举
+enum UserRole {
+  USER
+  ADMIN
+  MANAGER
+}
+
+// 订单状态枚举
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  ONGOING
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+// 车辆类型枚举
+enum VehicleType {
+  SEDAN
+  SUV
+  HATCHBACK
+  COUPE
+  CONVERTIBLE
+  TRUCK
+  VAN
+  LUXURY
+}
+
+// 变速箱类型枚举
+enum TransmissionType {
+  MANUAL
+  AUTOMATIC
+  CVT
+}
+
+// 燃油类型枚举
+enum FuelType {
+  GASOLINE
+  DIESEL
+  ELECTRIC
+  HYBRID
+  PLUGIN_HYBRID
+}
+
+// 通知类型枚举
+enum NotificationType {
+  ORDER
+  SYSTEM
+  PROMOTION
+  MAINTENANCE
+}
+
+// 支付状态枚举
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+// 1. 用户表（接入Google OAuth）
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  image         String?
+  phone         String?
+  driverLicense String?
+  
+  // Google OAuth相关字段
+  googleId      String?  @unique
+  
+  // 用户角色
+  role          UserRole @default(USER)
+  
+  // 是否激活
+  isActive      Boolean  @default(true)
+  
+  // 创建和更新时间
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // 关联关系
+  orders        Order[]
+  notifications Notification[]
+  reviews       Review[]
+  
+  @@map("users")
+}
+
+// 2. 店面表（后台配置）
+model Store {
+  id          String   @id @default(cuid())
+  name        String
+  address     String
+  city        String
+  state       String?
+  zipCode     String?
+  phone       String
+  email       String?
+  description String?
+  image       String?
+  
+  // 地理位置
+  latitude    Float?
+  longitude   Float?
+  
+  // 营业时间
+  openingHours Json?
+  
+  // 是否激活
+  isActive    Boolean  @default(true)
+  
+  // 创建和更新时间
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // 关联关系
+  vehicles    Vehicle[]
+  orders      Order[]
+  
+  @@map("stores")
+}
+
+// 3. 车辆表（后台配置）
+model Vehicle {
+  id           String           @id @default(cuid())
+  name         String
+  brand        String
+  model        String
+  year         Int
+  type         VehicleType
+  transmission TransmissionType
+  fuelType     FuelType
+  seats        Int
+  
+  // 价格信息
+  pricePerDay  Float
+  
+  // 车辆详情
+  description  String?
+  images       String[]
+  features     String[]
+  
+  // 车辆规格
+  engine       String?
+  mileage      String?
+  color        String?
+  plateNumber  String?        @unique
+  
+  // 可用性
+  isAvailable  Boolean        @default(true)
+  
+  // 关联店面
+  storeId      String
+  store        Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  
+  // 创建和更新时间
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  
+  // 关联关系
+  orders       Order[]
+  reviews      Review[]
+  
+  @@map("vehicles")
+}
+
+// 4. 订单表（包含租车信息和Stripe支付）
+model Order {
+  id                     String      @id @default(cuid())
+  orderNumber            String      @unique @default(cuid())
+  
+  // 用户和车辆关联
+  userId                 String
+  user                   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicleId              String
+  vehicle                Vehicle     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  storeId                String
+  store                  Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  
+  // 租车时间
+  startDate              DateTime
+  endDate                DateTime
+  totalDays              Int
+  
+  // 价格信息
+  pricePerDay            Float
+  subtotal               Float
+  taxAmount              Float       @default(0)
+  totalAmount            Float
+  
+  // 订单状态
+  status                 OrderStatus @default(PENDING)
+  
+  // Stripe支付信息
+  stripePaymentIntentId  String?
+  stripeCustomerId       String?
+  
+  // 取车和还车信息
+  pickupLocation         String?
+  dropoffLocation        String?
+  pickupTime             DateTime?
+  dropoffTime            DateTime?
+  
+  // 驾驶员信息
+  driverLicense          String
+  emergencyContact       String?
+  emergencyPhone         String?
+  
+  // 备注
+  notes                  String?
+  
+  // 创建和更新时间
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+  
+  // 关联关系
+  payments               Payment[]
+  notifications          Notification[]
+  
+  @@map("orders")
+}
+
+// 5. 新闻表
+model News {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  summary     String?
+  image       String?
+  author      String?
+  
+  // 分类和标签
+  category    String?
+  tags        String[]
+  
+  // 发布状态
+  isPublished Boolean  @default(false)
+  publishedAt DateTime?
+  
+  // SEO字段
+  slug        String?  @unique
+  metaTitle   String?
+  metaDescription String?
+  
+  // 创建和更新时间
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("news")
+}
+
+// 6. 用户通知表
+model Notification {
+  id              String           @id @default(cuid())
+  
+  // 关联用户
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // 通知内容
+  title           String
+  message         String
+  type            NotificationType
+  
+  // 阅读状态
+  isRead          Boolean          @default(false)
+  readAt          DateTime?
+  
+  // 关联订单（可选）
+  relatedOrderId  String?
+  relatedOrder    Order?           @relation(fields: [relatedOrderId], references: [id], onDelete: Cascade)
+  
+  // 创建时间
+  createdAt       DateTime         @default(now())
+  
+  @@map("notifications")
+}
+
+// 7. 支付记录表（Stripe集成）
+model Payment {
+  id                    String        @id @default(cuid())
+  
+  // 关联订单
+  orderId               String
+  order                 Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  // 支付金额
+  amount                Float
+  currency              String        @default("usd")
+  
+  // Stripe相关字段
+  stripePaymentIntentId String        @unique
+  stripeChargeId        String?
+  
+  // 支付状态
+  status                PaymentStatus @default(PENDING)
+  
+  // 支付方式
+  paymentMethod         String?
+  
+  // 退款信息
+  refundAmount          Float?
+  refundReason          String?
+  refundedAt            DateTime?
+  
+  // 创建和更新时间
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  
+  @@map("payments")
+}
+
+// 8. 评价表
+model Review {
+  id        String   @id @default(cuid())
+  
+  // 关联用户和车辆
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  
+  // 评价内容
+  rating    Int      // 1-5星评价
+  comment   String?
+  
+  // 是否显示
+  isVisible Boolean  @default(true)
+  
+  // 创建时间
+  createdAt DateTime @default(now())
+  
+  @@map("reviews")
+  @@unique([userId, vehicleId]) // 一个用户对同一车辆只能评价一次
+}
