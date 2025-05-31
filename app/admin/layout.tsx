@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
-import { isAdmin } from '@/lib/auth'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 
 export default async function AdminLayout({
@@ -7,9 +8,15 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const hasAdminAccess = await isAdmin()
+  const session = await getServerSession(authOptions)
   
-  if (!hasAdminAccess) {
+  // 如果没有登录，重定向到登录页面
+  if (!session?.user) {
+    redirect('/auth/signin')
+  }
+  
+  // 只允许ADMIN用户访问管理后台
+  if (session.user.role !== 'ADMIN') {
     redirect('/')
   }
 

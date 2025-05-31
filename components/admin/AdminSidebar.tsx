@@ -30,7 +30,7 @@ export function AdminSidebar() {
       <div className="p-6">
         <Link href="/" className="flex items-center space-x-2">
           <Home className="w-8 h-8 text-blue-600" />
-          <span className="text-xl font-bold text-gray-900">搜酷汽车</span>
+          <span className="text-xl font-bold text-gray-900">Soukyo汽车</span>
         </Link>
       </div>
       
