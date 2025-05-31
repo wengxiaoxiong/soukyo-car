@@ -5,7 +5,6 @@ import { FeaturedCars } from "@/components/FeaturedCars";
 import { StoreLocations } from "@/components/StoreLocations";
 import { CompanyInfo } from "@/components/CompanyInfo";
 import { Footer } from "@/components/Footer";
-import { CustomerServiceButton } from "@/components/CustomerServiceButton";
 
 const App: React.FC = () => {
   return (
@@ -16,7 +15,6 @@ const App: React.FC = () => {
       <StoreLocations />
       <CompanyInfo />
       <Footer />
-      <CustomerServiceButton />
     </div>
   );
 };
