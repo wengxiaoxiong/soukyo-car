@@ -167,6 +167,9 @@ model Store {
   description String?
   image       String?
   
+  // Google Maps链接
+  googleMap   String?
+  
   // 地理位置
   latitude    Float?
   longitude   Float?

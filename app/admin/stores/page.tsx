@@ -5,10 +5,11 @@ import { Badge } from '@/components/ui/badge'
 import { Plus, Edit, MapPin, Phone, Mail } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { StoreActions } from '@/components/admin/StoreActions'
+import { dbStoreSchema } from '@/lib/schemas/store'
 
-async function getStores() {
+async function getStoresWithCounts() {
   try {
-    const stores = await prisma.store.findMany({
+    const rawStores = await prisma.store.findMany({
       orderBy: {
         createdAt: 'desc',
       },
@@ -21,7 +22,18 @@ async function getStores() {
         },
       },
     })
-    return stores
+    
+    // 验证每个店面数据
+    const validatedStores = rawStores.map(rawStore => {
+      const { _count, ...storeData } = rawStore
+      const validatedStore = dbStoreSchema.parse(storeData)
+      return {
+        ...validatedStore,
+        _count,
+      }
+    })
+    
+    return validatedStores
   } catch (error) {
     console.error('获取店面列表失败:', error)
     return []
@@ -29,7 +41,7 @@ async function getStores() {
 }
 
 export default async function StoresPage() {
-  const stores = await getStores()
+  const stores = await getStoresWithCounts()
 
   return (
     <div>

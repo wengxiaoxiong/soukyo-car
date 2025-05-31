@@ -4,6 +4,82 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth'
+import { storeFormSchema, dbStoreSchema, transformFormDataToStore, type DbStore } from '@/lib/schemas/store'
+
+// 简化的FormData提取函数
+function extractFormData(formData: FormData) {
+  return Object.fromEntries(formData.entries())
+}
+
+export async function getStore(id: string): Promise<DbStore | null> {
+  try {
+    const rawStore = await prisma.store.findUnique({
+      where: { id },
+    })
+    
+    if (!rawStore) {
+      return null
+    }
+
+    // 使用 Zod 验证从数据库获取的数据
+    const validatedStore = dbStoreSchema.parse(rawStore)
+    return validatedStore
+  } catch (error) {
+    console.error('获取店面信息失败:', error)
+    return null
+  }
+}
+
+export async function getStoreWithCounts(id: string) {
+  try {
+    const rawStore = await prisma.store.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: {
+            vehicles: true,
+            orders: true,
+          },
+        },
+      },
+    })
+    
+    if (!rawStore) {
+      return null
+    }
+
+    // 分离计数数据和店面数据
+    const { _count, ...storeData } = rawStore
+    
+    // 验证店面数据
+    const validatedStore = dbStoreSchema.parse(storeData)
+    
+    return {
+      ...validatedStore,
+      _count,
+    }
+  } catch (error) {
+    console.error('获取店面详情失败:', error)
+    return null
+  }
+}
+
+export async function getAllStores(): Promise<DbStore[]> {
+  try {
+    const rawStores = await prisma.store.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    // 验证所有店面数据
+    const validatedStores = rawStores.map(store => dbStoreSchema.parse(store))
+    return validatedStores
+  } catch (error) {
+    console.error('获取店面列表失败:', error)
+    return []
+  }
+}
 
 export async function createStore(formData: FormData) {
   const user = await getCurrentUser()
@@ -11,41 +87,25 @@ export async function createStore(formData: FormData) {
     throw new Error('权限不足')
   }
 
-  const name = formData.get('name') as string
-  const address = formData.get('address') as string
-  const city = formData.get('city') as string
-  const state = formData.get('state') as string
-  const zipCode = formData.get('zipCode') as string
-  const phone = formData.get('phone') as string
-  const email = formData.get('email') as string
-  const description = formData.get('description') as string
-  const image = formData.get('image') as string
-  const latitude = formData.get('latitude') as string
-  const longitude = formData.get('longitude') as string
-  const openingHours = formData.get('openingHours') as string
-
   try {
+    // 提取并验证表单数据
+    const rawData = extractFormData(formData)
+    const validatedData = storeFormSchema.parse(rawData)
+    
+    // 转换为数据库格式
+    const storeData = transformFormDataToStore(validatedData)
+
     await prisma.store.create({
-      data: {
-        name,
-        address,
-        city,
-        state: state || null,
-        zipCode: zipCode || null,
-        phone,
-        email: email || null,
-        description: description || null,
-        image: image || null,
-        latitude: latitude ? parseFloat(latitude) : null,
-        longitude: longitude ? parseFloat(longitude) : null,
-        openingHours: openingHours ? JSON.parse(openingHours) : null,
-      },
+      data: storeData,
     })
 
     revalidatePath('/admin/stores')
     redirect('/admin/stores')
   } catch (error) {
     console.error('创建店面失败:', error)
+    if (error instanceof Error) {
+      throw new Error(`创建店面失败: ${error.message}`)
+    }
     throw new Error('创建店面失败')
   }
 }
@@ -56,44 +116,26 @@ export async function updateStore(id: string, formData: FormData) {
     throw new Error('权限不足')
   }
 
-  const name = formData.get('name') as string
-  const address = formData.get('address') as string
-  const city = formData.get('city') as string
-  const state = formData.get('state') as string
-  const zipCode = formData.get('zipCode') as string
-  const phone = formData.get('phone') as string
-  const email = formData.get('email') as string
-  const description = formData.get('description') as string
-  const image = formData.get('image') as string
-  const latitude = formData.get('latitude') as string
-  const longitude = formData.get('longitude') as string
-  const openingHours = formData.get('openingHours') as string
-  const isActive = formData.get('isActive') === 'true'
-
   try {
+    // 提取并验证表单数据
+    const rawData = extractFormData(formData)
+    const validatedData = storeFormSchema.parse(rawData)
+    
+    // 转换为数据库格式
+    const storeData = transformFormDataToStore(validatedData)
+
     await prisma.store.update({
       where: { id },
-      data: {
-        name,
-        address,
-        city,
-        state: state || null,
-        zipCode: zipCode || null,
-        phone,
-        email: email || null,
-        description: description || null,
-        image: image || null,
-        latitude: latitude ? parseFloat(latitude) : null,
-        longitude: longitude ? parseFloat(longitude) : null,
-        openingHours: openingHours ? JSON.parse(openingHours) : null,
-        isActive,
-      },
+      data: storeData,
     })
 
     revalidatePath('/admin/stores')
     redirect('/admin/stores')
   } catch (error) {
     console.error('更新店面失败:', error)
+    if (error instanceof Error) {
+      throw new Error(`更新店面失败: ${error.message}`)
+    }
     throw new Error('更新店面失败')
   }
 }
