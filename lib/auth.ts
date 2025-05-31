@@ -2,6 +2,7 @@ import { NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { getServerSession } from "next-auth/next"
 import { prisma } from "./prisma"
 import { UserRole } from "@prisma/client"
 import bcrypt from "bcryptjs"
@@ -102,7 +103,6 @@ export const authOptions: NextAuthOptions = {
 }
 
 export async function getCurrentUser() {
-  const { getServerSession } = await import("next-auth/next")
   const session = await getServerSession(authOptions)
   
   if (!session?.user?.id) {
