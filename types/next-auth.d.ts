@@ -1,22 +1,17 @@
-import { UserRole } from "@/lib/generated/prisma"
+import { DefaultSession } from "next-auth"
+import { UserRole } from "@prisma/client"
 
 declare module "next-auth" {
   interface Session {
     user: {
       id: string
-      email: string
-      name?: string | null
-      image?: string | null
       role: UserRole
       isActive: boolean
-    }
+    } & DefaultSession["user"]
   }
 
   interface User {
     id: string
-    email: string
-    name?: string | null
-    image?: string | null
     role: UserRole
     isActive?: boolean
   }
