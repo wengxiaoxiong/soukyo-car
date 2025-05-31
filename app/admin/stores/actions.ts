@@ -98,9 +98,6 @@ export async function createStore(formData: FormData) {
     await prisma.store.create({
       data: storeData,
     })
-
-    revalidatePath('/admin/stores')
-    redirect('/admin/stores')
   } catch (error) {
     console.error('创建店面失败:', error)
     if (error instanceof Error) {
@@ -108,6 +105,9 @@ export async function createStore(formData: FormData) {
     }
     throw new Error('创建店面失败')
   }
+
+  revalidatePath('/admin/stores')
+  redirect('/admin/stores')
 }
 
 export async function updateStore(id: string, formData: FormData) {
@@ -128,9 +128,6 @@ export async function updateStore(id: string, formData: FormData) {
       where: { id },
       data: storeData,
     })
-
-    revalidatePath('/admin/stores')
-    redirect('/admin/stores')
   } catch (error) {
     console.error('更新店面失败:', error)
     if (error instanceof Error) {
@@ -138,6 +135,9 @@ export async function updateStore(id: string, formData: FormData) {
     }
     throw new Error('更新店面失败')
   }
+
+  revalidatePath('/admin/stores')
+  redirect('/admin/stores')
 }
 
 export async function deleteStore(id: string) {

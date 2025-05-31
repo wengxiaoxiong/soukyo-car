@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
+import { ImageUpload } from '@/components/ui/image-upload'
 import { ArrowLeft, Save, Edit, Eye } from 'lucide-react'
 import Link from 'next/link'
 import { createStore, updateStore } from '@/app/admin/stores/actions'
@@ -49,6 +50,7 @@ export function StoreForm({ store, mode = 'add' }: StoreFormProps) {
     formState: { errors },
     reset,
     watch,
+    setValue,
   } = useForm<StoreFormData>({
     resolver: zodResolver(storeFormSchema.extend({
       // 添加自定义验证规则
@@ -59,10 +61,6 @@ export function StoreForm({ store, mode = 'add' }: StoreFormProps) {
       email: storeFormSchema.shape.email.refine(
         (value) => !value || value === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
         { message: '请输入有效的邮箱地址' }
-      ),
-      image: storeFormSchema.shape.image.refine(
-        (value) => !value || value === '' || /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(value),
-        { message: '请输入有效的图片URL' }
       ),
     })),
     defaultValues,
@@ -85,7 +83,15 @@ export function StoreForm({ store, mode = 'add' }: StoreFormProps) {
       } else if (mode === 'add') {
         await createStore(formData)
       }
+      // 如果执行到这里没有抛出错误，说明操作成功
+      // 注意：在App Router中，redirect会抛出NEXT_REDIRECT错误，但这是正常的重定向行为
     } catch (error) {
+      // 检查是否是Next.js的重定向错误，如果是则不显示错误消息
+      if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
+        return // 这是正常的重定向，不是真正的错误
+      }
+      
+      // 只有真正的错误才显示错误消息
       const message = error instanceof Error ? error.message : '操作失败，请重试'
       alert(message)
     } finally {
@@ -181,22 +187,38 @@ export function StoreForm({ store, mode = 'add' }: StoreFormProps) {
 
       <Card className="p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* 店面图片预览 */}
-          {(store?.image || watch('image')) && (
-            <div className="mb-6">
-              <Label>店面图片</Label>
-              <div className="mt-2">
-                <img
-                  src={store?.image || watch('image') || ''}
-                  alt={store?.name || watch('name') || '店面图片'}
-                  className="w-full h-64 object-cover rounded-lg border"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none'
-                  }}
+          {/* 店面图片上传 */}
+          <div className="space-y-2">
+            <Label>店面图片</Label>
+            {isReadOnly ? (
+              store?.image && (
+                <div className="mt-2">
+                  <img
+                    src={store.image}
+                    alt={store.name || '店面图片'}
+                    className="w-full h-64 object-cover rounded-lg border"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none'
+                    }}
+                  />
+                </div>
+              )
+            ) : (
+              <>
+                <ImageUpload
+                  value={watch('image')}
+                  onChange={(url) => setValue('image', url)}
+                  disabled={isLoading}
+                  placeholder="上传店面图片"
                 />
-              </div>
-            </div>
-          )}
+                {/* 隐藏的input字段用于react-hook-form注册 */}
+                <input
+                  type="hidden"
+                  {...register('image')}
+                />
+              </>
+            )}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
@@ -345,28 +367,6 @@ export function StoreForm({ store, mode = 'add' }: StoreFormProps) {
                 />
                 {errors.email && (
                   <p className="text-sm text-red-600">{errors.email.message}</p>
-                )}
-              </>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="image">店面图片URL</Label>
-            {isReadOnly ? (
-              <div className="p-3 bg-gray-50 rounded-md break-all">
-                {store?.image || '-'}
-              </div>
-            ) : (
-              <>
-                <Input
-                  id="image"
-                  {...register('image')}
-                  type="url"
-                  placeholder="请输入图片URL"
-                  className={errors.image ? 'border-red-500' : ''}
-                />
-                {errors.image && (
-                  <p className="text-sm text-red-600">{errors.image.message}</p>
                 )}
               </>
             )}

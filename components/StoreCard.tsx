@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MapPin, Clock, Navigation, Phone } from "lucide-react";
@@ -55,12 +56,13 @@ export const StoreCard: React.FC<StoreCardProps> = ({
   };
 
   return (
-    <Card className="overflow-hidden flex-shrink-0 w-[280px] md:w-auto mx-2 first:ml-0 last:mr-0 md:mx-0">
-      <div className="relative h-36 md:h-40">
-        <img
+    <Card className="overflow-hidden flex-shrink-0 w-[280px] md:w-auto mx-2 first:ml-0 last:mr-0 md:mx-0 pt-0">
+      <div className="relative h-48 md:h-56">
+        <Image
           src={image || '/placeholder-store.jpg'}
           alt={name}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = '/placeholder-store.jpg';
