@@ -52,9 +52,10 @@ async function getStore(id: string) {
 export default async function StoreDetailPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const store = await getStore(params.id)
+  const { id } = await params
+  const store = await getStore(id)
 
   if (!store) {
     notFound()

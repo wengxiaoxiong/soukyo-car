@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card'
 import { Store, Car, Users, FileText } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
+import Link from 'next/link'
 
 async function getStats() {
   try {
@@ -89,7 +90,7 @@ export default async function AdminDashboard() {
         <Card className="p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">快速操作</h3>
           <div className="space-y-3">
-            <a
+            <Link
               href="/admin/stores"
               className="block p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
             >
@@ -97,8 +98,8 @@ export default async function AdminDashboard() {
                 <Store className="w-5 h-5 text-blue-600 mr-3" />
                 <span className="font-medium">管理店面</span>
               </div>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/vehicles"
               className="block p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
             >
@@ -106,7 +107,7 @@ export default async function AdminDashboard() {
                 <Car className="w-5 h-5 text-green-600 mr-3" />
                 <span className="font-medium">管理车辆</span>
               </div>
-            </a>
+            </Link>
           </div>
         </Card>
 
