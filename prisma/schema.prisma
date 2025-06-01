@@ -30,34 +30,6 @@ enum OrderStatus {
   REFUNDED
 }
 
-// 车辆类型枚举
-enum VehicleType {
-  SEDAN
-  SUV
-  HATCHBACK
-  COUPE
-  CONVERTIBLE
-  TRUCK
-  VAN
-  LUXURY
-}
-
-// 变速箱类型枚举
-enum TransmissionType {
-  MANUAL
-  AUTOMATIC
-  CVT
-}
-
-// 燃油类型枚举
-enum FuelType {
-  GASOLINE
-  DIESEL
-  ELECTRIC
-  HYBRID
-  PLUGIN_HYBRID
-}
-
 // 通知类型枚举
 enum NotificationType {
   ORDER
@@ -198,9 +170,6 @@ model Vehicle {
   brand        String
   model        String
   year         Int
-  type         VehicleType
-  transmission TransmissionType
-  fuelType     FuelType
   seats        Int
   
   // 价格信息
@@ -208,12 +177,12 @@ model Vehicle {
   
   // 车辆详情
   description  String?
+  // 内部描述，用于管理员查看
+  internalDescription String?
+  
   images       String[]
-  features     String[]
   
   // 车辆规格
-  engine       String?
-  mileage      String?
   color        String?
   plateNumber  String?        @unique
   
@@ -223,7 +192,7 @@ model Vehicle {
   // 关联店面
   storeId      String
   store        Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  
+
   // 创建和更新时间
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
