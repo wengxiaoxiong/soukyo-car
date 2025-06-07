@@ -4,11 +4,12 @@ import { FeaturedCars } from "@/components/FeaturedCars";
 import { StoreLocations } from "@/components/StoreLocations";
 import { CompanyInfo } from "@/components/CompanyInfo";
 import { Footer } from "@/components/Footer";
+import { Header } from '@/components/Header';
 
 const App: React.FC = () => {
   return (
     <div className="min-h-[1024px]">
-      
+      <Header />
       <HeroSection />
       <FeaturedCars />
       <StoreLocations />

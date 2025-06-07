@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { getChatwootToken } from '@/app/actions/chatwoot';
 
-export const revalidate = 3600 * 24 // 每24小时重新生成一次
+
 
 interface ChatwootWindow extends Window {
   chatwootSettings?: {
