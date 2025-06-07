@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { 
@@ -9,8 +10,7 @@ import {
   Users, 
   FileText, 
   BarChart3, 
-  Settings,
-  Home
+  Settings
 } from 'lucide-react'
 
 const navigation = [
@@ -29,11 +29,9 @@ export function AdminSidebar() {
     <div className="w-64 bg-white shadow-lg">
       <div className="p-6">
         <Link href="/admin" className="flex items-center space-x-2">
-          <Home className="w-8 h-8 text-blue-600" />
-          <span className="text-xl font-bold text-gray-900">Soukyo汽车</span>
+          <Image src="/logo.png" alt="Soukyo租车" width={150} height={32} />
         </Link>
       </div>
-      
       <nav className="mt-8">
         <div className="px-4 space-y-2">
           {navigation.map((item) => {

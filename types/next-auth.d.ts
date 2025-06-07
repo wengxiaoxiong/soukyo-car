@@ -22,5 +22,6 @@ declare module "next-auth/jwt" {
     id: string
     role: UserRole
     isActive: boolean
+    lastRefresh?: number
   }
 } 

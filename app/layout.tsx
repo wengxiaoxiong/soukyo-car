@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { ChatwootWidget } from "@/components/ChatwootWidget";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,6 +33,7 @@ export default function RootLayout({
         <SessionProvider>
           <ChatwootWidget />
           {children}
+          <Toaster position="top-right" />
         </SessionProvider>
 
       </body>
