@@ -16,33 +16,51 @@ import { UserRole } from '@prisma/client'
 import { UserActions } from '@/components/admin/UserActions'
 import { AddUserDialog } from '@/components/admin/AddUserDialog'
 import { UserSearchAndFilter } from '@/components/admin/UserSearchAndFilter'
+import { UserListWithPagination } from '@/components/admin/UserListWithPagination'
 
 
-async function getUsers() {
+async function getUsers(page: number = 1, pageSize: number = 10) {
   try {
-    const users = await prisma.user.findMany({
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        isActive: true,
-        createdAt: true,
-        image: true,
-        phone: true,
-        _count: {
-          select: {
-            orders: true
+    const skip = (page - 1) * pageSize
+
+    const [users, totalCount] = await Promise.all([
+      prisma.user.findMany({
+        skip,
+        take: pageSize,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          isActive: true,
+          createdAt: true,
+          image: true,
+          phone: true,
+          _count: {
+            select: {
+              orders: true
+            }
           }
         }
-      }
-    })
+      }),
+      prisma.user.count()
+    ])
 
-    return users
+    return {
+      users,
+      totalCount,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page
+    }
   } catch (error) {
     console.error('获取用户列表失败:', error)
-    return []
+    return {
+      users: [],
+      totalCount: 0,
+      totalPages: 0,
+      currentPage: 1
+    }
   }
 }
 
@@ -72,8 +90,8 @@ function getRoleText(role: UserRole) {
   }
 }
 
-async function UserList() {
-  const users = await getUsers()
+async function UserList({ page }: { page: number }) {
+  const { users, totalCount, totalPages, currentPage } = await getUsers(page)
 
   if (users.length === 0) {
     return (
@@ -84,69 +102,98 @@ async function UserList() {
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>用户</TableHead>
-          <TableHead>邮箱</TableHead>
-          <TableHead>电话</TableHead>
-          <TableHead>角色</TableHead>
-          <TableHead>状态</TableHead>
-          <TableHead>订单数</TableHead>
-          <TableHead>注册时间</TableHead>
-          <TableHead>操作</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell>
-              <div className="flex items-center space-x-3">
-                {user.image ? (
-                  <img
-                    src={user.image}
-                    alt={user.name || '用户头像'}
-                    className="w-8 h-8 rounded-full"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    <span className="text-xs font-medium text-gray-600">
-                      {user.name?.[0] || user.email[0].toUpperCase()}
-                    </span>
-                  </div>
-                )}
-                <div>
-                  <div className="font-medium">{user.name || '未设置姓名'}</div>
-                </div>
-              </div>
-            </TableCell>
-            <TableCell>{user.email}</TableCell>
-            <TableCell>{user.phone || '-'}</TableCell>
-            <TableCell>
-              <Badge className={getRoleBadgeColor(user.role)}>
-                {getRoleText(user.role)}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <Badge variant={user.isActive ? 'default' : 'secondary'}>
-                {user.isActive ? '激活' : '停用'}
-              </Badge>
-            </TableCell>
-            <TableCell>{user._count.orders}</TableCell>
-            <TableCell>
-              {new Date(user.createdAt).toLocaleDateString('zh-CN')}
-            </TableCell>
-            <TableCell>
-              <UserActions user={user} />
-            </TableCell>
+    <>
+      <div className="mb-4">
+        <p className="text-sm text-gray-600">
+          共 {totalCount} 条记录，第 {currentPage} 页 / 共 {totalPages} 页
+        </p>
+      </div>
+      
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>用户</TableHead>
+            <TableHead>邮箱</TableHead>
+            <TableHead>电话</TableHead>
+            <TableHead>角色</TableHead>
+            <TableHead>状态</TableHead>
+            <TableHead>订单数</TableHead>
+            <TableHead>注册时间</TableHead>
+            <TableHead>操作</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {users.map((user) => (
+            <TableRow key={user.id}>
+              <TableCell>
+                <div className="flex items-center space-x-3">
+                  {user.image ? (
+                    <img
+                      src={user.image}
+                      alt={user.name || '用户头像'}
+                      className="w-8 h-8 rounded-full"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-xs font-medium text-gray-600">
+                        {user.name?.[0] || user.email[0].toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <div>
+                    <div className="font-medium">{user.name || '未设置姓名'}</div>
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>{user.phone || '-'}</TableCell>
+              <TableCell>
+                <Badge className={getRoleBadgeColor(user.role)}>
+                  {getRoleText(user.role)}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Badge variant={user.isActive ? 'default' : 'secondary'}>
+                  {user.isActive ? '激活' : '停用'}
+                </Badge>
+              </TableCell>
+              <TableCell>{user._count.orders}</TableCell>
+              <TableCell>
+                {new Date(user.createdAt).toLocaleDateString('zh-CN')}
+              </TableCell>
+              <TableCell>
+                <UserActions user={user} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </>
   )
 }
 
-export default async function UsersPage() {
+async function UserListWithPaginationWrapper({ page }: { page: number }) {
+  const { totalPages, currentPage } = await getUsers(page)
+  
+  return (
+    <UserListWithPagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+    >
+      <UserList page={page} />
+    </UserListWithPagination>
+  )
+}
+
+interface UsersPageProps {
+  searchParams: {
+    page?: string
+  }
+}
+
+export default async function UsersPage({ searchParams }: UsersPageProps) {
+  const currentPage = Number(searchParams.page) || 1
+  
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -168,7 +215,7 @@ export default async function UsersPage() {
           
           <div className="mt-6">
             <Suspense fallback={<div className="text-center py-8">加载中...</div>}>
-              <UserList />
+              <UserListWithPaginationWrapper page={currentPage} />
             </Suspense>
           </div>
         </div>
