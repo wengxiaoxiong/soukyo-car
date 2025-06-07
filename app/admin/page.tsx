@@ -39,6 +39,7 @@ export default async function AdminDashboard() {
       icon: Store,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100',
+      href: '/admin/stores',
     },
     {
       title: '车辆总数',
@@ -46,6 +47,7 @@ export default async function AdminDashboard() {
       icon: Car,
       color: 'text-green-600',
       bgColor: 'bg-green-100',
+      href: '/admin/vehicles',
     },
     {
       title: '用户总数',
@@ -53,6 +55,7 @@ export default async function AdminDashboard() {
       icon: Users,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
+      href: '/admin/users',
     },
     {
       title: '订单总数',
@@ -60,6 +63,7 @@ export default async function AdminDashboard() {
       icon: FileText,
       color: 'text-orange-600',
       bgColor: 'bg-orange-100',
+      href: '/admin/orders',
     },
   ]
 
@@ -72,45 +76,23 @@ export default async function AdminDashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {statCards.map((stat) => (
-          <Card key={stat.title} className="p-6">
-            <div className="flex items-center">
-              <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                <stat.icon className={`w-6 h-6 ${stat.color}`} />
+          <Link key={stat.title} href={stat.href}>
+            <Card className="p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center">
+                <div className={`p-3 rounded-lg ${stat.bgColor}`}>
+                  <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                </div>
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </Link>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">快速操作</h3>
-          <div className="space-y-3">
-            <Link
-              href="/admin/stores"
-              className="block p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex items-center">
-                <Store className="w-5 h-5 text-blue-600 mr-3" />
-                <span className="font-medium">管理店面</span>
-              </div>
-            </Link>
-            <Link
-              href="/admin/vehicles"
-              className="block p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex items-center">
-                <Car className="w-5 h-5 text-green-600 mr-3" />
-                <span className="font-medium">管理车辆</span>
-              </div>
-            </Link>
-          </div>
-        </Card>
-
         <Card className="p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">系统状态</h3>
           <div className="space-y-3">
