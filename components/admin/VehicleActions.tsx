@@ -37,8 +37,9 @@ export function VehicleActions({ vehicleId }: VehicleActionsProps) {
     setIsLoading(true)
     try {
       await toggleVehicleAvailability(vehicleId)
-    } catch {
-      alert('状态切换失败，请重试')
+    } catch(error) {
+      console.log(error);
+      alert('状态切换失败，请重试 ' + error)
     } finally {
       setIsLoading(false)
     }

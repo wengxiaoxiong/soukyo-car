@@ -75,7 +75,7 @@ export default async function StoresPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {stores.map((store) => (
-            <Card key={store.id} className="overflow-hidden">
+            <Card key={store.id} className="overflow-hidden pt-0">
               {store.image && (
                 <div className="h-48 overflow-hidden">
                   <img

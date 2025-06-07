@@ -4,17 +4,36 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Edit, Car, MapPin, DollarSign, Users, Palette, Hash } from 'lucide-react'
 import { VehicleActions } from '@/components/admin/VehicleActions'
-import { getVehicles } from './actions'
+import { VehicleFilters } from '@/components/admin/VehicleFilters'
+import { getVehicles, getStoresForSelect } from './actions'
 
-export default async function VehiclesPage() {
-  const vehicles = await getVehicles()
+interface VehiclesPageProps {
+  searchParams: Promise<{
+    page?: string
+    search?: string
+    store?: string
+  }>
+}
+
+export default async function VehiclesPage({ searchParams }: VehiclesPageProps) {
+  const params = await searchParams
+  const page = parseInt(params.page || '1')
+  const search = params.search
+  const storeId = params.store
+  
+  const [vehicleData, stores] = await Promise.all([
+    getVehicles(page, search, storeId),
+    getStoresForSelect()
+  ])
+  
+  const { vehicles, totalCount, totalPages, currentPage } = vehicleData
 
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">车辆管理</h1>
-          <p className="text-gray-600 mt-2">管理所有车辆信息</p>
+          <p className="text-gray-600 mt-2">管理所有车辆信息 (共 {totalCount} 辆)</p>
         </div>
         <Link href="/admin/vehicles/new">
           <Button className="bg-blue-600 hover:bg-blue-700">
@@ -24,24 +43,42 @@ export default async function VehiclesPage() {
         </Link>
       </div>
 
+      {/* 筛选和搜索组件 */}
+      <VehicleFilters
+        stores={stores}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        searchValue={search}
+        storeValue={storeId && storeId !== 'all' ? storeId : undefined}
+      />
+
       {vehicles.length === 0 ? (
         <Card className="p-12 text-center">
           <div className="text-gray-500">
-            <Car className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <h3 className="text-lg font-medium mb-2">暂无车辆</h3>
-            <p className="mb-4">开始添加您的第一辆车辆</p>
-            <Link href="/admin/vehicles/new">
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                添加车辆
-              </Button>
-            </Link>
+            <Car className="w-16 h-16 mx-auto mb-4 opacity-50" />
+            {search || (storeId && storeId !== 'all') ? (
+              <>
+                <h3 className="text-lg font-medium mb-2">未找到匹配的车辆</h3>
+                <p className="mb-4">请尝试调整搜索条件或筛选条件</p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-lg font-medium mb-2">暂无车辆</h3>
+                <p className="mb-4">开始添加您的第一辆车辆</p>
+                <Link href="/admin/vehicles/new">
+                  <Button>
+                    <Plus className="w-4 h-4 mr-2" />
+                    添加车辆
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {vehicles.map((vehicle) => (
-            <Card key={vehicle.id} className="overflow-hidden pt-0">
+            <Card key={vehicle.id} className="overflow-hidden pt-0 w-70">
               {vehicle.images && vehicle.images.length > 0 && (
                 <div className="h-48 overflow-hidden">
                   <img

@@ -31,9 +31,7 @@ export async function getFeaturedCars(): Promise<FeaturedCar[]> {
         createdAt: 'desc',
       },
       take: 3, // 只取前3辆车作为推荐
-    })
-
-    console.log(vehicles);
+  })
 
     return vehicles.map(vehicle => ({
       id: vehicle.id,

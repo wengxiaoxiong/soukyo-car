@@ -65,9 +65,54 @@ export async function getVehicleWithStore(id: string): Promise<VehicleWithStore 
   }
 }
 
-export async function getVehicles(): Promise<VehicleWithStore[]> {
+export async function getVehicles(
+  page: number = 1,
+  search?: string,
+  storeId?: string
+): Promise<{
+  vehicles: VehicleWithStore[]
+  totalCount: number
+  totalPages: number
+  currentPage: number
+}> {
   try {
+    const pageSize = 10
+    const skip = (page - 1) * pageSize
+
+    // 构建查询条件
+    const where: {
+      OR?: Array<{
+        name?: { contains: string; mode: 'insensitive' }
+        brand?: { contains: string; mode: 'insensitive' }
+        model?: { contains: string; mode: 'insensitive' }
+        plateNumber?: { contains: string; mode: 'insensitive' }
+        color?: { contains: string; mode: 'insensitive' }
+      }>
+      storeId?: string
+    } = {}
+    
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { brand: { contains: search, mode: 'insensitive' } },
+        { model: { contains: search, mode: 'insensitive' } },
+        { plateNumber: { contains: search, mode: 'insensitive' } },
+        { color: { contains: search, mode: 'insensitive' } },
+      ]
+    }
+    
+    if (storeId) {
+      where.storeId = storeId
+    }
+
+    // 获取总数
+    const totalCount = await prisma.vehicle.count({ where })
+    
+    // 获取分页数据
     const rawVehicles = await prisma.vehicle.findMany({
+      where,
+      skip,
+      take: pageSize,
       orderBy: {
         createdAt: 'desc',
       },
@@ -87,10 +132,22 @@ export async function getVehicles(): Promise<VehicleWithStore[]> {
       return vehicleWithStoreSchema.parse(rawVehicle)
     })
     
-    return validatedVehicles
+    const totalPages = Math.ceil(totalCount / pageSize)
+    
+    return {
+      vehicles: validatedVehicles,
+      totalCount,
+      totalPages,
+      currentPage: page
+    }
   } catch (error) {
     console.error('获取车辆列表失败:', error)
-    return []
+    return {
+      vehicles: [],
+      totalCount: 0,
+      totalPages: 0,
+      currentPage: 1
+    }
   }
 }
 
@@ -198,6 +255,7 @@ export async function deleteVehicle(id: string) {
 export async function toggleVehicleAvailability(id: string) {
   const user = await getCurrentUser()
   if (!user || (user.role !== 'ADMIN' && user.role !== 'MANAGER')) {
+    console.log(user);
     throw new Error('权限不足')
   }
 
