@@ -109,65 +109,126 @@ async function UserList({ page }: { page: number }) {
         </p>
       </div>
       
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>用户</TableHead>
-            <TableHead>邮箱</TableHead>
-            <TableHead>电话</TableHead>
-            <TableHead>角色</TableHead>
-            <TableHead>状态</TableHead>
-            <TableHead>订单数</TableHead>
-            <TableHead>注册时间</TableHead>
-            <TableHead>操作</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell>
-                <div className="flex items-center space-x-3">
-                  {user.image ? (
-                    <img
-                      src={user.image}
-                      alt={user.name || '用户头像'}
-                      className="w-8 h-8 rounded-full"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                      <span className="text-xs font-medium text-gray-600">
-                        {user.name?.[0] || user.email[0].toUpperCase()}
-                      </span>
+      {/* 桌面端表格视图 */}
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>用户</TableHead>
+              <TableHead>邮箱</TableHead>
+              <TableHead>电话</TableHead>
+              <TableHead>角色</TableHead>
+              <TableHead>状态</TableHead>
+              <TableHead>订单数</TableHead>
+              <TableHead>注册时间</TableHead>
+              <TableHead>操作</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {users.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  <div className="flex items-center space-x-3">
+                    {user.image ? (
+                      <img
+                        src={user.image}
+                        alt={user.name || '用户头像'}
+                        className="w-8 h-8 rounded-full"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-xs font-medium text-gray-600">
+                          {user.name?.[0] || user.email[0].toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    <div>
+                      <div className="font-medium">{user.name || '未设置姓名'}</div>
                     </div>
-                  )}
-                  <div>
-                    <div className="font-medium">{user.name || '未设置姓名'}</div>
                   </div>
+                </TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.phone || '-'}</TableCell>
+                <TableCell>
+                  <Badge className={getRoleBadgeColor(user.role)}>
+                    {getRoleText(user.role)}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={user.isActive ? 'default' : 'secondary'}>
+                    {user.isActive ? '激活' : '停用'}
+                  </Badge>
+                </TableCell>
+                <TableCell>{user._count.orders}</TableCell>
+                <TableCell>
+                  {new Date(user.createdAt).toLocaleDateString('zh-CN')}
+                </TableCell>
+                <TableCell>
+                  <UserActions user={user} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* 移动端卡片视图 */}
+      <div className="md:hidden space-y-4">
+        {users.map((user) => (
+          <div key={user.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex items-center space-x-3">
+                {user.image ? (
+                  <img
+                    src={user.image}
+                    alt={user.name || '用户头像'}
+                    className="w-10 h-10 rounded-full"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                    <span className="text-sm font-medium text-gray-600">
+                      {user.name?.[0] || user.email[0].toUpperCase()}
+                    </span>
+                  </div>
+                )}
+                <div>
+                  <div className="font-medium text-gray-900">{user.name || '未设置姓名'}</div>
+                  <div className="text-sm text-gray-500">{user.email}</div>
                 </div>
-              </TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.phone || '-'}</TableCell>
-              <TableCell>
+              </div>
+              <div className="flex items-center space-x-2">
                 <Badge className={getRoleBadgeColor(user.role)}>
                   {getRoleText(user.role)}
                 </Badge>
-              </TableCell>
-              <TableCell>
                 <Badge variant={user.isActive ? 'default' : 'secondary'}>
                   {user.isActive ? '激活' : '停用'}
                 </Badge>
-              </TableCell>
-              <TableCell>{user._count.orders}</TableCell>
-              <TableCell>
-                {new Date(user.createdAt).toLocaleDateString('zh-CN')}
-              </TableCell>
-              <TableCell>
-                <UserActions user={user} />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-gray-500">电话:</span>
+                <span className="ml-1 text-gray-900">{user.phone || '-'}</span>
+              </div>
+              <div>
+                <span className="text-gray-500">订单数:</span>
+                <span className="ml-1 text-gray-900">{user._count.orders}</span>
+              </div>
+              <div className="col-span-2">
+                <span className="text-gray-500">注册时间:</span>
+                <span className="ml-1 text-gray-900">
+                  {new Date(user.createdAt).toLocaleDateString('zh-CN')}
+                </span>
+              </div>
+            </div>
+            
+            <div className="mt-4 pt-3 border-t border-gray-100">
+              <UserActions user={user} />
+            </div>
+          </div>
+        ))}
+      </div>
     </>
   )
 }
@@ -186,23 +247,24 @@ async function UserListWithPaginationWrapper({ page }: { page: number }) {
 }
 
 interface UsersPageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string
-  }
+  }>
 }
 
 export default async function UsersPage({ searchParams }: UsersPageProps) {
-  const currentPage = Number(searchParams.page) || 1
+  const resolvedSearchParams = await searchParams
+  const currentPage = Number(resolvedSearchParams.page) || 1
   
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">用户管理</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">用户管理</h1>
           <p className="text-gray-600 mt-2">管理系统用户和权限</p>
         </div>
         <AddUserDialog>
-          <Button>
+          <Button className="w-full sm:w-auto">
             <UserPlus className="w-4 h-4 mr-2" />
             添加用户
           </Button>
