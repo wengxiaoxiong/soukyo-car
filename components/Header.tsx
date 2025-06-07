@@ -100,14 +100,8 @@ export const Header: React.FC = () => {
               // 未登录用户
               <div className="flex items-center gap-2">
                 <Link href="/auth/signin">
-                  <Button variant="ghost" className="!rounded-button whitespace-nowrap">
-                    登录
-                  </Button>
-                </Link>
-                <Link href="/auth/signup">
-                  <Button className="!rounded-button whitespace-nowrap">
-                    <User className="w-4 h-4 mr-2" />
-                    注册
+                  <Button variant="default" className="!rounded-button whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white">
+                    登录查看更多
                   </Button>
                 </Link>
               </div>
@@ -171,9 +165,7 @@ export const Header: React.FC = () => {
                   <Link href="/auth/signin" className="block py-2 text-gray-600 hover:text-gray-900">
                     登录
                   </Link>
-                  <Link href="/auth/signup" className="block py-2 text-gray-600 hover:text-gray-900">
-                    注册
-                  </Link>
+
                 </div>
               )}
             </nav>
