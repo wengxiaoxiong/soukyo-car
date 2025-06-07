@@ -59,6 +59,8 @@ export const ChatwootWidget = () => {
 
   useEffect(() => {
     const initializeChatwoot = async () => {
+
+      console.log("initializeChatwoot");
       // 获取Chatwoot token
       const token = await getChatwootToken();
       if (!token) {

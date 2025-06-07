@@ -28,7 +28,7 @@ export function AdminSidebar() {
   return (
     <div className="w-64 bg-white shadow-lg">
       <div className="p-6">
-        <Link href="/" className="flex items-center space-x-2">
+        <Link href="/admin" className="flex items-center space-x-2">
           <Home className="w-8 h-8 text-blue-600" />
           <span className="text-xl font-bold text-gray-900">Soukyo汽车</span>
         </Link>

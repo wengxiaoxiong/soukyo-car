@@ -2,29 +2,29 @@
 
 import { useState, useRef, useCallback } from 'react'
 import Image from 'next/image'
-import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react'
+import { X, Loader2, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-interface ImageUploadProps {
-  value?: string
-  onChange: (url: string) => void
-  onRemove?: () => void
+interface MultiImageUploadProps {
+  value?: string[]
+  onChange: (urls: string[]) => void
   disabled?: boolean
   className?: string
   placeholder?: string
   maxSize?: number // MB
+  maxImages?: number
 }
 
-export function ImageUpload({
-  value,
+export function MultiImageUpload({
+  value = [],
   onChange,
-  onRemove,
   disabled = false,
   className,
   placeholder = '点击上传图片或拖拽图片到此处',
   maxSize = 5,
-}: ImageUploadProps) {
+  maxImages = 10,
+}: MultiImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [error, setError] = useState<string>('')
@@ -80,7 +80,9 @@ export function ImageUpload({
           throw new Error(data.error || '上传失败')
         }
 
-        onChange(data.url)
+        // 添加新的图片URL到数组中
+        const newUrls = [...value, data.url]
+        onChange(newUrls)
       } catch (err) {
         const message = err instanceof Error ? err.message : '上传失败，请重试'
         setError(message)
@@ -88,17 +90,35 @@ export function ImageUpload({
         setIsUploading(false)
       }
     },
-    [validateFile, onChange]
+    [validateFile, value, onChange]
+  )
+
+  const uploadMultipleFiles = useCallback(
+    async (files: FileList) => {
+      const fileArray = Array.from(files)
+      
+      // 检查是否超过最大数量限制
+      if (value.length + fileArray.length > maxImages) {
+        setError(`最多只能上传 ${maxImages} 张图片`)
+        return
+      }
+
+      // 逐个上传文件
+      for (const file of fileArray) {
+        await uploadFile(file)
+      }
+    },
+    [uploadFile, value, maxImages]
   )
 
   const handleFileSelect = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0]
-      if (file) {
-        uploadFile(file)
+      const files = e.target.files
+      if (files && files.length > 0) {
+        uploadMultipleFiles(files)
       }
     },
-    [uploadFile]
+    [uploadMultipleFiles]
   )
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -119,65 +139,58 @@ export function ImageUpload({
 
     if (disabled || isUploading) return
 
-    const file = e.dataTransfer.files[0]
-    if (file) {
-      uploadFile(file)
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+      uploadMultipleFiles(files)
     }
-  }, [disabled, isUploading, uploadFile])
+  }, [disabled, isUploading, uploadMultipleFiles])
 
   const handleClick = () => {
-    if (!disabled && !isUploading) {
+    if (!disabled && !isUploading && value.length < maxImages) {
       fileInputRef.current?.click()
     }
   }
 
-  const handleRemove = () => {
-    if (onRemove) {
-      onRemove()
-    } else {
-      onChange('')
-    }
+  const handleRemove = (index: number) => {
+    const newUrls = value.filter((_, i) => i !== index)
+    onChange(newUrls)
     setError('')
   }
 
+  const canAddMore = value.length < maxImages
+
   return (
-    <div className={cn('space-y-2', className)}>
-      {value ? (
-        // 图片预览模式
-        <div className="relative group w-full h-64">
-          <Image
-            src={value}
-            alt="预览图片"
-            fill
-            className="object-cover rounded-lg border border-gray-200"
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-            <div className="flex space-x-2">
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={handleClick}
-                disabled={disabled || isUploading}
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                更换图片
-              </Button>
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                onClick={handleRemove}
-                disabled={disabled || isUploading}
-              >
-                <X className="w-4 h-4 mr-2" />
-                删除
-              </Button>
+    <div className={cn('space-y-4', className)}>
+      {/* 图片预览网格 */}
+      {value.length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {value.map((url, index) => (
+            <div key={index} className="relative group w-full h-32">
+              <Image
+                src={url}
+                alt={`车辆图片 ${index + 1}`}
+                fill
+                className="object-cover rounded-lg border border-gray-200"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleRemove(index)}
+                  disabled={disabled || isUploading}
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  删除
+                </Button>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
-      ) : (
-        // 上传区域
+      )}
+
+      {/* 上传区域 */}
+      {canAddMore && (
         <div
           className={cn(
             'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
@@ -200,11 +213,18 @@ export function ImageUpload({
               </>
             ) : (
               <>
-                <ImageIcon className="w-12 h-12 text-gray-400" />
+                <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full">
+                  <Plus className="w-6 h-6 text-gray-400" />
+                </div>
                 <div className="space-y-2">
-                  <p className="text-gray-600">{placeholder}</p>
+                  <p className="text-gray-600">
+                    {value.length === 0 ? placeholder : '继续添加图片'}
+                  </p>
                   <p className="text-sm text-gray-500">
                     支持 JPEG, PNG, GIF, WEBP 格式，最大 {maxSize}MB
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    已上传 {value.length}/{maxImages} 张图片
                   </p>
                 </div>
               </>
@@ -220,7 +240,8 @@ export function ImageUpload({
         accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
         onChange={handleFileSelect}
         className="hidden"
-        disabled={disabled || isUploading}
+        disabled={disabled || isUploading || !canAddMore}
+        multiple
       />
 
       {/* 错误提示 */}

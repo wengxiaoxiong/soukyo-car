@@ -6,5 +6,5 @@ export { StoreLocations } from './StoreLocations';
 export { StoreCard } from './StoreCard';
 export { CompanyInfo } from './CompanyInfo';
 export { Footer } from './Footer';
-export { CustomerServiceButton } from './CustomerServiceButton';
 export { LanguageSelector } from './LanguageSelector'; 
+export { ChatwootWidget } from './ChatwootWidget';
