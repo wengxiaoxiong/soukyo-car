@@ -29,7 +29,7 @@ export const FeaturedCars: React.FC = async () => {
                 
                 {/* "查看更多"卡片 */}
                 <Card className="overflow-hidden flex-shrink-0 w-[280px] md:w-auto mx-2 last:mr-0 md:mx-0 bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center pt-0">
-                  <a href="#" className="p-6 flex flex-col items-center justify-center w-full h-full min-h-[380px] md:min-h-full">
+                  <a href="/vehicle" className="p-6 flex flex-col items-center justify-center w-full h-full min-h-[380px] md:min-h-full">
                     <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
                       <ChevronRight className="w-6 h-6 text-gray-500" />
                     </div>

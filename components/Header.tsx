@@ -25,13 +25,16 @@ export const Header: React.FC = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4 md:gap-12">
             <h1 className="text-lg md:text-xl font-bold">
-              <Image src="/logo.png" alt="Soukyo租车" width={100} height={100} />
+
+              <Link href="/">
+                <Image src="/logo.png" alt="Soukyo租车" width={100} height={100} />
+              </Link>
             </h1>
             <nav className="hidden md:flex items-center gap-8">
-              <a href="#" className="text-gray-600 hover:text-gray-900">首页</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">车型</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">门店</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">关于我们</a>
+              <Link href="/" className="text-gray-600 hover:text-gray-900">首页</Link>
+              <Link href="/vehicle" className="text-gray-600 hover:text-gray-900">车型</Link>
+              <Link href="/store" className="text-gray-600 hover:text-gray-900">门店</Link>
+              <Link href="/about" className="text-gray-600 hover:text-gray-900">关于我们</Link>
             </nav>
           </div>
           <div className="flex items-center gap-4">

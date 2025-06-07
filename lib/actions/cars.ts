@@ -3,18 +3,31 @@
 import { prisma } from '@/lib/prisma'
 import type { Prisma } from '@prisma/client'
 
-export interface FeaturedCar {
+// 统一的车辆卡片数据接口
+export interface CarCardData {
   id: string
   name: string
-  type: string
-  price: string
+  type: string // brand + model
+  price: string // 格式化后的价格字符串
   image: string
-  location: string
-  seats: string
-  transmission: string
+  location: string // 格式化后的位置信息
+  seats: string // 格式化后的座位数
+  // 额外的原始数据，用于详情页或其他需要
+  originalData: {
+    brand: string
+    model: string
+    year: number
+    pricePerDay: number
+    color?: string | null
+    isAvailable: boolean
+    store: {
+      name: string
+      city: string
+    }
+  }
 }
 
-export async function getFeaturedCars(): Promise<FeaturedCar[]> {
+export async function getFeaturedCars(): Promise<CarCardData[]> {
   try {
     const vehicles = await prisma.vehicle.findMany({
       where: {
@@ -42,7 +55,18 @@ export async function getFeaturedCars(): Promise<FeaturedCar[]> {
       image: vehicle.images[0] || 'https://ai-public.mastergo.com/ai/img_res/e8ecc253a5e6100ab260268be804cff7.jpg',
       location: `${vehicle.store.city}可取还`,
       seats: `${vehicle.seats}座`,
-      transmission: '自动档'
+      originalData: {
+        brand: vehicle.brand,
+        model: vehicle.model,
+        year: vehicle.year,
+        pricePerDay: vehicle.pricePerDay,
+        color: vehicle.color,
+        isAvailable: vehicle.isAvailable,
+        store: {
+          name: vehicle.store.name,
+          city: vehicle.store.city
+        }
+      }
     }))
   } catch (error) {
     console.error('获取推荐车辆失败:', error)
@@ -51,25 +75,8 @@ export async function getFeaturedCars(): Promise<FeaturedCar[]> {
   }
 }
 
-export interface VehicleListItem {
-  id: string
-  name: string
-  brand: string
-  model: string
-  year: number
-  seats: number
-  pricePerDay: number
-  image: string
-  color?: string | null
-  isAvailable: boolean
-  store: {
-    name: string
-    city: string
-  }
-}
-
 export interface VehicleListResult {
-  vehicles: VehicleListItem[]
+  vehicles: CarCardData[]
   total: number
   page: number
   pageSize: number
@@ -157,17 +164,22 @@ export async function getVehicleList(
       vehicles: vehicles.map(vehicle => ({
         id: vehicle.id,
         name: vehicle.name,
-        brand: vehicle.brand,
-        model: vehicle.model,
-        year: vehicle.year,
-        seats: vehicle.seats,
-        pricePerDay: vehicle.pricePerDay,
+        type: `${vehicle.brand} ${vehicle.model}`,
+        price: `￥${vehicle.pricePerDay}`,
         image: vehicle.images[0] || 'https://ai-public.mastergo.com/ai/img_res/e8ecc253a5e6100ab260268be804cff7.jpg',
-        color: vehicle.color,
-        isAvailable: vehicle.isAvailable,
-        store: {
-          name: vehicle.store.name,
-          city: vehicle.store.city
+        location: `${vehicle.store.city}可取还`,
+        seats: `${vehicle.seats}座`,
+        originalData: {
+          brand: vehicle.brand,
+          model: vehicle.model,
+          year: vehicle.year,
+          pricePerDay: vehicle.pricePerDay,
+          color: vehicle.color,
+          isAvailable: vehicle.isAvailable,
+          store: {
+            name: vehicle.store.name,
+            city: vehicle.store.city
+          }
         }
       })),
       total,

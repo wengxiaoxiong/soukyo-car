@@ -83,14 +83,14 @@ export const VehicleFilters: React.FC<VehicleFiltersProps> = ({
         <div className="space-y-2">
           <Label htmlFor="brand">品牌</Label>
           <Select
-            value={filters.brand || ''}
-            onValueChange={(value) => handleFilterChange('brand', value || undefined)}
+            value={filters.brand || 'all'}
+            onValueChange={(value) => handleFilterChange('brand', value === 'all' ? undefined : value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="选择品牌" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">全部品牌</SelectItem>
+              <SelectItem value="all">全部品牌</SelectItem>
               {brands.map((brand) => (
                 <SelectItem key={brand} value={brand}>
                   {brand}
@@ -104,14 +104,14 @@ export const VehicleFilters: React.FC<VehicleFiltersProps> = ({
         <div className="space-y-2">
           <Label htmlFor="seats">座位数</Label>
           <Select
-            value={filters.seats?.toString() || ''}
-            onValueChange={(value) => handleFilterChange('seats', value ? parseInt(value) : undefined)}
+            value={filters.seats?.toString() || 'all'}
+            onValueChange={(value) => handleFilterChange('seats', value === 'all' ? undefined : parseInt(value))}
           >
             <SelectTrigger>
               <SelectValue placeholder="选择座位数" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">不限座位数</SelectItem>
+              <SelectItem value="all">不限座位数</SelectItem>
               <SelectItem value="2">2座</SelectItem>
               <SelectItem value="4">4座</SelectItem>
               <SelectItem value="5">5座</SelectItem>
@@ -124,14 +124,14 @@ export const VehicleFilters: React.FC<VehicleFiltersProps> = ({
         <div className="space-y-2">
           <Label htmlFor="city">城市</Label>
           <Select
-            value={filters.city || ''}
-            onValueChange={(value) => handleFilterChange('city', value || undefined)}
+            value={filters.city || 'all'}
+            onValueChange={(value) => handleFilterChange('city', value === 'all' ? undefined : value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="选择城市" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">全部城市</SelectItem>
+              <SelectItem value="all">全部城市</SelectItem>
               {cities.map((city) => (
                 <SelectItem key={city} value={city}>
                   {city}
