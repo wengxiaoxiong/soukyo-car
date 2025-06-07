@@ -4,15 +4,34 @@ import React, { useState, useEffect } from 'react'
 import { VehicleFilters } from '@/components/VehicleFilters'
 import { CarCard } from '@/components/CarCard'
 import { Pagination } from '@/components/Pagination'
-import { getVehicleList, getAvailableBrands, getAvailableCities } from '@/lib/actions/cars'
+import { getVehicleList } from '@/lib/actions/cars'
+import { getActiveStores } from '@/app/actions/stores'
 import type { CarCardData, VehicleFilters as FilterType } from '@/lib/actions/cars'
 import { Loader2 } from 'lucide-react'
+
+// 预定义的品牌列表，避免每次从数据库获取
+const PREDEFINED_BRANDS = [
+  '丰田',
+  '本田',
+  '大众',
+  '奥迪',
+  '宝马',
+  '奔驰',
+  '日产',
+  '马自达',
+  '现代',
+  '起亚',
+  '福特',
+  '雪佛兰',
+  '特斯拉',
+  '哈弗',
+  '奇瑞'
+].sort()
 
 export default function VehiclePage() {
   const [vehicles, setVehicles] = useState<CarCardData[]>([])
   const [loading, setLoading] = useState(true)
-  const [brands, setBrands] = useState<string[]>([])
-  const [cities, setCities] = useState<string[]>([])
+  const [stores, setStores] = useState<Array<{id: string, name: string, city: string}>>([])
   const [totalPages, setTotalPages] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [total, setTotal] = useState(0)
@@ -36,23 +55,23 @@ export default function VehiclePage() {
     setLoading(false)
   }
 
-  // 获取筛选选项
-  const fetchFilterOptions = async () => {
+  // 获取店面列表（只获取一次）
+  const fetchStores = async () => {
     try {
-      const [brandsData, citiesData] = await Promise.all([
-        getAvailableBrands(),
-        getAvailableCities()
-      ])
-      setBrands(brandsData)
-      setCities(citiesData)
+      const storesData = await getActiveStores()
+      setStores(storesData.map(store => ({
+        id: store.id,
+        name: store.name,
+        city: store.city
+      })))
     } catch (error) {
-      console.error('获取筛选选项失败:', error)
+      console.error('获取店面列表失败:', error)
     }
   }
 
   // 初始化数据
   useEffect(() => {
-    fetchFilterOptions()
+    fetchStores()
   }, [])
 
   // 当页码或筛选条件改变时重新获取数据
@@ -99,8 +118,8 @@ export default function VehiclePage() {
           <div className="lg:col-span-1">
             <div className="lg:sticky lg:top-8">
               <VehicleFilters
-                brands={brands}
-                cities={cities}
+                brands={PREDEFINED_BRANDS}
+                stores={stores}
                 filters={filters}
                 onFiltersChange={handleFiltersChange}
               />

@@ -7,6 +7,7 @@ export interface StoreWithOpeningHours {
   id: string
   name: string
   address: string
+  city: string
   phone: string
   image: string | null
   googleMap: string | null
@@ -25,6 +26,7 @@ export async function getActiveStores(): Promise<StoreWithOpeningHours[]> {
         id: true,
         name: true,
         address: true,
+        city: true,
         phone: true,
         image: true,
         googleMap: true,

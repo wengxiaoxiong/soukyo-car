@@ -10,26 +10,26 @@ import { X } from "lucide-react"
 
 export interface VehicleFiltersProps {
   brands?: string[]
-  cities?: string[]
+  stores?: Array<{id: string, name: string, city: string}>
   filters: {
     brand?: string
     minPrice?: number
     maxPrice?: number
     seats?: number
-    city?: string
+    storeId?: string
   }
   onFiltersChange: (filters: {
     brand?: string
     minPrice?: number
     maxPrice?: number
     seats?: number
-    city?: string
+    storeId?: string
   }) => void
 }
 
 export const VehicleFilters: React.FC<VehicleFiltersProps> = ({
   brands = [],
-  cities = [],
+  stores = [],
   filters,
   onFiltersChange
 }) => {
@@ -120,21 +120,21 @@ export const VehicleFilters: React.FC<VehicleFiltersProps> = ({
           </Select>
         </div>
 
-        {/* 城市筛选 */}
+        {/* 店面筛选 */}
         <div className="space-y-2">
-          <Label htmlFor="city">城市</Label>
+          <Label htmlFor="store">取车店面</Label>
           <Select
-            value={filters.city || 'all'}
-            onValueChange={(value) => handleFilterChange('city', value === 'all' ? undefined : value)}
+            value={filters.storeId || 'all'}
+            onValueChange={(value) => handleFilterChange('storeId', value === 'all' ? undefined : value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="选择城市" />
+              <SelectValue placeholder="选择店面" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">全部城市</SelectItem>
-              {cities.map((city) => (
-                <SelectItem key={city} value={city}>
-                  {city}
+              <SelectItem value="all">全部店面</SelectItem>
+              {stores.map((store) => (
+                <SelectItem key={store.id} value={store.id}>
+                  {store.name} ({store.city})
                 </SelectItem>
               ))}
             </SelectContent>

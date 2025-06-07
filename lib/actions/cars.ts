@@ -88,7 +88,7 @@ export interface VehicleFilters {
   minPrice?: number
   maxPrice?: number
   seats?: number
-  city?: string
+  storeId?: string
   isAvailable?: boolean
 }
 
@@ -124,13 +124,8 @@ export async function getVehicleList(
       where.seats = filters.seats
     }
     
-    if (filters.city) {
-      where.store = {
-        city: {
-          contains: filters.city,
-          mode: 'insensitive'
-        }
-      }
+    if (filters.storeId) {
+      where.storeId = filters.storeId
     }
     
     if (filters.isAvailable !== undefined) {
