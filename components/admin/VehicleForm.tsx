@@ -98,11 +98,19 @@ export function VehicleForm({ vehicle, mode = 'add' }: VehicleFormProps) {
 
       if (mode === 'add') {
         await createVehicle(formData)
-      } else if (mode === 'edit' && vehicle) {
+      } else if ((mode === 'edit' || (mode === 'view' && isEditing)) && vehicle) {
         await updateVehicle(vehicle.id, formData)
+        // 在视图模式下保存后，退出编辑状态
+        if (mode === 'view') {
+          setIsEditing(false)
+        }
       }
     } catch (error) {
       console.error('提交失败:', error)
+      // 检查是否是Next.js的redirect错误，如果是则重新抛出
+      if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
+        throw error
+      }
       alert(error instanceof Error ? error.message : '提交失败，请重试')
     } finally {
       setIsLoading(false)

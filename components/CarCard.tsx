@@ -24,7 +24,7 @@ export const CarCard: React.FC<CarCardProps> = ({
   transmission
 }) => {
   return (
-    <Card className="overflow-hidden flex-shrink-0 w-[280px] md:w-auto mx-2 first:ml-0 last:mr-0 md:mx-0">
+    <Card className="overflow-hidden flex-shrink-0 w-[280px] md:w-auto mx-2 first:ml-0 last:mr-0 md:mx-0  pt-0">
       <div className="relative h-48 md:h-56 overflow-hidden">
         <img
           src={image}

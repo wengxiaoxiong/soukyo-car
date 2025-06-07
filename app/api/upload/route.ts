@@ -1,5 +1,6 @@
 import { put } from '@vercel/blob'
 import { NextRequest, NextResponse } from 'next/server'
+import sharp from 'sharp'
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,11 +25,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 检查文件大小 (5MB限制)
+    // 检查文件大小 (20MB限制，因为我们会压缩)
     const contentLength = request.headers.get('content-length')
-    if (contentLength && parseInt(contentLength) > 5 * 1024 * 1024) {
+    if (contentLength && parseInt(contentLength) > 20 * 1024 * 1024) {
       return NextResponse.json(
-        { error: '文件大小不能超过5MB' },
+        { error: '文件大小不能超过20MB' },
         { status: 400 }
       )
     }
@@ -40,14 +41,36 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const blob = await put(filename, request.body, {
+    // 读取图像数据
+    const imageBuffer = Buffer.from(await request.arrayBuffer())
+
+    // 使用 sharp 处理图像：压缩并转换为 WebP
+    const processedImageBuffer = await sharp(imageBuffer)
+      .webp({ 
+        quality: 85, // 设置质量为85%，平衡文件大小和图像质量
+        effort: 4    // 压缩努力程度，4是一个不错的平衡点
+      })
+      .resize(2048, 2048, { 
+        fit: 'inside',        // 保持宽高比
+        withoutEnlargement: true // 不放大小图像
+      })
+      .toBuffer()
+
+    // 生成新的文件名，确保扩展名为 .webp
+    const webpFilename = filename.replace(/\.[^/.]+$/, '.webp')
+
+    const blob = await put(webpFilename, processedImageBuffer, {
       access: 'public',
+      contentType: 'image/webp'
     })
 
     return NextResponse.json({
       url: blob.url,
       downloadUrl: blob.downloadUrl,
       pathname: blob.pathname,
+      originalSize: imageBuffer.length,
+      compressedSize: processedImageBuffer.length,
+      compressionRatio: Math.round((1 - processedImageBuffer.length / imageBuffer.length) * 100)
     })
   } catch (error) {
     console.error('上传失败:', error)
