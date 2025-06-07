@@ -47,8 +47,8 @@ export const CarCard: React.FC<CarCardProps> = ({
             </p>
           </div>
           <div className="text-right">
-            <div className="text-sm text-gray-500">起步价/天</div>
-            <div className="text-xl font-bold text-primary">{price}</div>
+            <div className="text-sm text-gray-500">租金</div>
+            <div className="text-xl font-bold text-primary">{price}日元/天</div>
           </div>
         </div>
         <div className="flex gap-4 mb-6">
