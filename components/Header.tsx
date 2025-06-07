@@ -78,6 +78,12 @@ export const Header: React.FC = () => {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
+                    <Link href="/orders" className="flex items-center w-full">
+                      <Settings className="w-4 h-4 mr-2" />
+                      我的订单
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
                     <Settings className="w-4 h-4 mr-2" />
                     个人设置
                   </DropdownMenuItem>

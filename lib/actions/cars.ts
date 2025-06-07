@@ -232,4 +232,52 @@ export async function getAvailableCities(): Promise<string[]> {
     console.error('获取城市列表失败:', error)
     return []
   }
+}
+
+// 根据ID获取车辆详情
+export async function getVehicleById(vehicleId: string) {
+  try {
+    const vehicle = await prisma.vehicle.findUnique({
+      where: { id: vehicleId },
+      include: {
+        store: {
+          select: {
+            id: true,
+            name: true,
+            address: true,
+            city: true,
+          }
+        }
+      }
+    })
+
+    if (!vehicle) {
+      return {
+        success: false,
+        error: '车辆不存在'
+      }
+    }
+
+    return {
+      success: true,
+      vehicle: {
+        id: vehicle.id,
+        name: vehicle.name,
+        brand: vehicle.brand,
+        model: vehicle.model,
+        year: vehicle.year,
+        seats: vehicle.seats,
+        pricePerDay: vehicle.pricePerDay,
+        description: vehicle.description,
+        images: vehicle.images,
+        store: vehicle.store
+      }
+    }
+  } catch (error) {
+    console.error('获取车辆详情失败:', error)
+    return {
+      success: false,
+      error: '获取车辆详情失败'
+    }
+  }
 } 

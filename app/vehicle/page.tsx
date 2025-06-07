@@ -94,9 +94,7 @@ export default function VehiclePage() {
 
   // 处理预订点击
   const handleBookClick = (carId: string) => {
-    console.log('预订车辆:', carId)
-    // TODO: 跳转到预订页面
-    // window.location.href = `/booking/${carId}`;
+    window.location.href = `/booking/${carId}`
   }
 
   return (
