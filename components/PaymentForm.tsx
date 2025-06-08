@@ -99,7 +99,7 @@ function CheckoutForm({ clientSecret, amount, onSuccess, onError }: PaymentFormP
       <div className="bg-white rounded-lg border p-6 space-y-6">
         <div className="text-center">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">完成支付</h3>
-          <p className="text-2xl font-bold text-blue-600">JPY{(amount / 100).toFixed(2)}</p>
+          <p className="text-2xl font-bold text-blue-600">JPY{(amount).toFixed(2)}</p>
         </div>
 
         {succeeded ? (
@@ -141,7 +141,7 @@ function CheckoutForm({ clientSecret, amount, onSuccess, onError }: PaymentFormP
               ) : (
                 <>
                   <CreditCard className="mr-2 h-4 w-4" />
-                  支付 JPY{(amount / 100).toFixed(2)}
+                  支付 JPY{(amount ).toFixed(2)}
                 </>
               )}
             </Button>
