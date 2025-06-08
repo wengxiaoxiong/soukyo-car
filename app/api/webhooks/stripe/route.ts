@@ -111,8 +111,8 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
   try {
     console.log('Handling payment success:', paymentIntent.id)
     
-    // 修复：先通过payment表查找订单，因为payment表存储了正确的payment_intent_id
-    const payment = await prisma.payment.findFirst({
+    // 尝试通过payment_intent_id查找
+    let payment = await prisma.payment.findFirst({
       where: {
         stripePaymentIntentId: paymentIntent.id
       },
@@ -121,6 +121,51 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
       }
     })
 
+    console.log('Payment found:', payment)
+
+    // 如果没找到，可能是checkout.session.completed没有执行，尝试通过charge_id查找
+    if (!payment) {
+      console.log('Payment not found by payment_intent_id, trying to find by charge_id...')
+      payment = await prisma.payment.findFirst({
+        where: {
+          stripeChargeId: paymentIntent.id
+        },
+        include: {
+          order: true
+        }
+      })
+    }
+
+    console.log('Payment found:', payment)
+
+    // 如果还是没找到，尝试通过order表中的checkout session关联查找
+    if (!payment) {
+      console.log('Payment not found by charge_id, trying to find via checkout session...')
+      
+      // 获取payment intent的详细信息，包括相关的checkout session
+      const checkoutSessions = await stripe.checkout.sessions.list({
+        payment_intent: paymentIntent.id,
+        limit: 1
+      })
+      
+      if (checkoutSessions.data.length > 0) {
+        const sessionId = checkoutSessions.data[0].id
+        console.log('Found checkout session:', sessionId)
+        
+        // 通过checkout session id查找
+        payment = await prisma.payment.findFirst({
+          where: {
+            stripePaymentIntentId: sessionId
+          },
+          include: {
+            order: true
+          }
+        })
+      }
+    }
+
+    console.log('Payment found:', payment)
+
     if (!payment) {
       console.error('Payment not found for payment intent:', paymentIntent.id)
       return
@@ -128,23 +173,24 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
 
     const order = payment.order
 
-    // 更新订单状态
+    // 更新订单状态和支付信息
     await prisma.$transaction([
       prisma.order.update({
         where: { id: order.id },
         data: { 
           status: 'CONFIRMED',
-          stripePaymentIntentId: paymentIntent.id // 确保orders表也有正确的payment_intent_id
+          stripePaymentIntentId: paymentIntent.id // 更新为正确的payment_intent_id
         }
       }),
       prisma.payment.updateMany({
         where: { 
           orderId: order.id,
-          stripePaymentIntentId: paymentIntent.id 
+          id: payment.id
         },
         data: { 
           status: 'SUCCESS',
-          stripeChargeId: paymentIntent.latest_charge as string
+          stripePaymentIntentId: paymentIntent.id, // 更新为正确的payment_intent_id
+          stripeChargeId: paymentIntent.latest_charge as string // 更新为正确的charge_id
         }
       })
     ])
@@ -170,8 +216,8 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
   try {
     console.log('Handling payment failed:', paymentIntent.id)
     
-    // 修复：先通过payment表查找订单
-    const payment = await prisma.payment.findFirst({
+    // 尝试通过payment_intent_id查找
+    let payment = await prisma.payment.findFirst({
       where: {
         stripePaymentIntentId: paymentIntent.id
       },
@@ -179,6 +225,41 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
         order: true
       }
     })
+
+    // 如果没找到，尝试通过charge_id查找
+    if (!payment) {
+      console.log('Payment failed: not found by payment_intent_id, trying charge_id...')
+      payment = await prisma.payment.findFirst({
+        where: {
+          stripeChargeId: paymentIntent.id
+        },
+        include: {
+          order: true
+        }
+      })
+    }
+
+    // 如果还是没找到，尝试通过checkout session查找
+    if (!payment) {
+      console.log('Payment failed: not found by charge_id, trying checkout session...')
+      
+      const checkoutSessions = await stripe.checkout.sessions.list({
+        payment_intent: paymentIntent.id,
+        limit: 1
+      })
+      
+      if (checkoutSessions.data.length > 0) {
+        const sessionId = checkoutSessions.data[0].id
+        payment = await prisma.payment.findFirst({
+          where: {
+            stripePaymentIntentId: sessionId
+          },
+          include: {
+            order: true
+          }
+        })
+      }
+    }
 
     if (!payment) {
       console.error('Payment not found for payment intent:', paymentIntent.id)
@@ -191,10 +272,11 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
     await prisma.payment.updateMany({
       where: { 
         orderId: order.id,
-        stripePaymentIntentId: paymentIntent.id 
+        id: payment.id
       },
       data: { 
-        status: 'FAILED'
+        status: 'FAILED',
+        stripePaymentIntentId: paymentIntent.id // 也更新payment_intent_id
       }
     })
 
