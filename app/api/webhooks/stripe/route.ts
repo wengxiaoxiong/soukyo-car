@@ -84,7 +84,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           data: { 
             status: 'SUCCESS',
             stripePaymentIntentId: session.payment_intent as string,
-            stripeChargeId: session.payment_intent as string
+            stripeChargeId: null  // checkout session中不直接包含charge ID，后续通过payment_intent.succeeded webhook更新
           }
         })
       ])
@@ -111,23 +111,31 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
   try {
     console.log('Handling payment success:', paymentIntent.id)
     
-    // 查找对应的订单
-    const order = await prisma.order.findFirst({
+    // 修复：先通过payment表查找订单，因为payment表存储了正确的payment_intent_id
+    const payment = await prisma.payment.findFirst({
       where: {
         stripePaymentIntentId: paymentIntent.id
+      },
+      include: {
+        order: true
       }
     })
 
-    if (!order) {
-      console.error('Order not found for payment intent:', paymentIntent.id)
+    if (!payment) {
+      console.error('Payment not found for payment intent:', paymentIntent.id)
       return
     }
+
+    const order = payment.order
 
     // 更新订单状态
     await prisma.$transaction([
       prisma.order.update({
         where: { id: order.id },
-        data: { status: 'CONFIRMED' }
+        data: { 
+          status: 'CONFIRMED',
+          stripePaymentIntentId: paymentIntent.id // 确保orders表也有正确的payment_intent_id
+        }
       }),
       prisma.payment.updateMany({
         where: { 
@@ -162,17 +170,22 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
   try {
     console.log('Handling payment failed:', paymentIntent.id)
     
-    // 查找对应的订单
-    const order = await prisma.order.findFirst({
+    // 修复：先通过payment表查找订单
+    const payment = await prisma.payment.findFirst({
       where: {
         stripePaymentIntentId: paymentIntent.id
+      },
+      include: {
+        order: true
       }
     })
 
-    if (!order) {
-      console.error('Order not found for payment intent:', paymentIntent.id)
+    if (!payment) {
+      console.error('Payment not found for payment intent:', paymentIntent.id)
       return
     }
+
+    const order = payment.order
 
     // 更新支付状态
     await prisma.payment.updateMany({
