@@ -210,7 +210,7 @@ export async function createBooking(formData: BookingFormData) {
               description: `租期：${startDate} 至 ${endDate}（${totalDays}天）`,
               images: vehicle.images?.length > 0 ? [vehicle.images[0]] : undefined,
             },
-            unit_amount: Math.round(totalAmount * 100), // 转换为分
+            unit_amount: totalAmount
           },
           quantity: 1,
         },
@@ -678,7 +678,7 @@ export async function createPaymentLink(orderId: string) {
               description: `租期：${order.startDate.toLocaleDateString()} 至 ${order.endDate.toLocaleDateString()}（${order.totalDays}天）`,
               images: order.vehicle.images?.length > 0 ? [order.vehicle.images[0]] : undefined,
             },
-            unit_amount: Math.round(order.totalAmount * 100),
+            unit_amount: order.totalAmount
           },
           quantity: 1,
         },
