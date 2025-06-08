@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { VehicleFilters } from '@/components/VehicleFilters'
 import { CarCard } from '@/components/CarCard'
 import { Pagination } from '@/components/Pagination'
@@ -29,6 +30,7 @@ const PREDEFINED_BRANDS = [
 ].sort()
 
 export default function VehiclePage() {
+  const searchParams = useSearchParams()
   const [vehicles, setVehicles] = useState<CarCardData[]>([])
   const [loading, setLoading] = useState(true)
   const [stores, setStores] = useState<Array<{id: string, name: string, city: string}>>([])
@@ -37,6 +39,12 @@ export default function VehiclePage() {
   const [total, setTotal] = useState(0)
   const [filters, setFilters] = useState<FilterType>({
     isAvailable: true // 默认只显示可用车辆
+  })
+  const [searchConditions, setSearchConditions] = useState({
+    startDate: '',
+    endDate: '',
+    passengers: '',
+    storeId: ''
   })
 
   const pageSize = 12
@@ -68,6 +76,30 @@ export default function VehiclePage() {
       console.error('获取店面列表失败:', error)
     }
   }
+
+  // 从query参数初始化搜索条件
+  useEffect(() => {
+    const startDate = searchParams.get('startDate') || ''
+    const endDate = searchParams.get('endDate') || ''
+    const passengers = searchParams.get('passengers') || ''
+    const storeId = searchParams.get('storeId') || ''
+
+    setSearchConditions({
+      startDate,
+      endDate,
+      passengers,
+      storeId
+    })
+
+    // 如果有storeId参数，自动设置到筛选条件中
+    if (storeId) {
+      setFilters(prev => ({
+        ...prev,
+        storeId,
+        isAvailable: true
+      }))
+    }
+  }, [searchParams])
 
   // 初始化数据
   useEffect(() => {
@@ -107,6 +139,17 @@ export default function VehiclePage() {
           <p className="text-gray-600">
             为您精选优质租车服务，共找到 {total} 辆车
           </p>
+          {/* 显示搜索条件 */}
+          {(searchConditions.startDate || searchConditions.endDate) && (
+            <div className="mt-4 text-sm text-gray-500 flex flex-wrap gap-4">
+              {searchConditions.startDate && searchConditions.endDate && (
+                <span>📅 {searchConditions.startDate} 至 {searchConditions.endDate}</span>
+              )}
+              {searchConditions.passengers && (
+                <span>👥 {searchConditions.passengers}人</span>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
