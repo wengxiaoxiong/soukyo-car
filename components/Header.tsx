@@ -13,7 +13,9 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { User, Menu, X, LogOut, Settings, Shield } from "lucide-react";
-import { LanguageSelector } from "@/components/LanguageSelector"
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { NotificationCenter } from "@/components/NotificationCenter";
+import { NotificationMobileMenu } from "@/components/NotificationMobileMenu";
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -39,6 +41,9 @@ export const Header: React.FC = () => {
           </div>
           <div className="flex items-center gap-4">
             <LanguageSelector />
+
+            {/* 通知功能 */}
+            {session?.user && <NotificationCenter />}
 
             {/* 认证状态 */}
             {status === 'loading' ? (
@@ -132,6 +137,16 @@ export const Header: React.FC = () => {
               <a href="#" className="text-gray-600 hover:text-gray-900 py-2">门店</a>
               <a href="#" className="text-gray-600 hover:text-gray-900 py-2">关于我们</a>
 
+              {/* 移动端通知 */}
+              {session?.user && (
+                <div className="border-t pt-4 mt-4">
+                  <div className="flex items-center gap-2 py-2">
+                    <NotificationMobileMenu />
+                    <span className="text-gray-600">通知</span>
+                  </div>
+                </div>
+              )}
+
               {/* 移动端认证菜单 */}
               {session?.user ? (
                 <div className="border-t pt-4 mt-4">
@@ -151,6 +166,9 @@ export const Header: React.FC = () => {
                       {session.user.name || session.user.email}
                     </span>
                   </div>
+                  <Link href="/orders" className="block py-2 text-gray-600 hover:text-gray-900">
+                    我的订单
+                  </Link>
                   {session.user.role === 'ADMIN' && (
                     <Link href="/admin" className="block py-2 text-gray-600 hover:text-gray-900">
                       管理后台

@@ -8,3 +8,6 @@ export { CompanyInfo } from './CompanyInfo';
 export { Footer } from './Footer';
 export { LanguageSelector } from './LanguageSelector'; 
 export { ChatwootWidget } from './ChatwootWidget';
+export { NotificationCenter } from './NotificationCenter';
+export { NotificationMobileMenu } from './NotificationMobileMenu';
+export { NotificationRenderer } from './NotificationRenderer';
