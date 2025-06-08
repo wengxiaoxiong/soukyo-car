@@ -34,6 +34,8 @@ export async function checkVehicleAvailability(
   try {
     const start = new Date(startDate)
     const end = new Date(endDate)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0) // 将今天的时间设为午夜，以便比较日期
 
     // 检查日期是否有效
     if (start >= end) {
@@ -43,7 +45,8 @@ export async function checkVehicleAvailability(
       }
     }
 
-    if (start < new Date()) {
+    // 修改日期检查逻辑，允许当天租车
+    if (start < today) {
       return {
         success: false,
         error: '开始日期不能早于今天'
@@ -168,42 +171,7 @@ export async function createBooking(formData: BookingFormData) {
       }
     }
 
-    // 创建Stripe客户（如果不存在）
-    let stripeCustomerId = null
-    if (session.user.email) {
-      const existingCustomers = await stripe.customers.list({
-        email: session.user.email,
-        limit: 1
-      })
-
-      if (existingCustomers.data.length > 0) {
-        stripeCustomerId = existingCustomers.data[0].id
-      } else {
-        const customer = await stripe.customers.create({
-          email: session.user.email,
-          name: session.user.name || undefined,
-          metadata: {
-            userId: session.user.id
-          }
-        })
-        stripeCustomerId = customer.id
-      }
-    }
-
-    // 创建Stripe PaymentIntent
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(totalAmount * 100), // Stripe使用分为单位
-      currency: 'usd',
-      customer: stripeCustomerId || undefined,
-      metadata: {
-        vehicleId: vehicleId,
-        userId: session.user.id,
-        startDate: startDate,
-        endDate: endDate
-      }
-    })
-
-    // 创建订单
+    // 创建订单（支付状态为PENDING）
     const order = await prisma.order.create({
       data: {
         userId: session.user.id,
@@ -220,8 +188,7 @@ export async function createBooking(formData: BookingFormData) {
         emergencyContact,
         emergencyPhone,
         notes,
-        stripePaymentIntentId: paymentIntent.id,
-        stripeCustomerId
+        status: 'PENDING'
       },
       include: {
         vehicle: true,
@@ -230,12 +197,49 @@ export async function createBooking(formData: BookingFormData) {
       }
     })
 
+    // 创建Stripe Checkout Session
+    const checkoutSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      customer_email: session.user.email || undefined,
+      line_items: [
+        {
+          price_data: {
+            currency: 'cny',
+            product_data: {
+              name: `租车服务 - ${vehicle.brand} ${vehicle.model}`,
+              description: `租期：${startDate} 至 ${endDate}（${totalDays}天）`,
+              images: vehicle.images?.length > 0 ? [vehicle.images[0]] : undefined,
+            },
+            unit_amount: Math.round(totalAmount * 100), // 转换为分
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${process.env.NEXTAUTH_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/payment/cancel?order_id=${order.id}`,
+      metadata: {
+        orderId: order.id,
+        userId: session.user.id,
+        vehicleId: vehicleId,
+      },
+      expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // 30分钟后过期
+    })
+
+    // 更新订单，保存checkout session ID
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { 
+        stripePaymentIntentId: checkoutSession.id // 复用这个字段存储session ID
+      }
+    })
+
     // 创建支付记录
     await prisma.payment.create({
       data: {
         orderId: order.id,
         amount: totalAmount,
-        stripePaymentIntentId: paymentIntent.id,
+        stripePaymentIntentId: checkoutSession.id,
         status: 'PENDING'
       }
     })
@@ -243,7 +247,7 @@ export async function createBooking(formData: BookingFormData) {
     return {
       success: true,
       order,
-      clientSecret: paymentIntent.client_secret
+      checkoutUrl: checkoutSession.url
     }
   } catch (error) {
     console.error('创建订单失败:', error)
@@ -484,6 +488,228 @@ export async function cancelOrder(orderId: string) {
     return {
       success: false,
       error: '取消订单失败'
+    }
+  }
+}
+
+// 处理Stripe Checkout成功回调
+export async function handleCheckoutSuccess(sessionId: string, orderId: string) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        error: '请先登录'
+      }
+    }
+
+    // 验证Stripe Checkout Session状态
+    const checkoutSession = await stripe.checkout.sessions.retrieve(sessionId)
+    
+    if (checkoutSession.payment_status !== 'paid') {
+      return {
+        success: false,
+        error: '支付尚未完成'
+      }
+    }
+
+    // 验证订单属于当前用户
+    const order = await prisma.order.findFirst({
+      where: {
+        id: orderId,
+        userId: session.user.id
+      }
+    })
+
+    if (!order) {
+      return {
+        success: false,
+        error: '订单不存在'
+      }
+    }
+
+    // 更新订单和支付状态
+    await prisma.$transaction([
+      prisma.order.update({
+        where: { id: order.id },
+        data: { status: 'CONFIRMED' }
+      }),
+      prisma.payment.updateMany({
+        where: { 
+          orderId: order.id,
+          stripePaymentIntentId: sessionId
+        },
+        data: { 
+          status: 'SUCCESS',
+          stripeChargeId: checkoutSession.payment_intent as string
+        }
+      })
+    ])
+
+    // 创建通知
+    await prisma.notification.create({
+      data: {
+        userId: session.user.id,
+        title: '订单确认成功',
+        message: `您的订单 ${order.orderNumber} 已确认，请按时取车。`,
+        type: 'ORDER',
+        relatedOrderId: order.id
+      }
+    })
+
+    revalidatePath('/orders')
+    
+    return {
+      success: true,
+      orderId: order.id
+    }
+  } catch (error) {
+    console.error('处理支付成功回调失败:', error)
+    return {
+      success: false,
+      error: '处理支付失败'
+    }
+  }
+}
+
+// 处理Stripe Checkout取消回调
+export async function handleCheckoutCancel(orderId: string) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        error: '请先登录'
+      }
+    }
+
+    // 验证订单属于当前用户
+    const order = await prisma.order.findFirst({
+      where: {
+        id: orderId,
+        userId: session.user.id,
+        status: 'PENDING'
+      }
+    })
+
+    if (!order) {
+      return {
+        success: false,
+        error: '订单不存在或已处理'
+      }
+    }
+
+    // 取消订单
+    await prisma.$transaction([
+      prisma.order.update({
+        where: { id: order.id },
+        data: { status: 'CANCELLED' }
+      }),
+      prisma.payment.updateMany({
+        where: { 
+          orderId: order.id,
+          status: 'PENDING'
+        },
+        data: { 
+          status: 'FAILED'
+        }
+      })
+    ])
+
+    revalidatePath('/orders')
+    
+    return {
+      success: true,
+      message: '订单已取消'
+    }
+  } catch (error) {
+    console.error('处理支付取消回调失败:', error)
+    return {
+      success: false,
+      error: '处理取消失败'
+    }
+  }
+}
+
+// 为未支付订单创建新的支付链接
+export async function createPaymentLink(orderId: string) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        error: '请先登录'
+      }
+    }
+
+    // 获取订单信息
+    const order = await prisma.order.findFirst({
+      where: {
+        id: orderId,
+        userId: session.user.id,
+        status: 'PENDING'
+      },
+      include: {
+        vehicle: true
+      }
+    })
+
+    if (!order) {
+      return {
+        success: false,
+        error: '订单不存在或已处理'
+      }
+    }
+
+    // 创建新的Stripe Checkout Session
+    const checkoutSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      customer_email: session.user.email || undefined,
+      line_items: [
+        {
+          price_data: {
+            currency: 'cny',
+            product_data: {
+              name: `租车服务 - ${order.vehicle.brand} ${order.vehicle.model}`,
+              description: `租期：${order.startDate.toLocaleDateString()} 至 ${order.endDate.toLocaleDateString()}（${order.totalDays}天）`,
+              images: order.vehicle.images?.length > 0 ? [order.vehicle.images[0]] : undefined,
+            },
+            unit_amount: Math.round(order.totalAmount * 100),
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${process.env.NEXTAUTH_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/payment/cancel?order_id=${order.id}`,
+      metadata: {
+        orderId: order.id,
+        userId: session.user.id,
+        vehicleId: order.vehicleId,
+      },
+      expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // 30分钟后过期
+    })
+
+    // 更新支付记录
+    await prisma.payment.updateMany({
+      where: { 
+        orderId: order.id,
+        status: 'PENDING'
+      },
+      data: { 
+        stripePaymentIntentId: checkoutSession.id
+      }
+    })
+
+    return {
+      success: true,
+      checkoutUrl: checkoutSession.url
+    }
+  } catch (error) {
+    console.error('创建支付链接失败:', error)
+    return {
+      success: false,
+      error: '创建支付链接失败'
     }
   }
 } 

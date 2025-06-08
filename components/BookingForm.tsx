@@ -66,13 +66,15 @@ export function BookingForm({ vehicle, onSubmit, loading = false }: BookingFormP
     // 验证日期
     const start = new Date(startDate)
     const end = new Date(endDate)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0) // 将今天的时间设为00:00:00
     
     if (start >= end) {
       toast.error('结束日期必须晚于开始日期')
       return
     }
 
-    if (start < new Date()) {
+    if (start < today) {
       toast.error('开始日期不能早于今天')
       return
     }

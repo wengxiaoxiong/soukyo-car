@@ -42,6 +42,7 @@ interface OrderListProps {
   orders: Order[]
   onViewDetails: (orderId: string) => void
   onCancelOrder: (orderId: string) => void
+  onPayOrder?: (orderId: string) => void
   loading?: boolean
 }
 
@@ -54,7 +55,7 @@ const statusConfig = {
   REFUNDED: { label: '已退款', color: 'bg-purple-100 text-purple-800' }
 }
 
-export function OrderList({ orders, onViewDetails, onCancelOrder, loading = false }: OrderListProps) {
+export function OrderList({ orders, onViewDetails, onCancelOrder, onPayOrder, loading = false }: OrderListProps) {
   if (loading) {
     return (
       <div className="space-y-4">
@@ -91,6 +92,7 @@ export function OrderList({ orders, onViewDetails, onCancelOrder, loading = fals
       {orders.map((order) => {
         const statusInfo = statusConfig[order.status]
         const canCancel = order.status === 'PENDING' || order.status === 'CONFIRMED'
+        const needsPayment = order.status === 'PENDING' && order.payments.some(payment => payment.status === 'PENDING')
         
         return (
           <Card key={order.id} className="overflow-hidden">
@@ -187,6 +189,14 @@ export function OrderList({ orders, onViewDetails, onCancelOrder, loading = fals
                 >
                   查看详情
                 </Button>
+                {needsPayment && onPayOrder && (
+                  <Button
+                    onClick={() => onPayOrder(order.id)}
+                    className="flex-1"
+                  >
+                    立即支付
+                  </Button>
+                )}
                 {canCancel && (
                   <Button
                     variant="destructive"
