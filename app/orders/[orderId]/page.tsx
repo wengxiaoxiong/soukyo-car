@@ -453,20 +453,20 @@ export default function OrderDetailPage() {
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">单价/天</span>
-                  <span className="text-gray-900">¥{order.pricePerDay.toFixed(2)}</span>
+                  <span className="text-gray-900">JPY{order.pricePerDay.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">租期 ({order.totalDays} 天)</span>
-                  <span className="text-gray-900">¥{order.subtotal.toFixed(2)}</span>
+                  <span className="text-gray-900">JPY{order.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">税费</span>
-                  <span className="text-gray-900">¥{order.taxAmount.toFixed(2)}</span>
+                  <span className="text-gray-900">JPY{order.taxAmount.toFixed(2)}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between text-lg font-semibold">
                   <span className="text-gray-900">总计</span>
-                  <span className="text-blue-600">¥{order.totalAmount.toFixed(2)}</span>
+                  <span className="text-blue-600">JPY{order.totalAmount.toFixed(2)}</span>
                 </div>
               </CardContent>
             </Card>
@@ -526,7 +526,7 @@ export default function OrderDetailPage() {
                     <div key={payment.id} className="flex justify-between items-center">
                       <div>
                         <div className="text-sm font-medium">
-                          ¥{payment.amount.toFixed(2)}
+                          JPY{payment.amount.toFixed(2)}
                         </div>
                         <div className="text-xs text-gray-500">
                           {format(new Date(payment.createdAt), 'yyyy-MM-dd HH:mm', { locale: zhCN })}

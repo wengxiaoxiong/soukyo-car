@@ -326,7 +326,7 @@ model Payment {
   
   // 支付金额
   amount                Float
-  currency              String        @default("usd")
+  currency              String        @default("jpy")
   
   // Stripe相关字段
   stripePaymentIntentId String        @unique

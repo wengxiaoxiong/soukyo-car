@@ -140,7 +140,7 @@ export function BookingForm({ vehicle, onSubmit, loading = false }: BookingFormP
               </div>
               <div className="flex items-center gap-1">
                 <CreditCard className="w-4 h-4" />
-                <span>¥{vehicle.pricePerDay}/天</span>
+                <span>JPY{vehicle.pricePerDay}/天</span>
               </div>
             </div>
           </div>
@@ -187,15 +187,15 @@ export function BookingForm({ vehicle, onSubmit, loading = false }: BookingFormP
                 </div>
                 <div className="flex justify-between">
                   <span>车辆费用：</span>
-                  <span>¥{priceEstimate.subtotal.toFixed(2)}</span>
+                  <span>JPY{priceEstimate.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>税费 (10%)：</span>
-                  <span>¥{priceEstimate.taxAmount.toFixed(2)}</span>
+                  <span>JPY{priceEstimate.taxAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-semibold border-t pt-1">
                   <span>总计：</span>
-                  <span>¥{priceEstimate.totalAmount.toFixed(2)}</span>
+                  <span>JPY{priceEstimate.totalAmount.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -274,7 +274,7 @@ export function BookingForm({ vehicle, onSubmit, loading = false }: BookingFormP
           
           {priceEstimate && (
             <p className="text-center text-sm text-gray-500 mt-2">
-              点击确认后将跳转到支付页面，预估总金额 ¥{priceEstimate.totalAmount.toFixed(2)}
+              点击确认后将跳转到支付页面，预估总金额 JPY{priceEstimate.totalAmount.toFixed(2)}
             </p>
           )}
         </div>

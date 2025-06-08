@@ -157,7 +157,7 @@ export function OrderList({ orders, onViewDetails, onCancelOrder, onPayOrder, lo
                   <CreditCard className="w-4 h-4 text-green-500" />
                   <div>
                     <p className="text-gray-500">总金额</p>
-                    <p className="font-medium text-lg">¥{order.totalAmount.toFixed(2)}</p>
+                    <p className="font-medium text-lg">JPY{order.totalAmount.toFixed(2)}</p>
                   </div>
                 </div>
               </div>

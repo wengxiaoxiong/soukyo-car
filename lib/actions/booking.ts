@@ -204,7 +204,7 @@ export async function createBooking(formData: BookingFormData) {
       line_items: [
         {
           price_data: {
-            currency: 'cny',
+            currency: 'jpy',
             product_data: {
               name: `租车服务 - ${vehicle.brand} ${vehicle.model}`,
               description: `租期：${startDate} 至 ${endDate}（${totalDays}天）`,

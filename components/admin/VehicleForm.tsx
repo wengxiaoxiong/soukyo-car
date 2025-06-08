@@ -334,7 +334,7 @@ export function VehicleForm({ vehicle, mode = 'add' }: VehicleFormProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="pricePerDay">日租金 (日元) *</Label>
+                <Label htmlFor="pricePerDay">日租金 (JPY) *</Label>
                 {isReadOnly ? (
                   <div className="p-3 bg-gray-50 rounded-md">
                     ${vehicle?.pricePerDay || '-'}

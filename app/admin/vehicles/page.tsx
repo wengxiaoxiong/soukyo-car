@@ -113,7 +113,7 @@ export default async function VehiclesPage({ searchParams }: VehiclesPageProps) 
                   </div>
                   <div className="flex items-center">
                     <DollarSign className="w-4 h-4 mr-2 flex-shrink-0" />
-                    <span>{vehicle.pricePerDay}日元/天</span>
+                    <span>{vehicle.pricePerDay}JPY/天</span>
                   </div>
                   <div className="flex items-center">
                     <Users className="w-4 h-4 mr-2 flex-shrink-0" />
