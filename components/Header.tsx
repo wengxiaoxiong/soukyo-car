@@ -18,7 +18,7 @@ import { LanguageSelector } from "@/components/LanguageSelector"
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { data: session, status } = useSession();
-  
+
   return (
     <header className="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm">
       <div className="max-w-[1440px] mx-auto px-4 md:px-8">
@@ -39,7 +39,7 @@ export const Header: React.FC = () => {
           </div>
           <div className="flex items-center gap-4">
             <LanguageSelector />
-            
+
             {/* 认证状态 */}
             {status === 'loading' ? (
               <Button disabled className="!rounded-button whitespace-nowrap">
@@ -70,11 +70,11 @@ export const Header: React.FC = () => {
                   <div className="px-2 py-1.5">
                     <p className="text-sm font-medium">{session.user.name || '用户'}</p>
                     <p className="text-xs text-gray-500">{session.user.email}</p>
-                    <div className="flex items-center mt-1">
+                    {session.user.role === 'ADMIN' && <div className="flex items-center mt-1">
                       <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
                         {session.user.role}
                       </span>
-                    </div>
+                    </div>}
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
@@ -83,10 +83,7 @@ export const Header: React.FC = () => {
                       我的订单
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="w-4 h-4 mr-2" />
-                    个人设置
-                  </DropdownMenuItem>
+
                   {session.user.role === 'ADMIN' && (
                     <DropdownMenuItem>
                       <Link href="/admin" className="flex items-center w-full">
@@ -112,11 +109,11 @@ export const Header: React.FC = () => {
                 </Link>
               </div>
             )}
-            
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="md:hidden !rounded-button" 
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden !rounded-button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -124,7 +121,7 @@ export const Header: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       {/* 移动端菜单 */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 shadow-sm">
@@ -134,7 +131,7 @@ export const Header: React.FC = () => {
               <a href="#" className="text-gray-600 hover:text-gray-900 py-2">车型</a>
               <a href="#" className="text-gray-600 hover:text-gray-900 py-2">门店</a>
               <a href="#" className="text-gray-600 hover:text-gray-900 py-2">关于我们</a>
-              
+
               {/* 移动端认证菜单 */}
               {session?.user ? (
                 <div className="border-t pt-4 mt-4">
@@ -159,7 +156,7 @@ export const Header: React.FC = () => {
                       管理后台
                     </Link>
                   )}
-                  <button 
+                  <button
                     onClick={() => signOut()}
                     className="block py-2 text-gray-600 hover:text-gray-900 text-left"
                   >

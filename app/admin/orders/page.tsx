@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { OrderStatus } from '@prisma/client'
 import { getAdminOrders, getOrderStats, type OrderFilters } from '@/app/actions/orders'
@@ -14,11 +14,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 
+
 // 订单数据类型
 type OrderData = NonNullable<Awaited<ReturnType<typeof getAdminOrders>>['data']>
 type OrderStatsData = NonNullable<Awaited<ReturnType<typeof getOrderStats>>['stats']>
 
-export default function AdminOrdersPage() {
+function AdminOrdersContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -199,33 +200,34 @@ export default function AdminOrdersPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           {/* 搜索框 */}
-          <div className="flex gap-4">
+          <div className="flex gap-2">
             <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="搜索订单号、用户名、邮箱或车辆名称..."
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  className="pl-10"
-                />
-              </div>
+              <Input
+                placeholder="搜索订单ID、用户名、邮箱或电话..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                className="w-full"
+              />
             </div>
             <Button onClick={handleSearch} className="flex items-center gap-2">
               <Search className="w-4 h-4" />
               搜索
             </Button>
-            <Button onClick={handleResetFilters} variant="outline">
-              重置
-            </Button>
           </div>
 
-          {/* 其他筛选条件 */}
+          {/* 其他筛选器 */}
           <OrderFiltersComponent
             filters={filters}
             onFiltersChange={handleFiltersChange}
           />
+
+          {/* 操作按钮 */}
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleResetFilters}>
+              重置筛选
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -236,35 +238,46 @@ export default function AdminOrdersPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-                <p className="text-gray-600">正在加载订单数据...</p>
-              </div>
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+              <span className="ml-2">加载中...</span>
             </div>
           ) : (
             <>
-              <OrderTable 
-                orders={orders} 
-                onRefresh={handleRefresh}
-              />
-              
-              {/* 分页 */}
-              {pagination.totalPages > 1 && (
-                <div className="mt-6 flex justify-center">
-                  <Pagination
-                    currentPage={pagination.page}
-                    totalPages={pagination.totalPages}
-                    onPageChange={handlePageChange}
-                    hasNextPage={pagination.hasNextPage}
-                    hasPrevPage={pagination.hasPrevPage}
-                  />
-                </div>
-              )}
+              <OrderTable orders={orders} onRefresh={handleRefresh} />
+                             <div className="mt-6">
+                 <Pagination
+                   currentPage={pagination.page}
+                   totalPages={pagination.totalPages}
+                   onPageChange={handlePageChange}
+                   hasNextPage={pagination.hasNextPage}
+                   hasPrevPage={pagination.hasPrevPage}
+                 />
+               </div>
             </>
           )}
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">加载中...</h2>
+        <p className="text-gray-600">请稍候</p>
+      </div>
+    </div>
+  )
+}
+
+export default function AdminOrdersPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AdminOrdersContent />
+    </Suspense>
   )
 } 
