@@ -34,6 +34,11 @@ export async function POST(req: NextRequest) {
       const failedPayment = event.data.object as Stripe.PaymentIntent
       await handlePaymentFailed(failedPayment)
       break
+
+    case 'checkout.session.completed':
+      const session = event.data.object as Stripe.Checkout.Session
+      await handleCheckoutCompleted(session)
+      break
     
     default:
       console.log(`Unhandled event type ${event.type}`)
@@ -42,8 +47,70 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ received: true })
 }
 
+async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+  try {
+    console.log('Handling checkout completed:', session.id)
+    
+    // 通过checkout session id查找订单
+    const order = await prisma.order.findFirst({
+      where: {
+        OR: [
+          { stripePaymentIntentId: session.id }, // checkout session id
+          { stripePaymentIntentId: session.payment_intent as string }, // payment intent id
+        ]
+      }
+    })
+
+    if (!order) {
+      console.error('Order not found for session:', session.id)
+      return
+    }
+
+    // 检查支付是否成功
+    if (session.payment_status === 'paid') {
+      await prisma.$transaction([
+        prisma.order.update({
+          where: { id: order.id },
+          data: { 
+            status: 'CONFIRMED',
+            stripePaymentIntentId: session.payment_intent as string // 更新为真正的payment intent id
+          }
+        }),
+        prisma.payment.updateMany({
+          where: { 
+            orderId: order.id,
+            status: 'PENDING'
+          },
+          data: { 
+            status: 'SUCCESS',
+            stripePaymentIntentId: session.payment_intent as string,
+            stripeChargeId: session.payment_intent as string
+          }
+        })
+      ])
+
+      // 创建通知
+      await prisma.notification.create({
+        data: {
+          userId: order.userId,
+          title: '支付成功',
+          message: `您的订单 ${order.orderNumber} 支付成功，订单已确认。`,
+          type: 'ORDER',
+          relatedOrderId: order.id
+        }
+      })
+
+      console.log('Checkout completed handled for order:', order.id)
+    }
+  } catch (error) {
+    console.error('Error handling checkout completed:', error)
+  }
+}
+
 async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
   try {
+    console.log('Handling payment success:', paymentIntent.id)
+    
     // 查找对应的订单
     const order = await prisma.order.findFirst({
       where: {
@@ -93,6 +160,8 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
 
 async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
   try {
+    console.log('Handling payment failed:', paymentIntent.id)
+    
     // 查找对应的订单
     const order = await prisma.order.findFirst({
       where: {

@@ -170,11 +170,12 @@ export function OrderList({ orders, onViewDetails, onCancelOrder, onPayOrder, lo
                   {order.payments.map((payment) => (
                     <Badge 
                       key={payment.id}
-                      variant={payment.status === 'SUCCESS' ? 'default' : 'secondary'}
+                      variant={payment.status === 'SUCCESS' ? 'default' : payment.status === 'FAILED' ? 'destructive' : 'secondary'}
                     >
                       {payment.status === 'SUCCESS' ? '已支付' : 
                        payment.status === 'PENDING' ? '待支付' : 
-                       payment.status === 'FAILED' ? '支付失败' : '已退款'}
+                       payment.status === 'FAILED' ? '支付失败' : 
+                       payment.status === 'REFUNDED' ? '已退款' : '未知状态'}
                     </Badge>
                   ))}
                 </div>

@@ -395,7 +395,11 @@ export async function getOrderDetails(orderId: string) {
           }
         },
         store: true,
-        payments: true,
+        payments: {
+          orderBy: {
+            createdAt: 'desc'
+          }
+        },
         user: true
       }
     })

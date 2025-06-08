@@ -22,9 +22,9 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import { format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
+import { Separator } from '@radix-ui/react-dropdown-menu'
 
 type OrderDetails = {
   id: string
@@ -532,8 +532,11 @@ export default function OrderDetailPage() {
                           {format(new Date(payment.createdAt), 'yyyy-MM-dd HH:mm', { locale: zhCN })}
                         </div>
                       </div>
-                      <Badge variant={payment.status === 'SUCCESS' ? 'default' : 'secondary'}>
-                        {payment.status === 'SUCCESS' ? '已支付' : payment.status === 'PENDING' ? '待支付' : '失败'}
+                      <Badge variant={payment.status === 'SUCCESS' ? 'default' : payment.status === 'FAILED' ? 'destructive' : 'secondary'}>
+                        {payment.status === 'SUCCESS' ? '已支付' : 
+                         payment.status === 'PENDING' ? '待支付' : 
+                         payment.status === 'FAILED' ? '支付失败' : 
+                         payment.status === 'REFUNDED' ? '已退款' : '未知状态'}
                       </Badge>
                     </div>
                   ))}
