@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Star, Zap } from "lucide-react";
 import { CarCard } from './CarCard';
 import { getFeaturedCars } from '@/lib/actions/cars';
 
@@ -8,19 +8,35 @@ export const FeaturedCars: React.FC = async () => {
   const cars = await getFeaturedCars();
 
   return (
-    <div className="bg-gray-50">
-      <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-12 md:py-16">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8 md:mb-12">推荐车型</h2>
+    <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">
+            <Star className="w-4 h-4" />
+            <span>精选推荐</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            热门车型
+          </h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            精心挑选的优质车型，满足您不同的出行需求
+          </p>
+        </div>
+
+        {/* Cars Grid */}
         <div className="relative">
-          {/* 移动端滚动指示 */}
+          {/* 移动端滚动提示 */}
           {cars.length > 0 && (
-            <div className="md:hidden mb-4 text-sm text-gray-500 flex items-center">
-              <span>← 左右滑动查看更多 →</span>
+            <div className="md:hidden mb-6 text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm text-sm text-gray-500">
+                <span>← 左右滑动查看更多 →</span>
+              </div>
             </div>
           )}
           
-          {/* 滚动容器 */}
-          <div className="flex overflow-x-auto pb-4 md:pb-0 md:grid md:grid-cols-4 gap-6 md:gap-8 scrollbar-hide">
+          {/* 车辆卡片容器 */}
+          <div className="flex overflow-x-auto pb-6 md:pb-0 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 scrollbar-hide">
             {cars.length > 0 ? (
               <>
                 {cars.map((car) => (
@@ -28,24 +44,47 @@ export const FeaturedCars: React.FC = async () => {
                 ))}
                 
                 {/* "查看更多"卡片 */}
-                <Card className="overflow-hidden flex-shrink-0 w-[280px] md:w-auto mx-2 last:mr-0 md:mx-0 bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center pt-0">
-                  <a href="/vehicle" className="p-6 flex flex-col items-center justify-center w-full h-full min-h-[380px] md:min-h-full">
-                    <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                      <ChevronRight className="w-6 h-6 text-gray-500" />
+                <Card className="overflow-hidden flex-shrink-0 w-[300px] md:w-auto mx-2 first:ml-0 last:mr-0 md:mx-0 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-dashed border-blue-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300 group cursor-pointer">
+                  <a href="/vehicle" className="p-8 flex flex-col items-center justify-center w-full h-full min-h-[400px] text-center">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <ChevronRight className="w-8 h-8 text-blue-600 group-hover:translate-x-1 transition-transform duration-300" />
                     </div>
-                    <p className="text-lg font-medium text-gray-700">查看更多车型</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">查看更多车型</h3>
+                    <p className="text-gray-600 text-sm">发现更多适合您的车辆</p>
+                    <div className="mt-4 flex items-center gap-2 text-blue-600 text-sm font-medium">
+                      <Zap className="w-4 h-4" />
+                      <span>立即探索</span>
+                    </div>
                   </a>
                 </Card>
               </>
             ) : (
-              <div className="col-span-full text-center py-12">
-                <p className="text-gray-500 text-lg">暂无推荐车型</p>
-                <p className="text-gray-400 text-sm mt-2">管理员正在添加更多车辆信息</p>
+              <div className="col-span-full text-center py-20">
+                <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6">
+                  <Star className="w-12 h-12 text-gray-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">暂无推荐车型</h3>
+                <p className="text-gray-500 text-lg">管理员正在添加更多车辆信息</p>
               </div>
             )}
           </div>
         </div>
+
+        {/* CTA Section */}
+        {cars.length > 0 && (
+          <div className="text-center mt-16">
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <span className="text-gray-600">还没找到心仪的车型？</span>
+              <a 
+                href="/vehicle" 
+                className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors duration-200"
+              >
+                浏览全部车辆 →
+              </a>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 }; 

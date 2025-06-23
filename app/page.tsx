@@ -6,12 +6,12 @@ import { CompanyInfo } from "@/components/CompanyInfo";
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-[1024px]">
+    <main className="min-h-screen bg-white">
       <HeroSection />
       <FeaturedCars />
       <StoreLocations />
       <CompanyInfo />
-    </div>
+    </main>
   );
 };
 

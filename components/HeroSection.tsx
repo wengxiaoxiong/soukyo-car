@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Users, Search } from "lucide-react";
+import { Calendar, Users, Search, MapPin, Sparkles, Car } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { getActiveStores, StoreWithOpeningHours } from '@/app/actions/stores';
 
@@ -83,83 +83,142 @@ export const HeroSection: React.FC = () => {
   const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   return (
-    <div className="relative min-h-[700px] md:min-h-[650px] w-full">
-      {/* Hero Background Image */}
-      <div
-        className="absolute inset-0 w-full h-full bg-cover bg-center"
-        style={{
-          backgroundImage: `url('https://ai-public.mastergo.com/ai/img_res/ab15db9d2c399255794e1b782e0095a4.jpg')`
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40"></div>
+    <section className="relative min-h-screen w-full overflow-hidden">
+      {/* 背景图片和渐变遮罩 */}
+      <div className="absolute inset-0">
+        <div
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://ai-public.mastergo.com/ai/img_res/ab15db9d2c399255794e1b782e0095a4.jpg')`
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/85 via-slate-800/75 to-slate-900/70" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
       </div>
-      {/* Hero Content */}
-      <div className="relative max-w-[1440px] mx-auto px-4 md:px-8 pt-24 md:pt-32 pb-8">
-        <div className="max-w-4xl">
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6">探索日本，从这里开始</h1>
-          <p className="text-lg md:text-xl text-white/90 mb-8 md:mb-12">便捷的租车服务，让您的旅程更自由</p>
-          {/* Search Box */}
-          <div className="bg-white p-6 md:p-8 rounded-xl shadow-2xl max-w-4xl">
-            <div className="space-y-6">
-              {/* 店面选择 */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">取车店面</label>
-                <Select 
-                  value={searchData.storeId} 
-                  onValueChange={(value) => handleInputChange('storeId', value)}
-                  disabled={storesLoading}
-                >
-                  <SelectTrigger className="h-12 bg-gray-50 border-gray-200 hover:bg-white transition-colors">
-                    <SelectValue placeholder={storesLoading ? "加载中..." : "选择取车店面"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stores.map((store) => (
-                      <SelectItem key={store.id} value={store.id}>
-                        {store.name} - {store.city}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+
+      {/* 装饰性元素 - 在移动端隐藏部分 */}
+      <div className="absolute top-20 right-10 opacity-30 animate-pulse hidden sm:block">
+        <Sparkles className="w-8 h-8 text-blue-400" />
+      </div>
+      <div className="absolute top-40 right-32 opacity-20 animate-pulse delay-500 hidden lg:block">
+        <Car className="w-6 h-6 text-white" />
+      </div>
+      <div className="absolute bottom-32 left-10 opacity-20 animate-pulse delay-1000 hidden sm:block">
+        <Sparkles className="w-6 h-6 text-blue-300" />
+      </div>
+
+      {/* 主内容 */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex items-center">
+        <div className="w-full grid lg:grid-cols-2 gap-8 lg:gap-12 items-center py-8 lg:py-0">
+          
+          {/* 左侧：标题和描述 */}
+          <div className="text-center lg:text-left order-1 lg:order-1">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/20 backdrop-blur-sm rounded-full text-blue-200 text-xs sm:text-sm font-medium mb-4 sm:mb-6 border border-blue-400/30">
+              <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span>东京两大机场租车服务</span>
+            </div>
+            
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
+              探索
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400"> 日本</span>
+              <br />
+              <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white/90">从这里开始</span>
+            </h1>
+            
+            <p className="text-base sm:text-lg md:text-xl text-white/80 mb-6 sm:mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0 px-2 sm:px-0">
+              专业的租车服务，让您的日本之旅更加自由精彩
+            </p>
+
+            {/* 特色标签 - 移动端优化 */}
+            <div className="flex flex-wrap gap-2 sm:gap-3 justify-center lg:justify-start mb-6 sm:mb-8 px-2 sm:px-0">
+              <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-white/10 backdrop-blur-sm rounded-lg text-white/90 text-xs sm:text-sm">
+                <Car className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>多种车型</span>
               </div>
-              
-              {/* 日期选择 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">取车日期</label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <Input
-                      className="pl-12 h-12 bg-gray-50 border-gray-200 hover:bg-white transition-colors"
-                      type="date"
-                      value={searchData.startDate}
-                      min={today}
-                      onChange={(e) => handleInputChange('startDate', e.target.value)}
-                    />
+              <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-white/10 backdrop-blur-sm rounded-lg text-white/90 text-xs sm:text-sm">
+                <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>机场取车</span>
+              </div>
+              <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-white/10 backdrop-blur-sm rounded-lg text-white/90 text-xs sm:text-sm">
+                <Users className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>灵活预订</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 右侧：搜索表单 - 移动端优化 */}
+          <div className="w-full max-w-sm sm:max-w-md mx-auto lg:max-w-none order-2 lg:order-2">
+            <div className="bg-white/95 backdrop-blur-xl p-4 sm:p-6 rounded-2xl shadow-2xl border border-white/20 mx-2 sm:mx-0">
+              <div className="mb-4 sm:mb-6">
+                <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 flex items-center gap-2">
+                  <Search className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+                  开始租车
+                </h3>
+                <p className="text-gray-600 text-sm sm:text-base">选择您的需求，立即查找合适车辆</p>
+              </div>
+
+              <div className="space-y-3 sm:space-y-4">
+                {/* 店面选择 */}
+                <div className="space-y-1.5 sm:space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">取车店面</label>
+                  <Select 
+                    value={searchData.storeId} 
+                    onValueChange={(value) => handleInputChange('storeId', value)}
+                    disabled={storesLoading}
+                  >
+                    <SelectTrigger className="h-11 sm:h-12 bg-gray-50 border-gray-200 hover:border-blue-400 transition-colors rounded-xl text-sm sm:text-base">
+                      <SelectValue placeholder={storesLoading ? "加载中..." : "选择取车店面"} />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      {stores.map((store) => (
+                        <SelectItem key={store.id} value={store.id} className="py-2 text-sm sm:text-base">
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
+                            <span>{store.name} - {store.city}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* 日期选择 - 移动端垂直排列 */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">取车日期</label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
+                      <Input
+                        className="pl-10 h-11 sm:h-12 bg-gray-50 border-gray-200 hover:border-blue-400 transition-colors rounded-xl text-sm sm:text-base"
+                        type="date"
+                        value={searchData.startDate}
+                        min={today}
+                        onChange={(e) => handleInputChange('startDate', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">还车日期</label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
+                      <Input
+                        className="pl-10 h-11 sm:h-12 bg-gray-50 border-gray-200 hover:border-blue-400 transition-colors rounded-xl text-sm sm:text-base"
+                        type="date"
+                        value={searchData.endDate}
+                        min={searchData.startDate || tomorrow}
+                        onChange={(e) => handleInputChange('endDate', e.target.value)}
+                      />
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">还车日期</label>
+                
+                {/* 乘客数 */}
+                <div className="space-y-1.5 sm:space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">乘客数量</label>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
                     <Input
-                      className="pl-12 h-12 bg-gray-50 border-gray-200 hover:bg-white transition-colors"
-                      type="date"
-                      value={searchData.endDate}
-                      min={searchData.startDate || tomorrow}
-                      onChange={(e) => handleInputChange('endDate', e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              {/* 乘客数和搜索按钮 */}
-              <div className="flex flex-col sm:flex-row gap-4 items-end">
-                <div className="w-full sm:w-48">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">乘客数量</label>
-                  <div className="relative">
-                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <Input
-                      className="pl-12 h-12 bg-gray-50 border-gray-200 hover:bg-white transition-colors"
+                      className="pl-10 h-11 sm:h-12 bg-gray-50 border-gray-200 hover:border-blue-400 transition-colors rounded-xl text-sm sm:text-base"
                       type="number"
                       placeholder="请输入人数"
                       value={searchData.passengers}
@@ -169,20 +228,21 @@ export const HeroSection: React.FC = () => {
                     />
                   </div>
                 </div>
+
+                {/* 搜索按钮 */}
                 <Button 
-                  className="w-full sm:w-auto h-12 px-8 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex-shrink-0" 
-                  size="lg"
+                  className="w-full h-11 sm:h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 text-sm sm:text-base mt-4 sm:mt-6" 
                   onClick={handleSearch}
                   disabled={isLoading || storesLoading}
                 >
                   {isLoading ? (
                     <>
-                      <Search className="w-5 h-5 mr-2 animate-spin" />
+                      <Search className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-spin" />
                       搜索中...
                     </>
                   ) : (
                     <>
-                      <Search className="w-5 h-5 mr-2" />
+                      <Search className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                       立即查找车辆
                     </>
                   )}
@@ -192,6 +252,6 @@ export const HeroSection: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }; 
