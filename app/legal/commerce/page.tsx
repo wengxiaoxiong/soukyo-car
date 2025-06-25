@@ -25,7 +25,6 @@ export default function CommercePage() {
           </CardHeader>
           <CardContent className="p-6 md:p-8">
             <div className="space-y-6">
-              {/* Basic Information */}
               <div className="grid gap-6 md:gap-8">
                 <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
                   <div className="min-w-0 md:min-w-[200px]">
@@ -43,7 +42,7 @@ export default function CommercePage() {
                 <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
                   <div className="min-w-0 md:min-w-[200px]">
                     <Badge variant="outline" className="text-sm font-medium">
-                      代表責任者
+                      運営責任者
                     </Badge>
                   </div>
                   <div className="flex-1">
@@ -60,21 +59,24 @@ export default function CommercePage() {
                     </Badge>
                   </div>
                   <div className="flex-1">
-                    <p className="text-lg text-gray-900">埼玉県八潮市大字大曽根705-1</p>
+                    <p className="text-lg text-gray-900">〒340-0826 埼玉県八潮市大字大曽根705-1</p>
                   </div>
                 </div>
 
                 <Separator />
 
-                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                <div className="flex flex-col md:flex-row md:items-start gap-2 md:gap-4">
                   <div className="min-w-0 md:min-w-[200px]">
                     <Badge variant="outline" className="text-sm font-medium">
                       連絡先
                     </Badge>
                   </div>
                   <div className="flex-1">
-                    <p className="text-lg text-gray-900">048-951-1089</p>
-                    <p className="text-lg text-gray-900">rentalcar@soukyo-motors.jp</p>
+                    <p className="text-lg text-gray-900">電話番号：048-951-1089</p>
+                    <p className="text-lg text-gray-900">メールアドレス：rentalcar@soukyo-motors.jp</p>
+                    <p className="text-sm text-gray-600 mt-2">
+                      受付時間：09:00 - 18:00（年中無休）
+                    </p>
                   </div>
                 </div>
 
@@ -93,7 +95,7 @@ export default function CommercePage() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      www.soukyo-rent-a-car.com
+                      https://www.soukyo-rent-a-car.com
                     </a>
                   </div>
                 </div>
@@ -106,7 +108,7 @@ export default function CommercePage() {
         <Card className="pt-0 shadow-lg border-0 bg-white/80 backdrop-blur-sm mt-6">
           <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white">
             <CardTitle className="text-xl md:text-2xl text-center">
-              販売価格
+              販売価格（税込）
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 md:p-8">
@@ -159,18 +161,17 @@ export default function CommercePage() {
               </table>
             </div>
             <p className="text-sm text-gray-600 mt-4 text-center">
-              ※ 上記価格は税込み表示です
+              ※ 上記価格は消費税込みの表示です
             </p>
           </CardContent>
         </Card>
 
-        {/* Terms and Conditions */}
+        {/* Payment and Service Information */}
         <div className="grid gap-6 mt-6 md:grid-cols-2">
-          {/* Payment and Service */}
           <Card className="pt-0 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
             <CardHeader className="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
               <CardTitle className="text-lg md:text-xl">
-                お支払い・サービス
+                お支払い・その他費用
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
@@ -179,57 +180,70 @@ export default function CommercePage() {
                   <Badge variant="outline" className="mb-2">
                     商品代金以外の必要料金
                   </Badge>
-                  <p className="text-gray-700">保険費用</p>
+                  <ul className="text-gray-700 space-y-1">
+                    <li>• 保険料（お客様負担）</li>
+                    <li>• 燃料費（お客様負担）</li>
+                    <li>• 高速道路料金（お客様負担）</li>
+                    <li>• 駐車場料金（お客様負担）</li>
+                  </ul>
                 </div>
                 <Separator />
                 <div>
                   <Badge variant="outline" className="mb-2">
-                    支払方法
+                    受付可能な決済方法
                   </Badge>
-                  <p className="text-gray-700">Stripe決済</p>
+                  <p className="text-gray-700">クレジットカード決済（Stripe）</p>
+                  <p className="text-sm text-gray-600">
+                    VISA、MasterCard、American Express、JCB
+                  </p>
                 </div>
                 <Separator />
                 <div>
                   <Badge variant="outline" className="mb-2">
-                    サービス提供時間
+                    支払時期
                   </Badge>
-                  <p className="text-gray-700">09:00 - 18:00</p>
+                  <p className="text-gray-700">
+                    予約確定時に即座に決済処理を行います
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Cancellation Policy */}
           <Card className="pt-0 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white">
+            <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
               <CardTitle className="text-lg md:text-xl">
-                キャンセルポリシー
+                サービス提供期間
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-4">
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                  <p className="text-sm font-medium text-yellow-800 mb-2">
-                    取車前168時間〜72時間
-                  </p>
-                  <p className="text-sm text-yellow-700">
-                    キャンセル料：レンタル料金の30%
-                  </p>
-                </div>
-                <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
-                  <p className="text-sm font-medium text-orange-800 mb-2">
-                    取車前72時間〜24時間
-                  </p>
-                  <p className="text-sm text-orange-700">
-                    キャンセル料：レンタル料金の50%
+                <div>
+                  <Badge variant="outline" className="mb-2">
+                    引渡時期
+                  </Badge>
+                  <p className="text-gray-700">
+                    予約確定後、指定された日時にお車をお引き渡しいたします
                   </p>
                 </div>
-                <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-                  <p className="text-sm font-medium text-red-800 mb-2">
-                    取車前24時間以降
+                <Separator />
+                <div>
+                  <Badge variant="outline" className="mb-2">
+                    営業時間
+                  </Badge>
+                  <p className="text-gray-700">
+                    09:00 - 18:00<br />
+                    年中無休
                   </p>
-                  <p className="text-sm text-red-700">
-                    キャンセル料：レンタル料金の100%
+                </div>
+                <Separator />
+                <div>
+                  <Badge variant="outline" className="mb-2">
+                    貸出・返却場所
+                  </Badge>
+                  <p className="text-gray-700">
+                    埼玉県八潮市大字大曽根705-1<br />
+                    （その他指定場所での受け渡しも可能）
                   </p>
                 </div>
               </div>
@@ -237,16 +251,106 @@ export default function CommercePage() {
           </Card>
         </div>
 
+        {/* Return Policy */}
+        <Card className="pt-0 shadow-lg border-0 bg-white/80 backdrop-blur-sm mt-6">
+          <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-700 text-white">
+            <CardTitle className="text-xl md:text-2xl text-center">
+              返品・交換について
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 md:p-8">
+            <div className="space-y-6">
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h4 className="font-semibold text-blue-800 mb-2">お客様のご都合による返品・交換</h4>
+                <p className="text-blue-700 text-sm">
+                  レンタカーサービスの性質上、お客様のご都合による返品・交換は承っておりません。<br />
+                  キャンセルについては下記のキャンセルポリシーをご確認ください。
+                </p>
+              </div>
+              
+              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                <h4 className="font-semibold text-green-800 mb-2">車両の不具合・事故等による対応</h4>
+                <p className="text-green-700 text-sm">
+                  車両に不具合がある場合や、当社の責任による問題が発生した場合は、<br />
+                  代替車両の提供または料金の返金を行います。<br />
+                  お気づきの際は速やかにご連絡ください。<br />
+                  <strong>連絡先：048-951-1089</strong>
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Cancellation Policy */}
+        <Card className="pt-0 shadow-lg border-0 bg-white/80 backdrop-blur-sm mt-6">
+          <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white">
+            <CardTitle className="text-xl md:text-2xl text-center">
+              キャンセルポリシー
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 md:p-8">
+            <div className="space-y-4">
+              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                <p className="text-sm font-medium text-yellow-800 mb-2">
+                  ご利用開始時刻の168時間前〜72時間前
+                </p>
+                <p className="text-sm text-yellow-700">
+                  キャンセル料：レンタル料金の30%
+                </p>
+              </div>
+              <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                <p className="text-sm font-medium text-orange-800 mb-2">
+                  ご利用開始時刻の72時間前〜24時間前
+                </p>
+                <p className="text-sm text-orange-700">
+                  キャンセル料：レンタル料金の50%
+                </p>
+              </div>
+              <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                <p className="text-sm font-medium text-red-800 mb-2">
+                  ご利用開始時刻の24時間前以降
+                </p>
+                <p className="text-sm text-red-700">
+                  キャンセル料：レンタル料金の100%
+                </p>
+              </div>
+              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600">
+                  ※ キャンセルのご連絡は営業時間内（09:00-18:00）にお願いいたします<br />
+                  ※ 天災・事故等やむを得ない事情の場合は、個別に対応いたします
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Special Conditions */}
         <Card className="pt-0 shadow-lg border-0 bg-white/80 backdrop-blur-sm mt-6">
           <CardHeader className="bg-gradient-to-r from-gray-600 to-gray-700 text-white">
             <CardTitle className="text-xl md:text-2xl text-center">
-              特別条件
+              その他特記事項
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 md:p-8">
-            <div className="text-center">
-              <p className="text-lg text-gray-700">特別な制限条項はございません</p>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">利用条件</h4>
+                <ul className="text-gray-700 text-sm space-y-1">
+                  <li>• 有効な運転免許証をお持ちの方（国際免許証可）</li>
+                  <li>• 年齢21歳以上の方</li>
+                  <li>• 免許取得から1年以上経過している方</li>
+                </ul>
+              </div>
+              <Separator />
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">禁止事項</h4>
+                <ul className="text-gray-700 text-sm space-y-1">
+                  <li>• 車両の又貸し</li>
+                  <li>• 喫煙（全車禁煙）</li>
+                  <li>• ペットの同乗</li>
+                  <li>• 法令に違反する使用</li>
+                </ul>
+              </div>
             </div>
           </CardContent>
         </Card>

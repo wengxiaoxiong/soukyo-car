@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Loader2, Car, MapPin, CreditCard } from 'lucide-react'
 import { toast } from 'sonner'
+import Link from 'next/link'
 
 interface Vehicle {
   id: string
@@ -277,6 +278,17 @@ export function BookingForm({ vehicle, onSubmit, loading = false }: BookingFormP
               点击确认后将跳转到支付页面，预估总金额 JPY{priceEstimate.totalAmount.toFixed(2)}
             </p>
           )}
+          
+          <div className="text-center mt-4">
+            <Link 
+              href="/legal/commerce" 
+              className="text-xs text-blue-600 hover:text-blue-800 underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              特定商取引法に基づく表記
+            </Link>
+          </div>
         </div>
       </form>
     </div>

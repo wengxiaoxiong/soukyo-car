@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Phone, Mail, Instagram, Twitter } from "lucide-react";
+import Link from 'next/link';
 
 export const Footer: React.FC = () => {
   return (
@@ -16,7 +17,16 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="font-semibold mb-4">快速链接</h4>
             <ul className="space-y-2 text-gray-400">
-              <li>关于我们</li>
+              <li>
+                <Link href="/about" className="hover:text-white transition-colors">
+                  关于我们
+                </Link>
+              </li>
+              <li>
+                <Link href="/legal/commerce" className="hover:text-white transition-colors">
+                  特定商取引法に基づく表記
+                </Link>
+              </li>
               <li>服务条款</li>
               <li>隐私政策</li>
               <li>常见问题</li>
@@ -27,11 +37,11 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2 text-gray-400">
               <li className="flex items-center">
                 <Phone className="w-4 h-4 mr-2" />
-                +81 080-4612-0188
+                048-951-1089
               </li>
               <li className="flex items-center">
                 <Mail className="w-4 h-4 mr-2" />
-                contact@soukyo.com
+                rentalcar@soukyo-motors.jp
               </li>
             </ul>
           </div>
@@ -55,7 +65,7 @@ export const Footer: React.FC = () => {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-8 md:mt-12 pt-8 text-center text-gray-400">
-          <p>© 2024 Soukyo租车. All rights reserved.</p>
+          <p>© 2024 株式会社創挙. All rights reserved.</p>
         </div>
       </div>
     </footer>

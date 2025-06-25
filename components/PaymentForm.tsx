@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Loader2, CreditCard, CheckCircle, XCircle } from 'lucide-react'
 import { confirmPayment } from '@/lib/actions/booking'
 import { toast } from 'sonner'
+import Link from 'next/link'
 
 // 初始化Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
@@ -148,9 +149,17 @@ function CheckoutForm({ clientSecret, amount, onSuccess, onError }: PaymentFormP
           </form>
         )}
 
-        <div className="text-xs text-gray-500 text-center">
+        <div className="text-xs text-gray-500 text-center space-y-2">
           <p>您的支付信息通过SSL加密保护</p>
           <p>支持Visa、Mastercard、American Express等主要银行卡</p>
+          <Link 
+            href="/legal/commerce" 
+            className="block text-blue-600 hover:text-blue-800 underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            特定商取引法に基づく表記
+          </Link>
         </div>
       </div>
     </div>
