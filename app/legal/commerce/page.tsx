@@ -74,6 +74,7 @@ export default function CommercePage() {
                   </div>
                   <div className="flex-1">
                     <p className="text-lg text-gray-900">048-951-1089</p>
+                    <p className="text-lg text-gray-900">rentalcar@soukyo-motors.jp</p>
                   </div>
                 </div>
 
