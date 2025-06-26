@@ -232,7 +232,7 @@ export default function CommercePage() {
                     営業時間
                   </Badge>
                   <p className="text-gray-700">
-                    09:00 - 18:00<br />
+                    09:00 - 20:00<br />
                     年中無休
                   </p>
                 </div>
