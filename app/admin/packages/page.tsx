@@ -2,7 +2,7 @@ import React from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Package, Plus, Search, MapPin, Edit, Trash2, Eye, EyeOff, Star } from 'lucide-react'
+import { Package, Plus, Edit, Trash2, Eye, EyeOff, Star } from 'lucide-react'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { togglePackageStatus, deletePackage } from '@/lib/actions/packages'
@@ -10,16 +10,6 @@ import { togglePackageStatus, deletePackage } from '@/lib/actions/packages'
 async function getPackages() {
   try {
     const packages = await prisma.package.findMany({
-      include: {
-        store: {
-          select: {
-            id: true,
-            name: true,
-            city: true,
-            address: true
-          }
-        }
-      },
       orderBy: {
         createdAt: 'desc'
       }
@@ -121,9 +111,6 @@ export default async function AdminPackagesPage() {
                     套餐信息
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    门店
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     价格
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -162,13 +149,6 @@ export default async function AdminPackagesPage() {
                           </div>
                         </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <MapPin className="w-4 h-4 text-gray-400 mr-1" />
-                        <span className="text-sm text-gray-900">{pkg.store.name}</span>
-                      </div>
-                      <div className="text-sm text-gray-500">{pkg.store.city}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">

@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-export interface PackageWithStore {
+export interface Package {
   id: string
   name: string
   description: string | null
@@ -14,19 +14,12 @@ export interface PackageWithStore {
   stock: number
   isActive: boolean
   isFeatured: boolean
-  storeId: string
   createdAt: Date
   updatedAt: Date
-  store: {
-    id: string
-    name: string
-    city: string
-    address: string
-  }
 }
 
 // 获取推荐套餐
-export async function getFeaturedPackages(): Promise<PackageWithStore[]> {
+export async function getFeaturedPackages(): Promise<Package[]> {
   try {
     const packages = await prisma.package.findMany({
       where: {
@@ -34,16 +27,6 @@ export async function getFeaturedPackages(): Promise<PackageWithStore[]> {
         isFeatured: true,
         stock: {
           gt: 0
-        }
-      },
-      include: {
-        store: {
-          select: {
-            id: true,
-            name: true,
-            city: true,
-            address: true
-          }
         }
       },
       orderBy: {
@@ -61,21 +44,16 @@ export async function getFeaturedPackages(): Promise<PackageWithStore[]> {
 
 // 获取所有套餐
 export async function getAllPackages(params?: {
-  storeId?: string
   minPrice?: number
   maxPrice?: number
   search?: string
-}): Promise<PackageWithStore[]> {
+}): Promise<Package[]> {
   try {
     const where: any = {
       isActive: true,
       stock: {
         gt: 0
       }
-    }
-
-    if (params?.storeId) {
-      where.storeId = params.storeId
     }
 
     if (params?.minPrice !== undefined) {
@@ -95,16 +73,6 @@ export async function getAllPackages(params?: {
 
     const packages = await prisma.package.findMany({
       where,
-      include: {
-        store: {
-          select: {
-            id: true,
-            name: true,
-            city: true,
-            address: true
-          }
-        }
-      },
       orderBy: {
         createdAt: 'desc'
       }
@@ -118,20 +86,10 @@ export async function getAllPackages(params?: {
 }
 
 // 获取单个套餐详情
-export async function getPackageById(id: string): Promise<PackageWithStore | null> {
+export async function getPackageById(id: string): Promise<Package | null> {
   try {
     const packageData = await prisma.package.findUnique({
-      where: { id },
-      include: {
-        store: {
-          select: {
-            id: true,
-            name: true,
-            city: true,
-            address: true
-          }
-        }
-      }
+      where: { id }
     })
     
     return packageData
@@ -149,7 +107,6 @@ export async function createPackage(formData: FormData) {
     const content = formData.get('content') as string
     const price = parseFloat(formData.get('price') as string)
     const stock = parseInt(formData.get('stock') as string)
-    const storeId = formData.get('storeId') as string
     const isFeatured = formData.get('isFeatured') === 'on'
     const images = formData.getAll('images') as string[]
 
@@ -160,7 +117,6 @@ export async function createPackage(formData: FormData) {
         content,
         price,
         stock,
-        storeId,
         isFeatured,
         images: images.filter(img => img.trim() !== '')
       }
@@ -184,7 +140,6 @@ export async function updatePackage(id: string, formData: FormData) {
     const content = formData.get('content') as string
     const price = parseFloat(formData.get('price') as string)
     const stock = parseInt(formData.get('stock') as string)
-    const storeId = formData.get('storeId') as string
     const isFeatured = formData.get('isFeatured') === 'on'
     const images = formData.getAll('images') as string[]
 
@@ -196,7 +151,6 @@ export async function updatePackage(id: string, formData: FormData) {
         content,
         price,
         stock,
-        storeId,
         isFeatured,
         images: images.filter(img => img.trim() !== '')
       }

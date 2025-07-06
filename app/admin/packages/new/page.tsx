@@ -4,36 +4,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 // import { Switch } from '@/components/ui/switch'
-import { ArrowLeft, Upload, Plus, X } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
 import { createPackage } from '@/lib/actions/packages'
 
-async function getStores() {
-  try {
-    const stores = await prisma.store.findMany({
-      where: { isActive: true },
-      select: {
-        id: true,
-        name: true,
-        city: true,
-        address: true
-      },
-      orderBy: {
-        name: 'asc'
-      }
-    })
-    return stores
-  } catch (error) {
-    console.error('获取门店列表失败:', error)
-    return []
-  }
-}
-
-export default async function NewPackagePage() {
-  const stores = await getStores()
+export default function NewPackagePage() {
 
   return (
     <div>
@@ -56,33 +32,15 @@ export default async function NewPackagePage() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">基本信息</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name">套餐名称 *</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  placeholder="请输入套餐名称"
-                  required
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="storeId">关联门店 *</Label>
-                <Select name="storeId" required>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="选择门店" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stores.map((store) => (
-                      <SelectItem key={store.id} value={store.id}>
-                        {store.name} - {store.city}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label htmlFor="name">套餐名称 *</Label>
+              <Input
+                id="name"
+                name="name"
+                placeholder="请输入套餐名称"
+                required
+                className="mt-1"
+              />
             </div>
 
             <div>
