@@ -85,7 +85,7 @@ export const CompanyInfo: React.FC = () => {
                     <span className="block text-base font-normal text-gray-600 mt-1">事业介绍</span>
                   </h4>
                   <div className="text-gray-600 space-y-4 leading-relaxed">
-                    <p>为全面支持客户的汽车生活，本公司开展了多项业务。</p>
+                    <p>为全面支持客户的美好生活，本公司开展了多项套餐服务业务。</p>
                     <p>我们以&quot;信赖&quot;&quot;安心&quot;&quot;高品质&quot;为宗旨，将持续为客户提供令人满意的服务。</p>
                     <p>衷心期待各位的光临。</p>
                   </div>
@@ -102,7 +102,7 @@ export const CompanyInfo: React.FC = () => {
               为什么选择我们？
             </h3>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              多年行业经验，专业的服务团队，为您提供最可靠的租车体验
+              多年行业经验，专业的服务团队，为您提供最优质的套餐服务体验
             </p>
           </div>
 
@@ -126,7 +126,7 @@ export const CompanyInfo: React.FC = () => {
                 <Award className="w-8 h-8 text-purple-600" />
               </div>
               <h4 className="text-xl font-semibold text-gray-900 mb-2">高品质</h4>
-              <p className="text-gray-600">精选车辆，优质服务，品质保证</p>
+              <p className="text-gray-600">精选套餐，优质服务，品质保证</p>
             </div>
           </div>
 

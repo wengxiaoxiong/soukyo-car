@@ -34,7 +34,7 @@ export const Header: React.FC = () => {
             </h1>
             <nav className="hidden md:flex items-center gap-8">
               <Link href="/" className="text-gray-600 hover:text-gray-900">首页</Link>
-              <Link href="/vehicle" className="text-gray-600 hover:text-gray-900">车型</Link>
+              <Link href="/packages" className="text-gray-600 hover:text-gray-900">套餐</Link>
               <Link href="/store" className="text-gray-600 hover:text-gray-900">门店</Link>
               <Link href="/about" className="text-gray-600 hover:text-gray-900">关于我们</Link>
             </nav>
