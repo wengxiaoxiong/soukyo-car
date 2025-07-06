@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { FeaturedCars } from '@/components/FeaturedCars';
-import { Home, Car } from 'lucide-react';
+import { FeaturedPackages } from '@/components/FeaturedPackages';
+import { Home, Package } from 'lucide-react';
 
 export default function NotFound() {
   return (
@@ -24,7 +24,7 @@ export default function NotFound() {
               很抱歉，您要访问的页面可能已被删除或URL输入有误。
             </p>
             <p className="text-base text-gray-500">
-              您可以查看下方的推荐车型，或者返回首页。
+              您可以查看下方的推荐套餐，或者返回首页。
             </p>
           </div>
 
@@ -37,19 +37,19 @@ export default function NotFound() {
               </Button>
             </Link>
             
-            <Link href="/vehicle">
+            <Link href="/packages">
               <Button variant="outline" size="lg" className="px-8 py-3">
-                <Car className="w-5 h-5 mr-2" />
-                查看所有车型
+                <Package className="w-5 h-5 mr-2" />
+                查看所有套餐
               </Button>
             </Link>
           </div>
         </div>
       </div>
 
-      {/* 推荐车型区域 */}
+      {/* 推荐套餐区域 */}
       <div className="border-t border-gray-200">
-        <FeaturedCars />
+        <FeaturedPackages />
       </div>
     </div>
   );
