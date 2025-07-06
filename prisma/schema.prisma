@@ -79,7 +79,6 @@ model User {
   // 关联关系
   orders        Order[]
   notifications Notification[]
-  reviews       Review[]
   
   @@map("users")
 }
@@ -157,73 +156,77 @@ model Store {
   updatedAt   DateTime @updatedAt
   
   // 关联关系
-  vehicles    Vehicle[]
   orders      Order[]
   
   @@map("stores")
 }
 
-// 3. 车辆表（后台配置）
-model Vehicle {
-  id           String           @id @default(cuid())
-  name         String
-  brand        String
-  model        String
-  year         Int
-  seats        Int
+// 3. 套餐表（后台配置）
+model Package {
+  id          String   @id @default(cuid())
+  name        String
+  title       String?  // 套餐标题
   
   // 价格信息
-  pricePerDay  Float
+  price       Float
+  originalPrice Float? // 原价，用于显示折扣
   
-  // 车辆详情
-  description  String?
-  // 内部描述，用于管理员查看
-  internalDescription String?
+  // 套餐详情
+  description String?  // 简短描述
+  content     String?  // Markdown格式的详细内容
   
-  images       String[]
+  // 图片
+  images      String[] // 多张图片
+  thumbnail   String?  // 缩略图
   
-  // 车辆规格
-  color        String?
-  plateNumber  String?        @unique
+  // 库存管理
+  stock       Int      @default(0)
+  maxStock    Int      @default(0) // 最大库存，用于库存预警
   
-  // 可用性
-  isAvailable  Boolean        @default(true)
+  // 分类和标签
+  category    String?
+  tags        String[]
   
-  // 关联店面
-  storeId      String
-  store        Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
-
+  // 套餐状态
+  isActive    Boolean  @default(true)
+  isPublished Boolean  @default(false)
+  
+  // 排序权重
+  sortOrder   Int      @default(0)
+  
+  // SEO字段
+  slug        String?  @unique
+  metaTitle   String?
+  metaDescription String?
+  
   // 创建和更新时间
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   
   // 关联关系
-  orders       Order[]
-  reviews      Review[]
+  orders      Order[]
   
-  @@map("vehicles")
+  @@map("packages")
 }
 
-// 4. 订单表（包含租车信息和Stripe支付）
+// 4. 订单表（套餐购买）
 model Order {
   id                     String      @id @default(cuid())
   orderNumber            String      @unique @default(cuid())
   
-  // 用户和车辆关联
+  // 用户和套餐关联
   userId                 String
   user                   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vehicleId              String
-  vehicle                Vehicle     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  packageId              String
+  package                Package     @relation(fields: [packageId], references: [id], onDelete: Cascade)
   storeId                String
   store                  Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
   
-  // 租车时间
-  startDate              DateTime
-  endDate                DateTime
-  totalDays              Int
+  // 购买数量
+  quantity               Int         @default(1)
   
   // 价格信息
-  pricePerDay            Float
+  unitPrice              Float
   subtotal               Float
   taxAmount              Float       @default(0)
   totalAmount            Float
@@ -235,16 +238,11 @@ model Order {
   stripePaymentIntentId  String?
   stripeCustomerId       String?
   
-  // 取车和还车信息
-  pickupLocation         String?
-  dropoffLocation        String?
-  pickupTime             DateTime?
-  dropoffTime            DateTime?
-  
-  // 驾驶员信息
-  driverLicense          String
-  emergencyContact       String?
-  emergencyPhone         String?
+  // 收货信息
+  deliveryAddress        String?
+  deliveryPhone          String?
+  deliveryName           String?
+  deliveryNotes          String?
   
   // 备注
   notes                  String?
@@ -348,28 +346,4 @@ model Payment {
   updatedAt             DateTime      @updatedAt
   
   @@map("payments")
-}
-
-// 8. 评价表
-model Review {
-  id        String   @id @default(cuid())
-  
-  // 关联用户和车辆
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vehicleId String
-  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  
-  // 评价内容
-  rating    Int      // 1-5星评价
-  comment   String?
-  
-  // 是否显示
-  isVisible Boolean  @default(true)
-  
-  // 创建时间
-  createdAt DateTime @default(now())
-  
-  @@map("reviews")
-  @@unique([userId, vehicleId]) // 一个用户对同一车辆只能评价一次
 }

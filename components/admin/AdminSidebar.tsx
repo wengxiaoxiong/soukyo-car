@@ -16,7 +16,7 @@ import {
 const navigation = [
   { name: '仪表板', href: '/admin', icon: BarChart3 },
   { name: '店面管理', href: '/admin/stores', icon: Store },
-  { name: '车辆管理', href: '/admin/vehicles', icon: Car },
+  { name: '套餐管理', href: '/admin/packages', icon: Car },
   { name: '用户管理', href: '/admin/users', icon: Users },
   { name: '订单管理', href: '/admin/orders', icon: FileText },
   { name: '设置', href: '/admin/settings', icon: Settings },
