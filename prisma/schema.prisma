@@ -80,6 +80,7 @@ model User {
   orders        Order[]
   notifications Notification[]
   reviews       Review[]
+  packageReviews PackageReview[]
   
   @@map("users")
 }
@@ -159,6 +160,7 @@ model Store {
   // 关联关系
   vehicles    Vehicle[]
   orders      Order[]
+  packages    Package[]
   
   @@map("stores")
 }
@@ -209,11 +211,19 @@ model Order {
   id                     String      @id @default(cuid())
   orderNumber            String      @unique @default(cuid())
   
-  // 用户和车辆关联
+  // 用户关联
   userId                 String
   user                   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vehicleId              String
-  vehicle                Vehicle     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  
+  // 车辆关联（可选）
+  vehicleId              String?
+  vehicle                Vehicle?    @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  
+  // 套餐关联（可选）
+  packageId              String?
+  package                Package?    @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  
+  // 店面关联
   storeId                String
   store                  Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
   
@@ -372,4 +382,67 @@ model Review {
   
   @@map("reviews")
   @@unique([userId, vehicleId]) // 一个用户对同一车辆只能评价一次
+}
+
+// 9. 套餐表（新增）
+model Package {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  
+  // Markdown 文本内容
+  content     String?  @db.Text
+  
+  // 图片数组
+  images      String[]
+  
+  // 价格信息
+  price       Float
+  
+  // 库存管理
+  stock       Int      @default(0)
+  
+  // 是否启用
+  isActive    Boolean  @default(true)
+  
+  // 是否推荐
+  isFeatured  Boolean  @default(false)
+  
+  // 关联店面
+  storeId     String
+  store       Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  
+  // 创建和更新时间
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // 关联关系
+  orders      Order[]
+  packageReviews PackageReview[]
+  
+  @@map("packages")
+}
+
+// 10. 套餐评价表
+model PackageReview {
+  id        String   @id @default(cuid())
+  
+  // 关联用户和套餐
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  packageId String
+  package   Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  
+  // 评价内容
+  rating    Int      // 1-5星评价
+  comment   String?
+  
+  // 是否显示
+  isVisible Boolean  @default(true)
+  
+  // 创建时间
+  createdAt DateTime @default(now())
+  
+  @@map("package_reviews")
+  @@unique([userId, packageId]) // 一个用户对同一套餐只能评价一次
 }

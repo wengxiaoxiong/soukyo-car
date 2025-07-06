@@ -34,7 +34,7 @@ export const Header: React.FC = () => {
             </h1>
             <nav className="hidden md:flex items-center gap-8">
               <Link href="/" className="text-gray-600 hover:text-gray-900">首页</Link>
-              <Link href="/vehicle" className="text-gray-600 hover:text-gray-900">车型</Link>
+              <Link href="/package" className="text-gray-600 hover:text-gray-900">套餐</Link>
               <Link href="/store" className="text-gray-600 hover:text-gray-900">门店</Link>
               <Link href="/about" className="text-gray-600 hover:text-gray-900">关于我们</Link>
             </nav>
@@ -132,10 +132,10 @@ export const Header: React.FC = () => {
         <div className="md:hidden bg-white border-t border-gray-100 shadow-sm">
           <div className="max-w-[1440px] mx-auto px-4 py-4">
             <nav className="flex flex-col space-y-4">
-              <a href="#" className="text-gray-600 hover:text-gray-900 py-2">首页</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900 py-2">车型</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900 py-2">门店</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900 py-2">关于我们</a>
+              <Link href="/" className="text-gray-600 hover:text-gray-900 py-2">首页</Link>
+              <Link href="/package" className="text-gray-600 hover:text-gray-900 py-2">套餐</Link>
+              <Link href="/store" className="text-gray-600 hover:text-gray-900 py-2">门店</Link>
+              <Link href="/about" className="text-gray-600 hover:text-gray-900 py-2">关于我们</Link>
 
               {/* 移动端通知 */}
               {session?.user && (

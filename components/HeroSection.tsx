@@ -60,7 +60,7 @@ export const HeroSection: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // 构建搜索参数，直接跳转到vehicle页面
+      // 构建搜索参数，直接跳转到package页面
       const searchParams = new URLSearchParams({
         startDate: searchData.startDate,
         endDate: searchData.endDate,
@@ -68,8 +68,8 @@ export const HeroSection: React.FC = () => {
         storeId: searchData.storeId
       });
 
-      // 直接跳转到vehicle页面
-      router.push(`/vehicle?${searchParams.toString()}`);
+      // 直接跳转到package页面
+      router.push(`/package?${searchParams.toString()}`);
     } catch (error) {
       console.error('搜索失败:', error);
       alert('搜索失败，请重试');
@@ -152,9 +152,9 @@ export const HeroSection: React.FC = () => {
               <div className="mb-4 sm:mb-6">
                 <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 flex items-center gap-2">
                   <Search className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
-                  开始租车
+                  选择套餐
                 </h3>
-                <p className="text-gray-600 text-sm sm:text-base">选择您的需求，立即查找合适车辆</p>
+                <p className="text-gray-600 text-sm sm:text-base">选择您的需求，立即查找合适套餐</p>
               </div>
 
               <div className="space-y-3 sm:space-y-4">
@@ -243,7 +243,7 @@ export const HeroSection: React.FC = () => {
                   ) : (
                     <>
                       <Search className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                      立即查找车辆
+                      立即查找套餐
                     </>
                   )}
                 </Button>
