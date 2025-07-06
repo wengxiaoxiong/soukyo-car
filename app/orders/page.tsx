@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { OrderList } from '@/components/OrderList'
-import { getUserOrders, cancelOrder, createPaymentLink } from '@/lib/actions/booking'
+import { getUserOrders, cancelOrder } from '@/lib/actions/orders'
 import { useSession } from 'next-auth/react'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -73,15 +73,10 @@ export default function OrdersPage() {
 
   const handlePayOrder = async (orderId: string) => {
     try {
-      const result = await createPaymentLink(orderId)
-      if (result.success && result.checkoutUrl) {
-        // 跳转到Stripe支付页面
-        window.location.href = result.checkoutUrl
-      } else {
-        toast.error(result.error || '创建支付链接失败')
-      }
+      // TODO: 实现支付逻辑
+      toast.info('支付功能开发中，敬请期待')
     } catch {
-      toast.error('创建支付链接失败')
+      toast.error('支付功能暂不可用')
     }
   }
 
