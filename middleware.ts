@@ -9,25 +9,14 @@ export default createMiddleware({
   defaultLocale: 'zh',
   
   // 语言检测策略
-  localeDetection: true,
-  
-  // 路径名配置
-  pathnames: {
-    '/': '/',
-    '/vehicles': '/vehicles',
-    '/packages': '/packages',
-    '/stores': '/stores',
-    '/orders': '/orders',
-    '/booking': '/booking',
-    '/about': '/about',
-    '/contact': '/contact'
-  }
+  localeDetection: true
 });
 
 export const config = {
   // 匹配所有路径，除了以下路径：
   // - API路由 (/api)
-  // - Next.js内部路径 (/_next)
-  // - 静态文件 (不包含文件扩展名的路径)
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+  // - Next.js内部路径 (_next, _vercel等)
+  // - 静态文件 (包含文件扩展名的路径)
+  // - favicon.ico
+  matcher: ['/((?!api|_next|_vercel|favicon.ico|.*\\..*).*)', '/']
 };
