@@ -1,5 +1,8 @@
 {
   "common": {
+    "or": "或",
+    "return_home": "返回首页",
+    "relogin": "重新登录",
     "home": "首页",
     "about": "关于我们",
     "services": "服务",
@@ -187,6 +190,9 @@
     "contact_store": "联系门店"
   },
   "auth": {
+    "account_disabled_title": "账户已被禁用",
+    "account_disabled_description": "您的账户已被管理员禁用，无法访问系统功能",
+    "account_disabled_contact_admin": "如果您认为这是一个错误，请联系管理员以重新激活您的账户。",
     "sign_in": "登录",
     "sign_up": "注册",
     "sign_out": "退出登录",
@@ -199,7 +205,22 @@
     "or_continue_with": "或使用以下方式继续",
     "google_sign_in": "使用Google登录",
     "already_have_account": "已有账户？",
-    "dont_have_account": "还没有账户？"
+    "dont_have_account": "还没有账户？",
+    "login_account": "登录账户",
+    "register_account": "注册账户",
+    "error_invalid_credentials": "邮箱或密码错误",
+    "login_failed_retry": "登录失败，请稍后重试",
+    "register_failed_retry": "注册失败，请稍后重试",
+    "password_mismatch": "两次输入的密码不一致",
+    "password_too_short": "密码至少需要6位字符",
+    "register_success_login_fail": "注册成功，但登录失败，请手动登录",
+    "login_in_progress": "登录中...",
+    "register_in_progress": "注册中...",
+    "input_email_placeholder": "请输入邮箱地址",
+    "input_password_placeholder": "请输入密码",
+    "input_name_placeholder": "请输入您的姓名",
+    "confirm_password": "确认密码",
+    "confirm_password_placeholder": "请再次输入密码"
   },
   "footer": {
     "company_info": "公司信息",

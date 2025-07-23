@@ -1,5 +1,8 @@
 {
   "common": {
+    "or": "Or",
+    "return_home": "Return Home",
+    "relogin": "Re-login",
     "home": "Home",
     "about": "About Us",
     "services": "Services",
@@ -187,6 +190,9 @@
     "contact_store": "Contact Store"
   },
   "auth": {
+    "account_disabled_title": "Account Disabled",
+    "account_disabled_description": "Your account has been disabled by the administrator and cannot access system functions",
+    "account_disabled_contact_admin": "If you believe this is an error, please contact the administrator to reactivate your account.",
     "sign_in": "Sign In",
     "sign_up": "Sign Up",
     "sign_out": "Sign Out",
@@ -199,7 +205,22 @@
     "or_continue_with": "Or continue with",
     "google_sign_in": "Sign in with Google",
     "already_have_account": "Already have an account?",
-    "dont_have_account": "Don't have an account?"
+    "dont_have_account": "Don't have an account?",
+    "login_account": "Login Account",
+    "register_account": "Register Account",
+    "error_invalid_credentials": "Incorrect email or password",
+    "login_failed_retry": "Login failed, please try again later",
+    "register_failed_retry": "Registration failed, please try again later",
+    "password_mismatch": "Passwords do not match",
+    "password_too_short": "Password must be at least 6 characters",
+    "register_success_login_fail": "Registration successful but login failed, please login manually",
+    "login_in_progress": "Logging in...",
+    "register_in_progress": "Registering...",
+    "input_email_placeholder": "Please enter your email address",
+    "input_password_placeholder": "Please enter your password",
+    "input_name_placeholder": "Please enter your name",
+    "confirm_password": "Confirm Password",
+    "confirm_password_placeholder": "Please enter your password again"
   },
   "footer": {
     "company_info": "Company Information",
