@@ -9,9 +9,12 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function SignInPage() {
   const router = useRouter()
+  const t = useTranslations('auth')
+  const commonT = useTranslations('common')
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -33,7 +36,7 @@ export default function SignInPage() {
       })
 
       if (result?.error) {
-        setError('邮箱或密码错误')
+        setError(t('error_invalid_credentials'))
       } else {
         // 获取用户session信息
         const session = await getSession()
@@ -45,7 +48,7 @@ export default function SignInPage() {
       }
     } catch (error) {
       console.error('登录失败:', error)
-      setError('登录失败，请稍后重试')
+      setError(t('login_failed_retry'))
     } finally {
       setIsLoading(false)
     }
@@ -57,7 +60,7 @@ export default function SignInPage() {
       await signIn('google', { callbackUrl: '/' })
     } catch (error) {
       console.error('Google登录失败:', error)
-      setError('Google登录失败，请稍后重试')
+      setError(t('login_failed_retry'))
     } finally {
       setIsLoading(false)
     }
@@ -68,15 +71,15 @@ export default function SignInPage() {
       <Card className="max-w-md w-full space-y-8 p-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            登录账户
+            {t('login_account')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            或者{' '}
+            {' '}
             <Link
               href="/auth/signup"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
-              注册新账户
+              {t('dont_have_account')}
             </Link>
           </p>
         </div>
@@ -90,7 +93,7 @@ export default function SignInPage() {
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="email">邮箱地址</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <div className="mt-1 relative">
                 <Input
                   id="email"
@@ -102,14 +105,14 @@ export default function SignInPage() {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   className="pl-10"
-                  placeholder="请输入邮箱地址"
+                  placeholder={t('input_email_placeholder')}
                 />
                 <Mail className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="password">密码</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <div className="mt-1 relative">
                 <Input
                   id="password"
@@ -121,7 +124,7 @@ export default function SignInPage() {
                     setFormData({ ...formData, password: e.target.value })
                   }
                   className="pl-10 pr-10"
-                  placeholder="请输入密码"
+                  placeholder={t('input_password_placeholder')}
                 />
                 <Lock className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
                 <button
@@ -145,7 +148,7 @@ export default function SignInPage() {
               disabled={isLoading}
               className="w-full"
             >
-              {isLoading ? '登录中...' : '登录'}
+              {isLoading ? t('login_in_progress') : t('sign_in')}
             </Button>
           </div>
 
@@ -155,7 +158,7 @@ export default function SignInPage() {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">或者</span>
+                <span className="px-2 bg-white text-gray-500">{commonT('or')}</span>
               </div>
             </div>
 
@@ -185,7 +188,7 @@ export default function SignInPage() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                使用 Google 登录
+                {t('google_sign_in')}
               </Button>
             </div>
           </div>

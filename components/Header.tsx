@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,6 +21,8 @@ import { NotificationMobileMenu } from "@/components/NotificationMobileMenu";
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { data: session, status } = useSession();
+  const t = useTranslations();
+  const locale = useLocale();
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm">
@@ -33,10 +36,10 @@ export const Header: React.FC = () => {
               </Link>
             </h1>
             <nav className="hidden md:flex items-center gap-8">
-              <Link href="/" className="text-gray-600 hover:text-gray-900">首页</Link>
-              <Link href="/package" className="text-gray-600 hover:text-gray-900">套餐</Link>
-              <Link href="/store" className="text-gray-600 hover:text-gray-900">门店</Link>
-              <Link href="/about" className="text-gray-600 hover:text-gray-900">关于我们</Link>
+              <Link href={`/${locale}`} className="text-gray-600 hover:text-gray-900">{t('common.home')}</Link>
+              <Link href={`/${locale}/package`} className="text-gray-600 hover:text-gray-900">{t('navigation.packages')}</Link>
+              <Link href={`/${locale}/store`} className="text-gray-600 hover:text-gray-900">{t('navigation.stores')}</Link>
+              <Link href={`/${locale}/about`} className="text-gray-600 hover:text-gray-900">{t('common.about')}</Link>
             </nav>
           </div>
           <div className="flex items-center gap-4">
@@ -48,7 +51,7 @@ export const Header: React.FC = () => {
             {/* 认证状态 */}
             {status === 'loading' ? (
               <Button disabled className="!rounded-button whitespace-nowrap">
-                加载中...
+                {t('common.loading')}
               </Button>
             ) : session?.user ? (
               // 已登录用户
@@ -73,7 +76,7 @@ export const Header: React.FC = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <div className="px-2 py-1.5">
-                    <p className="text-sm font-medium">{session.user.name || '用户'}</p>
+                    <p className="text-sm font-medium">{session.user.name || t('common.name')}</p>
                     <p className="text-xs text-gray-500">{session.user.email}</p>
                     {session.user.role === 'ADMIN' && <div className="flex items-center mt-1">
                       <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
@@ -83,33 +86,33 @@ export const Header: React.FC = () => {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <Link href="/orders" className="flex items-center w-full">
+                    <Link href={`/${locale}/orders`} className="flex items-center w-full">
                       <Settings className="w-4 h-4 mr-2" />
-                      我的订单
+                      {t('navigation.orders')}
                     </Link>
                   </DropdownMenuItem>
 
                   {session.user.role === 'ADMIN' && (
                     <DropdownMenuItem>
-                      <Link href="/admin" className="flex items-center w-full">
+                      <Link href={`/${locale}/admin`} className="flex items-center w-full">
                         <Shield className="w-4 h-4 mr-2" />
-                        管理后台
+                        {t('navigation.admin')}
                       </Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => signOut()}>
                     <LogOut className="w-4 h-4 mr-2" />
-                    退出登录
+                    {t('auth.sign_out')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               // 未登录用户
               <div className="flex items-center gap-2">
-                <Link href="/auth/signin">
+                <Link href={`/${locale}/auth/signin`}>
                   <Button variant="default" className="!rounded-button whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white">
-                    登录查看更多
+                    {t('auth.sign_in')}
                   </Button>
                 </Link>
               </div>
@@ -132,17 +135,17 @@ export const Header: React.FC = () => {
         <div className="md:hidden bg-white border-t border-gray-100 shadow-sm">
           <div className="max-w-[1440px] mx-auto px-4 py-4">
             <nav className="flex flex-col space-y-4">
-              <Link href="/" className="text-gray-600 hover:text-gray-900 py-2">首页</Link>
-              <Link href="/package" className="text-gray-600 hover:text-gray-900 py-2">套餐</Link>
-              <Link href="/store" className="text-gray-600 hover:text-gray-900 py-2">门店</Link>
-              <Link href="/about" className="text-gray-600 hover:text-gray-900 py-2">关于我们</Link>
+              <Link href={`/${locale}`} className="text-gray-600 hover:text-gray-900 py-2">{t('common.home')}</Link>
+              <Link href={`/${locale}/package`} className="text-gray-600 hover:text-gray-900 py-2">{t('navigation.packages')}</Link>
+              <Link href={`/${locale}/store`} className="text-gray-600 hover:text-gray-900 py-2">{t('navigation.stores')}</Link>
+              <Link href={`/${locale}/about`} className="text-gray-600 hover:text-gray-900 py-2">{t('common.about')}</Link>
 
               {/* 移动端通知 */}
               {session?.user && (
                 <div className="border-t pt-4 mt-4">
                   <div className="flex items-center gap-2 py-2">
                     <NotificationMobileMenu />
-                    <span className="text-gray-600">通知</span>
+                    <span className="text-gray-600">{t('notifications.title')}</span>
                   </div>
                 </div>
               )}
@@ -166,25 +169,25 @@ export const Header: React.FC = () => {
                       {session.user.name || session.user.email}
                     </span>
                   </div>
-                  <Link href="/orders" className="block py-2 text-gray-600 hover:text-gray-900">
-                    我的订单
+                  <Link href={`/${locale}/orders`} className="block py-2 text-gray-600 hover:text-gray-900">
+                    {t('navigation.orders')}
                   </Link>
                   {session.user.role === 'ADMIN' && (
-                    <Link href="/admin" className="block py-2 text-gray-600 hover:text-gray-900">
-                      管理后台
+                    <Link href={`/${locale}/admin`} className="block py-2 text-gray-600 hover:text-gray-900">
+                      {t('navigation.admin')}
                     </Link>
                   )}
                   <button
                     onClick={() => signOut()}
                     className="block py-2 text-gray-600 hover:text-gray-900 text-left"
                   >
-                    退出登录
+                    {t('auth.sign_out')}
                   </button>
                 </div>
               ) : (
                 <div className="border-t pt-4 mt-4 space-y-2">
-                  <Link href="/auth/signin" className="block py-2 text-gray-600 hover:text-gray-900">
-                    登录
+                  <Link href={`/${locale}/auth/signin`} className="block py-2 text-gray-600 hover:text-gray-900">
+                    {t('auth.sign_in')}
                   </Link>
 
                 </div>

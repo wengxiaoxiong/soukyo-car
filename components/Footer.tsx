@@ -1,9 +1,13 @@
 import React from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from "@/components/ui/button";
 import { Phone, Mail, Instagram, Twitter } from "lucide-react";
 import Link from 'next/link';
 
 export const Footer: React.FC = () => {
+  const t = useTranslations();
+  const locale = useLocale();
+  
   return (
     <footer className="bg-gray-900 text-white mt-8 md:mt-16">
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-12 md:py-16">
@@ -11,29 +15,29 @@ export const Footer: React.FC = () => {
           <div>
             <h3 className="text-xl font-bold mb-6">Soukyo租车</h3>
             <p className="text-gray-400">
-              为您提供优质的租车服务，让您的日本之旅更加便捷舒适。
+              {t('home.subtitle')}
             </p>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">快速链接</h4>
+            <h4 className="font-semibold mb-4">{t('footer.services')}</h4>
             <ul className="space-y-2 text-gray-400">
               <li>
-                <Link href="/about" className="hover:text-white transition-colors">
-                  关于我们
+                <Link href={`/${locale}/about`} className="hover:text-white transition-colors">
+                  {t('common.about')}
                 </Link>
               </li>
               <li>
-                <Link href="/legal/commerce" className="hover:text-white transition-colors">
+                <Link href={`/${locale}/legal/commerce`} className="hover:text-white transition-colors">
                   特定商取引法に基づく表記
                 </Link>
               </li>
-              <li>服务条款</li>
-              <li>隐私政策</li>
-              <li>常见问题</li>
+              <li>{t('footer.terms_of_service')}</li>
+              <li>{t('footer.privacy_policy')}</li>
+              <li>FAQ</li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">联系方式</h4>
+            <h4 className="font-semibold mb-4">{t('common.contact')}</h4>
             <ul className="space-y-2 text-gray-400">
               <li className="flex items-center">
                 <Phone className="w-4 h-4 mr-2" />
@@ -46,7 +50,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">关注我们</h4>
+            <h4 className="font-semibold mb-4">{t('footer.support')}</h4>
             <div className="flex gap-4">
               <Button variant="ghost" size="icon" className="!rounded-button">
                 <Instagram className="w-5 h-5" />
@@ -65,7 +69,7 @@ export const Footer: React.FC = () => {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-8 md:mt-12 pt-8 text-center text-gray-400">
-          <p>© 2024 株式会社創挙. All rights reserved.</p>
+          <p>© 2024 株式会社創挙. {t('footer.copyright')}.</p>
         </div>
       </div>
     </footer>

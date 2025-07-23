@@ -9,9 +9,12 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 export default function SignUpPage() {
   const router = useRouter()
+  const t = useTranslations('auth')
+  const commonT = useTranslations('common')
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -29,13 +32,13 @@ export default function SignUpPage() {
     setError('')
 
     if (formData.password !== formData.confirmPassword) {
-      setError('两次输入的密码不一致')
+      setError(t('password_mismatch'))
       setIsLoading(false)
       return
     }
 
     if (formData.password.length < 6) {
-      setError('密码至少需要6位字符')
+      setError(t('password_too_short'))
       setIsLoading(false)
       return
     }
@@ -56,7 +59,7 @@ export default function SignUpPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error || '注册失败')
+        setError(data.error || t('register_failed_retry'))
         return
       }
 
@@ -68,14 +71,14 @@ export default function SignUpPage() {
       })
 
       if (result?.error) {
-        setError('注册成功，但登录失败，请手动登录')
+        setError(t('register_success_login_fail'))
         router.push('/auth/signin')
       } else {
         router.push('/')
       }
     } catch (error) {
       console.error('注册失败:', error)
-      setError('注册失败，请稍后重试')
+      setError(t('register_failed_retry'))
     } finally {
       setIsLoading(false)
     }
@@ -87,7 +90,7 @@ export default function SignUpPage() {
       await signIn('google', { callbackUrl: '/' })
     } catch (error) {
       console.error('Google登录失败:', error)
-      setError('Google登录失败，请稍后重试')
+      setError(t('register_failed_retry'))
     } finally {
       setIsLoading(false)
     }
@@ -98,15 +101,15 @@ export default function SignUpPage() {
       <Card className="max-w-md w-full space-y-8 p-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            注册账户
+            {t('register_account')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            已有账户?{' '}
+            {t('already_have_account')}{' '}
             <Link
               href="/auth/signin"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
-              立即登录
+              {t('sign_in')}
             </Link>
           </p>
         </div>
@@ -120,7 +123,7 @@ export default function SignUpPage() {
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">姓名</Label>
+              <Label htmlFor="name">{t('name')}</Label>
               <div className="mt-1 relative">
                 <Input
                   id="name"
@@ -131,14 +134,14 @@ export default function SignUpPage() {
                     setFormData({ ...formData, name: e.target.value })
                   }
                   className="pl-10"
-                  placeholder="请输入您的姓名"
+                  placeholder={t('input_name_placeholder')}
                 />
                 <User className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="email">邮箱地址</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <div className="mt-1 relative">
                 <Input
                   id="email"
@@ -150,14 +153,14 @@ export default function SignUpPage() {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   className="pl-10"
-                  placeholder="请输入邮箱地址"
+                  placeholder={t('input_email_placeholder')}
                 />
                 <Mail className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="password">密码</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <div className="mt-1 relative">
                 <Input
                   id="password"
@@ -169,7 +172,7 @@ export default function SignUpPage() {
                     setFormData({ ...formData, password: e.target.value })
                   }
                   className="pl-10 pr-10"
-                  placeholder="请输入密码（至少6位）"
+                  placeholder={t('input_password_placeholder')}
                 />
                 <Lock className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
                 <button
@@ -187,7 +190,7 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword">确认密码</Label>
+              <Label htmlFor="confirmPassword">{t('confirm_password')}</Label>
               <div className="mt-1 relative">
                 <Input
                   id="confirmPassword"
@@ -199,7 +202,7 @@ export default function SignUpPage() {
                     setFormData({ ...formData, confirmPassword: e.target.value })
                   }
                   className="pl-10 pr-10"
-                  placeholder="请再次输入密码"
+                  placeholder={t('confirm_password_placeholder')}
                 />
                 <Lock className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
                 <button
@@ -223,7 +226,7 @@ export default function SignUpPage() {
               disabled={isLoading}
               className="w-full"
             >
-              {isLoading ? '注册中...' : '注册账户'}
+              {isLoading ? t('register_in_progress') : t('register_account')}
             </Button>
           </div>
 
@@ -233,7 +236,7 @@ export default function SignUpPage() {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">或者</span>
+                <span className="px-2 bg-white text-gray-500">{commonT('or')}</span>
               </div>
             </div>
 
@@ -263,7 +266,7 @@ export default function SignUpPage() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                使用 Google 注册
+                {t('google_sign_in')}
               </Button>
             </div>
           </div>

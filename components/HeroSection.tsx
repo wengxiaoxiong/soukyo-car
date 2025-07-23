@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar, Users, Search, MapPin, Sparkles, Car } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { getActiveStores, StoreWithOpeningHours } from '@/app/actions/stores';
+import { useTranslations } from 'next-intl';
 
 interface SearchFormData {
   startDate: string;
@@ -17,6 +18,7 @@ interface SearchFormData {
 
 export const HeroSection: React.FC = () => {
   const router = useRouter();
+  const t = useTranslations('HeroSection');
   const [searchData, setSearchData] = useState<SearchFormData>({
     startDate: '',
     endDate: '',
@@ -54,7 +56,7 @@ export const HeroSection: React.FC = () => {
   // 处理搜索
   const handleSearch = async () => {
     if (!searchData.startDate || !searchData.endDate || !searchData.storeId) {
-      alert('请填写完整的搜索信息并选择取车店面');
+      alert(t('alert.fill_all_fields'));
       return;
     }
 
@@ -72,7 +74,7 @@ export const HeroSection: React.FC = () => {
       router.push(`/package?${searchParams.toString()}`);
     } catch (error) {
       console.error('搜索失败:', error);
-      alert('搜索失败，请重试');
+      alert(t('alert.search_failed'));
     } finally {
       setIsLoading(false);
     }
@@ -115,33 +117,33 @@ export const HeroSection: React.FC = () => {
           <div className="text-center lg:text-left order-1 lg:order-1">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/20 backdrop-blur-sm rounded-full text-blue-200 text-xs sm:text-sm font-medium mb-4 sm:mb-6 border border-blue-400/30">
               <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span>东京两大机场租车服务</span>
+              <span>{t('top_banner.text')}</span>
             </div>
             
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
-              探索
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400"> 日本</span>
+              {t('title.part1')}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400"> {t('title.japan')}</span>
               <br />
-              <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white/90">从这里开始</span>
+              <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white/90">{t('title.part2')}</span>
             </h1>
             
             <p className="text-base sm:text-lg md:text-xl text-white/80 mb-6 sm:mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0 px-2 sm:px-0">
-              专业的租车服务，让您的日本之旅更加自由精彩
+              {t('description')}
             </p>
 
             {/* 特色标签 - 移动端优化 */}
             <div className="flex flex-wrap gap-2 sm:gap-3 justify-center lg:justify-start mb-6 sm:mb-8 px-2 sm:px-0">
               <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-white/10 backdrop-blur-sm rounded-lg text-white/90 text-xs sm:text-sm">
                 <Car className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span>多种车型</span>
+                <span>{t('features.car_models')}</span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-white/10 backdrop-blur-sm rounded-lg text-white/90 text-xs sm:text-sm">
                 <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span>机场取车</span>
+                <span>{t('features.airport_pickup')}</span>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-white/10 backdrop-blur-sm rounded-lg text-white/90 text-xs sm:text-sm">
                 <Users className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span>灵活预订</span>
+                <span>{t('features.flexible_booking')}</span>
               </div>
             </div>
           </div>
@@ -152,22 +154,22 @@ export const HeroSection: React.FC = () => {
               <div className="mb-4 sm:mb-6">
                 <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 flex items-center gap-2">
                   <Search className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
-                  选择套餐
+                  {t('search_form.title')}
                 </h3>
-                <p className="text-gray-600 text-sm sm:text-base">选择您的需求，立即查找合适套餐</p>
+                <p className="text-gray-600 text-sm sm:text-base">{t('search_form.subtitle')}</p>
               </div>
 
               <div className="space-y-3 sm:space-y-4">
                 {/* 店面选择 */}
                 <div className="space-y-1.5 sm:space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">取车店面</label>
+                  <label className="block text-sm font-medium text-gray-700">{t('search_form.pickup_store')}</label>
                   <Select 
                     value={searchData.storeId} 
                     onValueChange={(value) => handleInputChange('storeId', value)}
                     disabled={storesLoading}
                   >
                     <SelectTrigger className="h-11 sm:h-12 bg-gray-50 border-gray-200 hover:border-blue-400 transition-colors rounded-xl text-sm sm:text-base">
-                      <SelectValue placeholder={storesLoading ? "加载中..." : "选择取车店面"} />
+                      <SelectValue placeholder={storesLoading ? t('search_form.loading') : t('search_form.select_pickup_store')} />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                       {stores.map((store) => (
@@ -185,7 +187,7 @@ export const HeroSection: React.FC = () => {
                 {/* 日期选择 - 移动端垂直排列 */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5 sm:space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">取车日期</label>
+                    <label className="block text-sm font-medium text-gray-700">{t('search_form.pickup_date')}</label>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
                       <Input
@@ -198,7 +200,7 @@ export const HeroSection: React.FC = () => {
                     </div>
                   </div>
                   <div className="space-y-1.5 sm:space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">还车日期</label>
+                    <label className="block text-sm font-medium text-gray-700">{t('search_form.return_date')}</label>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
                       <Input
@@ -214,13 +216,13 @@ export const HeroSection: React.FC = () => {
                 
                 {/* 乘客数 */}
                 <div className="space-y-1.5 sm:space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">乘客数量</label>
+                  <label className="block text-sm font-medium text-gray-700">{t('search_form.passengers')}</label>
                   <div className="relative">
                     <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
                     <Input
                       className="pl-10 h-11 sm:h-12 bg-gray-50 border-gray-200 hover:border-blue-400 transition-colors rounded-xl text-sm sm:text-base"
                       type="number"
-                      placeholder="请输入人数"
+                      placeholder={t('search_form.enter_passengers_placeholder')}
                       value={searchData.passengers}
                       min="1"
                       max="9"
@@ -238,12 +240,12 @@ export const HeroSection: React.FC = () => {
                   {isLoading ? (
                     <>
                       <Search className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-spin" />
-                      搜索中...
+                      {t('search_button.searching')}
                     </>
                   ) : (
                     <>
                       <Search className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                      立即查找套餐
+                      {t('search_button.find_package')}
                     </>
                   )}
                 </Button>
