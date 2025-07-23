@@ -5,18 +5,19 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { 
-  Store, 
-  Car, 
+  Store,  
   Users, 
   FileText, 
   BarChart3, 
-  Settings
+  Settings,
+  Package
 } from 'lucide-react'
 
 const navigation = [
   { name: '仪表板', href: '/admin', icon: BarChart3 },
   { name: '店面管理', href: '/admin/stores', icon: Store },
-  { name: '车辆管理', href: '/admin/vehicles', icon: Car },
+  { name: '套餐管理', href: '/admin/packages', icon: Package },
+  // { name: '车辆管理', href: '/admin/vehicles', icon: Car },
   { name: '用户管理', href: '/admin/users', icon: Users },
   { name: '订单管理', href: '/admin/orders', icon: FileText },
   { name: '设置', href: '/admin/settings', icon: Settings },
