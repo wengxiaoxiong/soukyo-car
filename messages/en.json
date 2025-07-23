@@ -310,5 +310,194 @@
     "try_again": "Try Again",
     "go_home": "Go Home",
     "contact_support": "Contact Support"
+  },
+  "FeaturedPackages": {
+    "top_banner": "Featured Packages",
+    "title": "Popular Packages",
+    "subtitle": "Carefully selected premium packages to meet your travel needs",
+    "scroll_tip": "← Swipe left/right to see more →",
+    "view_more_card": {
+      "title": "View More Packages",
+      "subtitle": "Discover more packages that suit you",
+      "explore_now": "Explore Now"
+    },
+    "no_packages": {
+      "title": "No Recommended Packages",
+      "subtitle": "Admin is adding more package information"
+    },
+    "cta": {
+      "text": "Haven't found your ideal package?",
+      "link": "Browse All Packages →"
+    },
+    "loading_packages": "Loading packages..."
+  },
+  "HeroSection": {
+    "top_banner": {
+      "text": "Car Rental Services at Tokyo's Two Major Airports"
+    },
+    "title": {
+      "part1": "Explore",
+      "japan": "Japan",
+      "part2": "Starts Here"
+    },
+    "description": "Professional car rental services to make your Japan trip more free and exciting",
+    "features": {
+      "car_models": "Multiple Car Models",
+      "airport_pickup": "Airport Pickup",
+      "flexible_booking": "Flexible Booking"
+    },
+    "search_form": {
+      "title": "Select Package",
+      "subtitle": "Choose your needs and find the right package now",
+      "pickup_store": "Pickup Store",
+      "loading": "Loading...",
+      "select_pickup_store": "Select Pickup Store",
+      "pickup_date": "Pickup Date",
+      "return_date": "Return Date",
+      "passengers": "Number of Passengers",
+      "enter_passengers_placeholder": "Enter number of people"
+    },
+    "search_button": {
+      "searching": "Searching...",
+      "find_package": "Find Package Now"
+    },
+    "alert": {
+      "fill_all_fields": "Please fill in all search information and select a pickup store",
+      "search_failed": "Search failed, please try again"
+    }
+  },
+  "StoreLocations": {
+    "top_banner": "Store Network",
+    "title": "Tokyo Store Locations",
+    "subtitle": "Covering Tokyo's two major airports, providing convenient pickup and return services",
+    "stats": {
+      "service_stores": "Service Stores",
+      "all_day_service": "24/7 Service",
+      "airports": "Airports"
+    },
+    "scroll_tip": "← Swipe left/right to see more →",
+    "no_stores": {
+      "title": "No Available Stores",
+      "subtitle": "We are expanding more service locations"
+    },
+    "additional_info": {
+      "title": "Airport Pickup Service",
+      "description": "Narita Airport and Haneda Airport pickup services, providing convenient pickup and return services.",
+      "online_service": "Online Service",
+      "chinese_support": "Chinese Language Support",
+      "airport_pickup": "Airport Pickup"
+    },
+    "loading_stores": "Loading store information..."
+  },
+  "CompanyInfo": {
+    "top_banner": "Customer Service",
+    "title": "Always at Your Service",
+    "subtitle": "Professional customer service team with multiple contact methods to ensure you get the best service experience",
+    "contact_section": {
+      "title": "Contact Us",
+      "description": "Feel free to contact us anytime. You can consult via phone or our dedicated form, our professional team is always ready to assist you.",
+      "phone_inquiry": {
+        "title": "Phone Inquiry",
+        "hours": "Service Hours: 10:00-19:00"
+      },
+      "online_inquiry": {
+        "title": "Online Inquiry",
+        "button": "Contact",
+        "hours": "24/7 Service"
+      }
+    },
+    "about_us_section": {
+      "title": "About Us",
+      "description": "We always put customer satisfaction first and are committed to providing thoughtful service to every customer.",
+      "business_intro": {
+        "title_en": "Business Introduction",
+        "title_zh": "Business Introduction",
+        "p1": "To fully support our customers' car life, we have developed various businesses.",
+        "p2": "With \"Trust\", \"Peace of Mind\", and \"High Quality\" as our motto, we will continue to provide satisfying services to our customers.",
+        "p3": "We sincerely look forward to your visit."
+      }
+    },
+    "why_choose_us": {
+      "title": "Why Choose Us?",
+      "subtitle": "Years of industry experience, professional service team, providing you with the most reliable car rental experience",
+      "trust": {
+        "title": "Trust",
+        "description": "Years of industry experience, trustworthy service quality"
+      },
+      "peace_of_mind": {
+        "title": "Peace of Mind",
+        "description": "Comprehensive protection for a more worry-free journey"
+      },
+      "high_quality": {
+        "title": "High Quality",
+        "description": "Carefully selected vehicles, premium service, quality guaranteed"
+      }
+    },
+    "cta": {
+      "text": "Need more help?",
+      "link": "Contact Us Now →"
+    }
+  },  
+  "AboutPage": {
+    "hero_title": "About SOUKYO Auto",
+    "hero_subtitle": "Your trusted automotive partner, providing professional and reliable one-stop car services",
+    "trust": "Trust",
+    "peace_of_mind": "Peace of Mind",
+    "high_quality": "High Quality",
+    "company_philosophy_title": "Company Philosophy",
+    "company_philosophy_subtitle": "Customer-centric, delivering premium automotive service experiences",
+    "company_philosophy_quote": "\"A car is not just a means of transportation, but an important partner in enriching life. We adhere to the 'Customer First' philosophy, through used car sales, acquisition, and maintenance services, committed to providing you with a safe and comfortable automotive life. We believe that sincere service and professional technology are the foundation of earning customer trust.\"",
+    "company_philosophy_ceo": "—— Message from SOUKYO Auto Representative",
+    "business_intro_title": "Business Introduction",
+    "business_intro_subtitle": "Comprehensive support for your automotive life",
+    "used_car_title": "Used Car Sales",
+    "used_car_description": "We offer fair prices based on market value for used car acquisition, carefully selecting quality vehicles for our customers. We promise high-price acquisition, quick assessment, and secure transactions.",
+    "rental_service_title": "Car Rental Service",
+    "rental_service_description": "From short-term to long-term, we provide vehicles suitable for various purposes at reasonable prices to meet your different travel needs.",
+    "maintenance_title": "Maintenance",
+    "maintenance_description": "Our team of experienced professional technicians provides meticulous maintenance and repair services for your beloved car, ensuring your comfortable driving experience.",
+    "pro_service_title": "Professional Services",
+    "pro_service_subtitle": "Professional technology, thoughtful service",
+    "car_inspection_title": "Car Inspection & Maintenance",
+    "car_inspection_subtitle": "In-house certified factory, professional technician services",
+    "car_inspection_description": "At our own certified factory, professional technicians provide comprehensive car inspection and maintenance services. We offer various options from high-standard maintenance to economical maintenance based on different customer needs.",
+    "free_assessment": "Free Assessment",
+    "free_substitute_car": "Free Substitute Car",
+    "professional_certification": "Professional Certification",
+    "body_paint_title": "Body Paint",
+    "body_paint_subtitle": "Restore your car's original brilliance",
+    "body_paint_description": "Body paint is a professional service that repairs car scratches and dents, restoring the original aesthetic condition through painting. From small scratches to large-area damage, we provide high-quality repair services to protect the value of your car.",
+    "high_quality_repair": "High-Quality Repair",
+    "free_consultation": "Free Consultation",
+    "value_maintenance": "Value Maintenance",
+    "after_sales_title": "After-Sales Service",
+    "after_sales_subtitle": "Thoughtful protection after purchase",
+    "after_sales_description": "We provide reliable after-sales service protection after purchase. Regular inspections, oil changes, warranty services, etc., fully support your automotive life. You can also consult anytime for inspections and malfunctions.",
+    "regular_maintenance": "Regular Maintenance",
+    "warranty_service": "Warranty Service",
+    "24_hour_consultation": "24-Hour Consultation",
+    "etc_install_title": "ETC Installation",
+    "etc_install_subtitle": "Professional ETC device installation",
+    "etc_install_description": "We provide professional ETC device installation services. From selecting the right ETC device for your vehicle to installation and registration, we offer one-stop services to make your travel more convenient.",
+    "professional_installation": "Professional Installation",
+    "device_selection": "Device Selection",
+    "one_stop_service": "One-Stop Service",
+    "acquisition_features_title": "Acquisition Service Features",
+    "acquisition_features_subtitle": "High-price acquisition, quick assessment, secure transactions",
+    "fast_assessment_title": "Quick Assessment",
+    "fast_assessment_description": "Assessment completed in just minutes, with acquisition price provided on the spot. If all necessary documents are complete, cash conversion can be done on the same day. No waiting for appointments, smooth and stress-free process.",
+    "high_price_acquisition_title": "High-Price Acquisition",
+    "high_price_acquisition_description": "Because we value your beloved car, we maximize its value assessment. Based on market data, we offer fair prices, never losing to competitors' high-price acquisitions.",
+    "secure_transaction_title": "Secure Transaction",
+    "secure_transaction_description": "Comprehensive transaction process, transparent price assessment, allowing you to entrust your car to us with peace of mind. Our professional team ensures every step is safe and reliable.",
+    "contact_us_title": "Contact Us",
+    "contact_us_subtitle": "Feel free to contact us anytime, we will serve you wholeheartedly",
+    "sales_maintenance_phone_title": "Used Car Sales & Maintenance",
+    "sales_maintenance_hours": "Service Hours: 10:00～19:00",
+    "rental_service_phone_title": "Car Rental Service",
+    "rental_service_hours": "Service Hours: 8:00～20:00",
+    "contact_form_info": "Consultation is also available via phone and dedicated form",
+    "book_visit": "Book a Visit",
+    "check_inventory_quote": "Inventory Check & Price Quote"
   }
 }

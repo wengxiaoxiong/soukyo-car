@@ -310,5 +310,194 @@
     "try_again": "再試行",
     "go_home": "ホームに戻る",
     "contact_support": "サポートに連絡"
+  },
+  "FeaturedPackages": {
+    "top_banner": "おすすめプラン",
+    "title": "人気プラン",
+    "subtitle": "厳選された高品質なプランで、さまざまな旅行ニーズにお応えします",
+    "scroll_tip": "← 左右にスクロールして詳細を見る →",
+    "view_more_card": {
+      "title": "もっとプランを見る",
+      "subtitle": "あなたにぴったりのプランを見つけましょう",
+      "explore_now": "今すぐ探す"
+    },
+    "no_packages": {
+      "title": "おすすめプランはありません",
+      "subtitle": "管理者が新しいプランを追加中です"
+    },
+    "cta": {
+      "text": "お気に入りのプランが見つかりませんか？",
+      "link": "すべてのプランを見る →"
+    },
+    "loading_packages": "プランを読み込み中..."
+  },
+  "HeroSection": {
+    "top_banner": {
+      "text": "東京の2大空港でのレンタカーサービス"
+    },
+    "title": {
+      "part1": "探検",
+      "japan": "日本",
+      "part2": "ここから始めよう"
+    },
+    "description": "プロフェッショナルなレンタカーサービスで、日本旅行をより自由で素晴らしいものに",
+    "features": {
+      "car_models": "豊富な車種",
+      "airport_pickup": "空港での受け取り",
+      "flexible_booking": "柔軟な予約"
+    },
+    "search_form": {
+      "title": "プランを選択",
+      "subtitle": "あなたのニーズに合ったプランをすぐに見つけましょう",
+      "pickup_store": "受け取り店舗",
+      "loading": "読み込み中...",
+      "select_pickup_store": "受け取り店舗を選択",
+      "pickup_date": "受け取り日",
+      "return_date": "返却日",
+      "passengers": "乗客数",
+      "enter_passengers_placeholder": "人数を入力してください"
+    },
+    "search_button": {
+      "searching": "検索中...",
+      "find_package": "今すぐプランを探す"
+    },
+    "alert": {
+      "fill_all_fields": "すべての検索情報を入力し、受け取り店舗を選択してください",
+      "search_failed": "検索に失敗しました。もう一度お試しください"
+    }
+  },
+  "StoreLocations": {
+    "top_banner": "店舗ネットワーク",
+    "title": "東京の店舗分布",
+    "subtitle": "東京の2大主要空港をカバーし、便利な受け取り・返却サービスを提供します",
+    "stats": {
+      "service_stores": "サービス店舗",
+      "all_day_service": "24時間サービス",
+      "airports": "空港"
+    },
+    "scroll_tip": "← 左右にスクロールして詳細を見る →",
+    "no_stores": {
+      "title": "利用可能な店舗はありません",
+      "subtitle": "より多くのサービス拠点を拡張中です"
+    },
+    "additional_info": {
+      "title": "空港での受け取りサービス",
+      "description": "成田空港、羽田空港での受け取りサービスで、便利な受け取り・返却を提供します。",
+      "online_service": "オンラインサポート",
+      "chinese_support": "中国語サポート",
+      "airport_pickup": "空港での受け取り"
+    },
+    "loading_stores": "店舗情報を読み込み中..."
+  },
+  "CompanyInfo": {
+    "top_banner": "カスタマーサービス",
+    "title": "いつでもご利用いただけます",
+    "subtitle": "プロフェッショナルなカスタマーサービスチームと多様な連絡方法で、最高のサービス体験を提供します",
+    "contact_section": {
+      "title": "お問い合わせ",
+      "description": "いつでもご相談ください。電話または専用フォームでご相談いただけます。専門チームがいつでもご対応いたします。",
+      "phone_inquiry": {
+        "title": "電話でのお問い合わせ",
+        "hours": "受付時間：10:00-19:00"
+      },
+      "online_inquiry": {
+        "title": "オンラインでのお問い合わせ",
+        "button": "Contact",
+        "hours": "24時間受付"
+      }
+    },
+    "about_us_section": {
+      "title": "私たちについて",
+      "description": "私たちは常にお客様の満足を最優先に考え、一人ひとりのお客様に心のこもったサービスを提供することに努めています。",
+      "business_intro": {
+        "title_en": "Business introduction",
+        "title_zh": "事業紹介",
+        "p1": "お客様のカーライフを全面的にサポートするため、当社はさまざまな事業を展開しています。",
+        "p2": "私たちは「信頼」「安心」「高品質」をモットーに、お客様に満足のいくサービスを提供し続けます。",
+        "p3": "皆様のご来店を心よりお待ちしております。"
+      }
+    },
+    "why_choose_us": {
+      "title": "なぜ私たちを選ぶのか？",
+      "subtitle": "長年の業界経験とプロフェッショナルなサービスチームが、最も信頼できるレンタカー体験を提供します",
+      "trust": {
+        "title": "信頼",
+        "description": "長年の業界経験と信頼できるサービス品質"
+      },
+      "peace_of_mind": {
+        "title": "安心",
+        "description": "包括的な保証で、あなたの旅をより安心に"
+      },
+      "high_quality": {
+        "title": "高品質",
+        "description": "厳選された車両と高品質なサービスで品質を保証"
+      }
+    },
+    "cta": {
+      "text": "さらにサポートが必要ですか？",
+      "link": "今すぐお問い合わせ →"
+    }
+  },
+  "AboutPage": {
+    "hero_title": "SOUKYO自動車について",
+    "hero_subtitle": "信頼できる自動車パートナー、プロフェッショナルで信頼性の高いワンストップ自動車サービス",
+    "trust": "信頼",
+    "peace_of_mind": "安心",
+    "high_quality": "高品質",
+    "company_philosophy_title": "会社理念",
+    "company_philosophy_subtitle": "お客様を中心に、質の高い自動車サービス体験を提供",
+    "company_philosophy_quote": "「自動車は単なる移動手段ではなく、生活を豊かにする重要なパートナーです。私たちは『お客様第一』の理念のもと、中古車販売、買取、整備などのサービスを通じて、安心で快適なカーライフを提供することに努めています。誠実なサービスと専門的な技術がお客様の信頼を勝ち取る根本であると信じています。」",
+    "company_philosophy_ceo": "—— SOUKYO自動車 代表挨拶",
+    "business_intro_title": "事業紹介",
+    "business_intro_subtitle": "あなたのカーライフを全面的にサポート",
+    "used_car_title": "中古車販売",
+    "used_car_description": "市場価値に基づいた公正な価格で中古車を買取し、厳選された高品質な車両をお客様に提供します。高価買取、迅速な査定、安心の取引をお約束します。",
+    "rental_service_title": "レンタカーサービス",
+    "rental_service_description": "短期から長期まで、様々な用途に適した車両を提供し、リーズナブルな価格で異なる移動ニーズに対応します。",
+    "maintenance_title": "整備・メンテナンス",
+    "maintenance_description": "経験豊富な専門技術者チームが、あなたの愛車に細心の整備・修理を施し、快適なドライビング体験を保証します。",
+    "pro_service_title": "プロフェッショナルサービス",
+    "pro_service_subtitle": "専門技術、心のこもったサービス",
+    "car_inspection_title": "車検整備",
+    "car_inspection_subtitle": "自社認証工場、専門技術者サービス",
+    "car_inspection_description": "自社認証工場で、専門技術者が総合的な車検整備サービスを提供します。お客様の異なるニーズに応じて、高水準の整備から経済的な整備まで、様々な選択肢を提供します。",
+    "free_assessment": "無料査定",
+    "free_substitute_car": "無料代車",
+    "professional_certification": "専門認証",
+    "body_paint_title": "板金塗装",
+    "body_paint_subtitle": "愛車の元の輝きを取り戻す",
+    "body_paint_description": "板金塗装は、自動車のキズや凹みを修復し、塗装によって元の美しい状態に戻す専門サービスです。小さなキズから大きな損傷まで、高品質な修復サービスを提供し、愛車の価値を守ります。",
+    "high_quality_repair": "高品質修復",
+    "free_consultation": "無料相談",
+    "value_maintenance": "価値維持",
+    "after_sales_title": "アフターサービス",
+    "after_sales_subtitle": "購入後の安心サポート",
+    "after_sales_description": "購入後も安心のアフターサービスを提供します。定期点検、オイル交換、保証サービスなど、あなたのカーライフを全面的にサポートします。車検や故障時もいつでもご相談ください。",
+    "regular_maintenance": "定期メンテナンス",
+    "warranty_service": "保証サービス",
+    "24_hour_consultation": "24時間相談",
+    "etc_install_title": "ETC取付",
+    "etc_install_subtitle": "ETC車載器専門取付",
+    "etc_install_description": "ETC車載器の専門取付サービスを提供します。お客様の車両に適したETC機器の選択から取付、登録までワンストップサービスで、移動をより便利にします。",
+    "professional_installation": "専門取付",
+    "device_selection": "機器選択",
+    "one_stop_service": "ワンストップサービス",
+    "acquisition_features_title": "買取サービスの特徴",
+    "acquisition_features_subtitle": "高価買取、迅速査定、安心取引",
+    "fast_assessment_title": "迅速査定",
+    "fast_assessment_description": "最短数分で査定を完了し、その場で買取価格を提示します。必要な書類が揃っていれば、当日に現金化も可能です。予約待ちなしで、スムーズなプロセスを提供します。",
+    "high_price_acquisition_title": "高価買取",
+    "high_price_acquisition_description": "あなたの愛車を大切に考え、その価値を最大限に評価します。市場データに基づいた公正な価格を提示し、他社に負けない高価買取を実現します。",
+    "secure_transaction_title": "安心取引",
+    "secure_transaction_description": "完璧な取引プロセスと透明性のある価格査定で、安心して愛車を託していただけます。専門チームが各ステップを安全かつ確実にサポートします。",
+    "contact_us_title": "お問い合わせ",
+    "contact_us_subtitle": "いつでもご相談ください、誠心誠意対応いたします",
+    "sales_maintenance_phone_title": "中古車販売・整備",
+    "sales_maintenance_hours": "受付時間：10:00～19:00",
+    "rental_service_phone_title": "レンタカーサービス",
+    "rental_service_hours": "受付時間：8:00～20:00",
+    "contact_form_info": "電話や専用フォームでもご相談を受け付けております",
+    "book_visit": "来店予約",
+    "check_inventory_quote": "在庫確認・見積もり相談"
   }
 }

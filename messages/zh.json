@@ -310,5 +310,194 @@
     "try_again": "重试",
     "go_home": "返回首页",
     "contact_support": "联系客服"
+  },
+  "FeaturedPackages": {
+    "top_banner": "精选推荐",
+    "title": "热门套餐",
+    "subtitle": "精心挑选的优质套餐，满足您不同的出行需求",
+    "scroll_tip": "← 左右滑动查看更多 →",
+    "view_more_card": {
+      "title": "查看更多套餐",
+      "subtitle": "发现更多适合您的套餐",
+      "explore_now": "立即探索"
+    },
+    "no_packages": {
+      "title": "暂无推荐套餐",
+      "subtitle": "管理员正在添加更多套餐信息"
+    },
+    "cta": {
+      "text": "还没找到心仪的套餐？",
+      "link": "浏览全部套餐 →"
+    },
+    "loading_packages": "正在加载套餐..."
+  },
+  "HeroSection": {
+    "top_banner": {
+      "text": "东京两大机场租车服务"
+    },
+    "title": {
+      "part1": "探索",
+      "japan": "日本",
+      "part2": "从这里开始"
+    },
+    "description": "专业的租车服务，让您的日本之旅更加自由精彩",
+    "features": {
+      "car_models": "多种车型",
+      "airport_pickup": "机场取车",
+      "flexible_booking": "灵活预订"
+    },
+    "search_form": {
+      "title": "选择套餐",
+      "subtitle": "选择您的需求，立即查找合适套餐",
+      "pickup_store": "取车店面",
+      "loading": "加载中...",
+      "select_pickup_store": "选择取车店面",
+      "pickup_date": "取车日期",
+      "return_date": "还车日期",
+      "passengers": "乘客数量",
+      "enter_passengers_placeholder": "请输入人数"
+    },
+    "search_button": {
+      "searching": "搜索中...",
+      "find_package": "立即查找套餐"
+    },
+    "alert": {
+      "fill_all_fields": "请填写完整的搜索信息并选择取车店面",
+      "search_failed": "搜索失败，请重试"
+    }
+  },
+  "StoreLocations": {
+    "top_banner": "门店网络",
+    "title": "东京门店分布",
+    "subtitle": "覆盖东京两大主要机场，为您提供便捷的取还车服务",
+    "stats": {
+      "service_stores": "服务门店",
+      "all_day_service": "全天候服务",
+      "airports": "机场"
+    },
+    "scroll_tip": "← 左右滑动查看更多 →",
+    "no_stores": {
+      "title": "暂无可用店面",
+      "subtitle": "我们正在扩展更多服务网点"
+    },
+    "additional_info": {
+      "title": "机场取车服务",
+      "description": "成田机场、羽田机场取车服务，为您提供便捷的取还车服务。",
+      "online_service": "在线客服",
+      "chinese_support": "中文服务支持",
+      "airport_pickup": "机场取车"
+    },
+    "loading_stores": "正在加载门店信息..."
+  },
+  "CompanyInfo": {
+    "top_banner": "客户服务",
+    "title": "随时为您服务",
+    "subtitle": "专业的客服团队，多种联系方式，确保您获得最佳的服务体验",
+    "contact_section": {
+      "title": "联系咨询",
+      "description": "欢迎随时咨询。可通过电话或专用表格进行咨询，我们的专业团队随时为您解答。",
+      "phone_inquiry": {
+        "title": "电话咨询",
+        "hours": "受理时间：10:00-19:00"
+      },
+      "online_inquiry": {
+        "title": "在线咨询",
+        "button": "Contact",
+        "hours": "24小时受理"
+      }
+    },
+    "about_us_section": {
+      "title": "关于我们",
+      "description": "我们始终将客户的满意度放在首位，致力于为每一位客户提供贴心的服务。",
+      "business_intro": {
+        "title_en": "Business introduction",
+        "title_zh": "事业介绍",
+        "p1": "为全面支持客户的汽车生活，本公司开展了多项业务。",
+        "p2": "我们以\"信赖\"\"安心\"\"高品质\"为宗旨，将持续为客户提供令人满意的服务。",
+        "p3": "衷心期待各位的光临。"
+      }
+    },
+    "why_choose_us": {
+      "title": "为什么选择我们？",
+      "subtitle": "多年行业经验，专业的服务团队，为您提供最可靠的租车体验",
+      "trust": {
+        "title": "信赖",
+        "description": "多年行业经验，值得信赖的服务品质"
+      },
+      "peace_of_mind": {
+        "title": "安心",
+        "description": "全面保障，让您的旅程更加安心"
+      },
+      "high_quality": {
+        "title": "高品质",
+        "description": "精选车辆，优质服务，品质保证"
+      }
+    },
+    "cta": {
+      "text": "需要更多帮助？",
+      "link": "立即联系我们 →"
+    }
+  },
+  "AboutPage": {
+    "hero_title": "关于SOUKYO汽车",
+    "hero_subtitle": "您信赖的汽车伙伴，专业可靠的一站式汽车服务",
+    "trust": "信赖",
+    "peace_of_mind": "安心",
+    "high_quality": "高品质",
+    "company_philosophy_title": "公司理念",
+    "company_philosophy_subtitle": "以客户为中心，提供优质的汽车服务体验",
+    "company_philosophy_quote": "“汽车不仅仅是交通工具，更是丰富生活的重要伙伴。我们秉承‘客户第一’的理念，通过中古车销售、收购、整备等服务，致力于为您提供安心、舒适的汽车生活。我们相信，真诚的服务和专业的技术是赢得客户信赖的根本。”",
+    "company_philosophy_ceo": "—— SOUKYO汽车 代表致辞",
+    "business_intro_title": "业务介绍",
+    "business_intro_subtitle": "为您的汽车生活提供全方位支持",
+    "used_car_title": "中古车买卖",
+    "used_car_description": "基于市场价值提供公正价格收购中古车，精选优质车辆为客户提供服务。我们承诺高价收购、快速评估、安心交易。",
+    "rental_service_title": "租车服务",
+    "rental_service_description": "从短期到长期，我们提供适合各种用途的车辆，价格合理，满足您不同的出行需求。",
+    "maintenance_title": "维修保养",
+    "maintenance_description": "经验丰富的专业技师团队，为您的爱车提供细致的整备维修，确保您的舒适驾驶体验。",
+    "pro_service_title": "专业服务",
+    "pro_service_subtitle": "专业技术，贴心服务",
+    "car_inspection_title": "车检整备",
+    "car_inspection_subtitle": "自社认证工厂，专业技师服务",
+    "car_inspection_description": "在我们的自有认证工厂，专业技师为您提供全面的车检整备服务。我们会根据客户的不同需求，提供从高标准整备到经济型整备的多种选择。",
+    "free_assessment": "免费评估",
+    "free_substitute_car": "免费代车",
+    "professional_certification": "专业认证",
+    "body_paint_title": "钣金喷漆",
+    "body_paint_subtitle": "恢复爱车原有光彩",
+    "body_paint_description": "钣金喷漆是修复汽车划痕和凹痕，通过喷漆恢复原有美观状态的专业服务。从小划痕到大面积损伤，我们都能提供高品质的修复服务，守护您爱车的价值。",
+    "high_quality_repair": "高品质修复",
+    "free_consultation": "免费咨询",
+    "value_maintenance": "保值维护",
+    "after_sales_title": "售后服务",
+    "after_sales_subtitle": "购车后的贴心保障",
+    "after_sales_description": "购车后我们提供安心的售后服务保障。定期检查、机油更换、保修服务等，全面支持您的汽车生活。车检和故障时也可随时咨询。",
+    "regular_maintenance": "定期维护",
+    "warranty_service": "保修服务",
+    "24_hour_consultation": "24小时咨询",
+    "etc_install_title": "ETC安装",
+    "etc_install_subtitle": "ETC车载器专业安装",
+    "etc_install_description": "我们提供ETC车载器的专业安装服务。从选择适合您车辆的ETC设备到安装、注册等一站式服务，让您的出行更加便捷。",
+    "professional_installation": "专业安装",
+    "device_selection": "设备选择",
+    "one_stop_service": "一站式服务",
+    "acquisition_features_title": "收购服务特色",
+    "acquisition_features_subtitle": "高价收购，快速评估，安心交易",
+    "fast_assessment_title": "快速评估",
+    "fast_assessment_description": "最快几分钟完成评估，当场提供收购价格。必要资料齐全的话，当天即可现金化。预约无需等待，流程顺畅无压力。",
+    "high_price_acquisition_title": "高价收购",
+    "high_price_acquisition_description": "因为珍视您的爱车，我们会最大化评估其价值。基于市场数据，提供公正价格，绝不输给同行的高价收购。",
+    "secure_transaction_title": "安心交易",
+    "secure_transaction_description": "完善的交易流程，透明的价格评估，让您放心地将爱车托付给我们。专业团队确保每一步都安全可靠。",
+    "contact_us_title": "联系我们",
+    "contact_us_subtitle": "欢迎随时咨询，我们将竭诚为您服务",
+    "sales_maintenance_phone_title": "中古车销售・整备",
+    "sales_maintenance_hours": "受理时间：10:00～19:00",
+    "rental_service_phone_title": "租车服务",
+    "rental_service_hours": "受理时间：8:00～20:00",
+    "contact_form_info": "也可通过电话和专用表单接受咨询",
+    "book_visit": "来店预约",
+    "check_inventory_quote": "库存确认・估价咨询"
   }
 }
