@@ -5,12 +5,12 @@ import { useTranslations, useLocale } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { MapPin, Package, Star, ShoppingCart, Eye, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Package, ShoppingCart, Eye, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { PackageWithStore } from '@/lib/actions/packages'
+import { Package as PackageType } from '@/lib/actions/packages'
 
-interface PackageCardProps extends PackageWithStore {
+interface PackageCardProps extends PackageType {
   showPurchaseButton?: boolean
 }
 
@@ -21,7 +21,6 @@ export const PackageCard: React.FC<PackageCardProps> = ({
   images,
   price,
   stock,
-  store,
   showPurchaseButton = true
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -76,7 +75,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({
                 
                 {/* 图片指示器 */}
                 <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-                  {images.map((_, index) => (
+                  {images.map((_: string, index: number) => (
                     <div
                       key={index}
                       className={`w-2 h-2 rounded-full transition-colors ${
@@ -109,10 +108,6 @@ export const PackageCard: React.FC<PackageCardProps> = ({
         {/* 套餐标题 */}
         <div className="mb-3">
           <h3 className="text-xl font-bold text-gray-900 mb-1 line-clamp-2">{name}</h3>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <MapPin className="w-4 h-4" />
-            <span>{store.name} - {store.city}</span>
-          </div>
         </div>
         
         {/* 套餐描述 */}

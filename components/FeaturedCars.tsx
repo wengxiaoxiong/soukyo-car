@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { Card } from "@/components/ui/card";
 import { ChevronRight, Star, Zap } from "lucide-react";
 import { CarCard } from './CarCard';
@@ -45,7 +46,7 @@ export const FeaturedCars: React.FC = async () => {
                 
                 {/* "查看更多"卡片 */}
                 <Card className="overflow-hidden flex-shrink-0 w-[300px] md:w-auto mx-2 first:ml-0 last:mr-0 md:mx-0 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-dashed border-blue-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300 group cursor-pointer">
-                  <a href="/vehicle" className="p-8 flex flex-col items-center justify-center w-full h-full min-h-[400px] text-center">
+                  <Link href="/vehicle" className="p-8 flex flex-col items-center justify-center w-full h-full min-h-[400px] text-center">
                     <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                       <ChevronRight className="w-8 h-8 text-blue-600 group-hover:translate-x-1 transition-transform duration-300" />
                     </div>
@@ -55,7 +56,7 @@ export const FeaturedCars: React.FC = async () => {
                       <Zap className="w-4 h-4" />
                       <span>立即探索</span>
                     </div>
-                  </a>
+                  </Link>
                 </Card>
               </>
             ) : (
@@ -75,12 +76,12 @@ export const FeaturedCars: React.FC = async () => {
           <div className="text-center mt-16">
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300">
               <span className="text-gray-600">还没找到心仪的车型？</span>
-              <a 
+              <Link 
                 href="/vehicle" 
-                className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors duration-200"
+                className="text-blue-600 hover:text-blue-7 00 font-medium hover:underline transition-colors duration-200"
               >
                 浏览全部车辆 →
-              </a>
+              </Link>
             </div>
           </div>
         )}

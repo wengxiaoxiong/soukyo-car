@@ -49,7 +49,12 @@ export async function getAllPackages(params?: {
   search?: string
 }): Promise<Package[]> {
   try {
-    const where: any = {
+    const where: {
+      isActive: boolean
+      stock: { gt: number }
+      price?: { gte?: number; lte?: number }
+      OR?: Array<{ name: { contains: string; mode: 'insensitive' } } | { description: { contains: string; mode: 'insensitive' } }>
+    } = {
       isActive: true,
       stock: {
         gt: 0

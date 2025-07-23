@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Globe } from "lucide-react"
-import { useLocale, useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 import { useRouter, usePathname } from 'next/navigation'
 import {
   DropdownMenu,
@@ -22,7 +22,6 @@ export function LanguageSelector() {
   const locale = useLocale()
   const router = useRouter()
   const pathname = usePathname()
-  const t = useTranslations('common')
 
   const currentLanguage = languages.find(lang => lang.code === locale) || languages[0]
 
