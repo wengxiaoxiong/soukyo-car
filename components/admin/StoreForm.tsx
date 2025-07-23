@@ -12,8 +12,8 @@ import { Badge } from '@/components/ui/badge'
 import { ImageUpload } from '@/components/ui/image-upload'
 import { ArrowLeft, Save, Edit, Eye } from 'lucide-react'
 import Link from 'next/link'
-import { createStore, updateStore } from '@/app/admin/stores/actions'
 import { storeFormSchema, type Store, type StoreFormData, validateJsonString } from '@/lib/schemas/store'
+import { updateStore, createStore } from '@/app/[locale]/admin/stores/actions'
 
 type FormMode = 'add' | 'edit' | 'view'
 
