@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Soukyo Rent a cat",
-  description: "This is Soukyo car rent web. Let's  exploring Japan with Soukyo!",
+  title: "Soukyo Rent a car",
+  description: "This is Soukyo car rent web. Let's exploring Japan with Soukyo!",
 };
 
 export default function RootLayout({
@@ -28,17 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased mt-16`}
       >
-        <SessionProvider>
-          <Header />
-          <ChatwootWidget />
-          {children}
-          <Toaster position="top-right" />
-          <Footer />
-        </SessionProvider>
+        {children}
       </body>
     </html>
   );
