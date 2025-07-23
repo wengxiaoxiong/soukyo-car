@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -25,6 +26,8 @@ export const PackageCard: React.FC<PackageCardProps> = ({
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const t = useTranslations()
+  const locale = useLocale()
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length)
@@ -97,7 +100,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({
             variant={stock > 0 ? "default" : "destructive"}
             className="bg-white/90 text-gray-900 hover:bg-white"
           >
-            库存: {stock}
+            {stock > 0 ? t('common.available') : t('common.unavailable')}: {stock}
           </Badge>
         </div>
       </div>
@@ -120,20 +123,20 @@ export const PackageCard: React.FC<PackageCardProps> = ({
         {/* 价格 */}
         <div className="mb-4">
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-blue-600">¥{price.toLocaleString()}</span>
-            <span className="text-sm text-gray-500">/ 套餐</span>
+            <span className="text-2xl font-bold text-blue-600">{t('common.currency')}{price.toLocaleString()}</span>
+            <span className="text-sm text-gray-500">/ {t('packages.title')}</span>
           </div>
         </div>
         
         {/* 操作按钮 */}
         <div className="flex gap-2">
-          <Link href={`/package/${id}`} className="flex-1">
+          <Link href={`/${locale}/package/${id}`} className="flex-1">
             <Button 
               variant="outline" 
               className="w-full flex items-center gap-2 hover:bg-gray-50"
             >
               <Eye className="w-4 h-4" />
-              查看详情
+              {t('packages.view_details')}
             </Button>
           </Link>
           
@@ -144,7 +147,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({
               className="flex-1 bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
             >
               <ShoppingCart className="w-4 h-4" />
-              {isLoading ? '处理中...' : stock <= 0 ? '已售罄' : '立即购买'}
+              {isLoading ? t('common.loading') : stock <= 0 ? t('common.unavailable') : t('packages.book_package')}
             </Button>
           )}
         </div>

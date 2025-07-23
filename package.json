@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "seed-stores": "tsx scripts/seed-stores.ts"
+    "seed-stores": "tsx scripts/seed-stores.ts",
+    "seed-packages": "tsx scripts/seed-packages.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

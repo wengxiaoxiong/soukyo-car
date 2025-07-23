@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { PackageCard } from '@/components/PackageCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,6 +11,7 @@ import { getAllPackages, PackageWithStore } from '@/lib/actions/packages'
 import { getActiveStores, StoreWithOpeningHours } from '@/app/actions/stores'
 
 export default function PackagePage() {
+  const t = useTranslations()
   const [packages, setPackages] = useState<PackageWithStore[]>([])
   const [stores, setStores] = useState<StoreWithOpeningHours[]>([])
   const [loading, setLoading] = useState(true)
@@ -29,7 +31,7 @@ export default function PackagePage() {
         setPackages(packagesData)
         setStores(storesData)
       } catch (error) {
-        console.error('获取数据失败:', error)
+        console.error('Failed to fetch data:', error)
       } finally {
         setLoading(false)
       }
@@ -82,10 +84,10 @@ export default function PackagePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              精选套餐
+              {t('packages.title')}
             </h1>
             <p className="text-lg text-gray-600">
-              发现最适合您的出行套餐
+              {t('packages.description')}
             </p>
           </div>
 
@@ -96,7 +98,7 @@ export default function PackagePage() {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
-                  placeholder="搜索套餐名称..."
+                  placeholder={t('search.search_placeholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 h-12 text-base"
@@ -110,7 +112,7 @@ export default function PackagePage() {
                 className="h-12 px-6 flex items-center gap-2"
               >
                 <Filter className="w-4 h-4" />
-                筛选
+                {t('common.filter')}
               </Button>
             </div>
 
@@ -118,7 +120,7 @@ export default function PackagePage() {
             {showFilters && (
               <div className="bg-white rounded-lg p-6 shadow-sm border mb-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">筛选选项</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{t('search.filter_results')}</h3>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -126,7 +128,7 @@ export default function PackagePage() {
                     className="text-gray-500 hover:text-gray-700"
                   >
                     <X className="w-4 h-4 mr-1" />
-                    清除
+                    {t('common.clear')}
                   </Button>
                 </div>
 
@@ -134,14 +136,14 @@ export default function PackagePage() {
                   {/* 门店选择 */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      门店
+                      {t('stores.title')}
                     </label>
                     <Select value={selectedStore} onValueChange={setSelectedStore}>
                       <SelectTrigger>
-                        <SelectValue placeholder="选择门店" />
+                        <SelectValue placeholder={t('common.select')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">全部门店</SelectItem>
+                        <SelectItem value="">{t('common.all')}</SelectItem>
                         {stores.map((store) => (
                           <SelectItem key={store.id} value={store.id}>
                             <div className="flex items-center gap-2">
@@ -157,11 +159,11 @@ export default function PackagePage() {
                   {/* 价格范围 */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      最低价格
+                      {t('common.price')} ({t('common.currency')})
                     </label>
                     <Input
                       type="number"
-                      placeholder="最低价格"
+                      placeholder={t('common.price')}
                       value={priceRange.min}
                       onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
                     />
@@ -169,11 +171,11 @@ export default function PackagePage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      最高价格
+                      {t('common.price')} ({t('common.currency')})
                     </label>
                     <Input
                       type="number"
-                      placeholder="最高价格"
+                      placeholder={t('common.price')}
                       value={priceRange.max}
                       onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
                     />
@@ -190,13 +192,13 @@ export default function PackagePage() {
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">加载中...</p>
+            <p className="text-gray-600">{t('common.loading')}</p>
           </div>
         ) : packages.length > 0 ? (
           <>
             <div className="flex items-center justify-between mb-6">
               <p className="text-gray-600">
-                共找到 <span className="font-semibold text-gray-900">{packages.length}</span> 个套餐
+                {t('search.results_count', { count: packages.length })}
               </p>
             </div>
 
@@ -209,15 +211,15 @@ export default function PackagePage() {
         ) : (
           <div className="text-center py-12">
             <Package className="w-24 h-24 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">暂无套餐</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('packages.title')}</h3>
             <p className="text-gray-600 mb-6">
               {searchTerm || selectedStore || priceRange.min || priceRange.max
-                ? '没有符合条件的套餐，请尝试调整筛选条件'
-                : '管理员正在添加套餐信息'}
+                ? t('search.no_results')
+                : t('packages.description')}
             </p>
             {(searchTerm || selectedStore || priceRange.min || priceRange.max) && (
               <Button onClick={clearFilters} variant="outline">
-                清除筛选条件
+                {t('common.clear')}
               </Button>
             )}
           </div>
