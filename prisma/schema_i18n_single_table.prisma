@@ -1,0 +1,171 @@
+// 数据库i18n方案一：单表多列方式
+// 适用于语言种类较少（2-4种）的情况
+
+// 店面表 - 多语言版本
+model Store {
+  id          String   @id @default(cuid())
+  
+  // 多语言字段
+  name_zh     String   // 中文名称
+  name_en     String?  // 英文名称
+  name_ja     String?  // 日文名称
+  
+  description_zh String? // 中文描述
+  description_en String? // 英文描述
+  description_ja String? // 日文描述
+  
+  // 其他非多语言字段保持不变
+  address     String
+  city        String
+  state       String?
+  zipCode     String?
+  phone       String
+  email       String?
+  image       String?
+  googleMap   String?
+  latitude    Float?
+  longitude   Float?
+  openingHours Json?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  vehicles    Vehicle[]
+  orders      Order[]
+  
+  @@map("stores")
+}
+
+// 车辆表 - 多语言版本
+model Vehicle {
+  id           String           @id @default(cuid())
+  
+  // 多语言字段
+  name_zh      String           // 中文名称
+  name_en      String?          // 英文名称
+  name_ja      String?          // 日文名称
+  
+  description_zh  String?       // 中文描述
+  description_en  String?       // 英文描述
+  description_ja  String?       // 日文描述
+  
+  internalDescription_zh String? // 中文内部描述
+  internalDescription_en String? // 英文内部描述
+  internalDescription_ja String? // 日文内部描述
+  
+  // 其他字段保持不变
+  brand        String
+  model        String
+  year         Int
+  seats        Int
+  pricePerDay  Float
+  images       String[]
+  color        String?
+  plateNumber  String?        @unique
+  isAvailable  Boolean        @default(true)
+  storeId      String
+  store        Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  
+  orders       Order[]
+  reviews      Review[]
+  
+  @@map("vehicles")
+}
+
+// 新闻表 - 多语言版本
+model News {
+  id          String   @id @default(cuid())
+  
+  // 多语言字段
+  title_zh       String    // 中文标题
+  title_en       String?   // 英文标题
+  title_ja       String?   // 日文标题
+  
+  content_zh     String    // 中文内容
+  content_en     String?   // 英文内容
+  content_ja     String?   // 日文内容
+  
+  summary_zh     String?   // 中文摘要
+  summary_en     String?   // 英文摘要
+  summary_ja     String?   // 日文摘要
+  
+  metaTitle_zh   String?   // 中文SEO标题
+  metaTitle_en   String?   // 英文SEO标题
+  metaTitle_ja   String?   // 日文SEO标题
+  
+  metaDescription_zh String? // 中文SEO描述
+  metaDescription_en String? // 英文SEO描述
+  metaDescription_ja String? // 日文SEO描述
+  
+  // 其他字段
+  image       String?
+  author      String?
+  category    String?
+  tags        String[]
+  isPublished Boolean  @default(false)
+  publishedAt DateTime?
+  slug        String?  @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("news")
+}
+
+// 套餐表 - 多语言版本
+model Package {
+  id          String   @id @default(cuid())
+  
+  // 多语言字段
+  name_zh        String    // 中文名称
+  name_en        String?   // 英文名称
+  name_ja        String?   // 日文名称
+  
+  description_zh String?   // 中文描述
+  description_en String?   // 英文描述
+  description_ja String?   // 日文描述
+  
+  content_zh     String?  @db.Text // 中文内容
+  content_en     String?  @db.Text // 英文内容
+  content_ja     String?  @db.Text // 日文内容
+  
+  // 其他字段
+  images      String[]
+  price       Float
+  stock       Int      @default(0)
+  isActive    Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  orders      Order[]
+  packageReviews PackageReview[]
+  
+  @@map("packages")
+}
+
+// 通知表 - 多语言版本
+model Notification {
+  id              String           @id @default(cuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // 多语言字段
+  title_zh        String           // 中文标题
+  title_en        String?          // 英文标题
+  title_ja        String?          // 日文标题
+  
+  message_zh      String           // 中文消息
+  message_en      String?          // 英文消息
+  message_ja      String?          // 日文消息
+  
+  type            NotificationType
+  isRead          Boolean          @default(false)
+  readAt          DateTime?
+  relatedOrderId  String?
+  relatedOrder    Order?           @relation(fields: [relatedOrderId], references: [id], onDelete: Cascade)
+  createdAt       DateTime         @default(now())
+  
+  @@map("notifications")
+}
