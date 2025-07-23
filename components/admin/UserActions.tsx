@@ -41,7 +41,7 @@ import {
   toggleUserStatus, 
   deleteUser,
   resetUserPassword 
-} from '@/app/admin/users/actions'
+} from '@/app/[locale]/admin/users/actions'
 import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
 

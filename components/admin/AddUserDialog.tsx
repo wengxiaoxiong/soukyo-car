@@ -21,10 +21,11 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { UserRole } from '@prisma/client'
-import { createUser } from '@/app/admin/users/actions'
+
 import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
 import { UserCog, Shield, ShieldCheck } from 'lucide-react'
+import { createUser } from '@/app/[locale]/admin/users/actions'
 
 interface AddUserDialogProps {
   children: React.ReactNode

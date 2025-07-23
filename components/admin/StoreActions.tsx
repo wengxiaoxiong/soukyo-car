@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, Trash2, ToggleLeft } from 'lucide-react'
-import { deleteStore, toggleStoreStatus } from '@/app/admin/stores/actions'
+import { deleteStore, toggleStoreStatus } from '@/app/[locale]/admin/stores/actions'
 
 interface StoreActionsProps {
   storeId: string

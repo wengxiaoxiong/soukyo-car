@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, ToggleLeft, Trash2 } from 'lucide-react'
-import { deleteVehicle, toggleVehicleAvailability } from '@/app/admin/vehicles/actions'
+import { deleteVehicle, toggleVehicleAvailability } from '@/app/[locale]/admin/vehicles/actions'
 
 interface VehicleActionsProps {
   vehicleId: string
