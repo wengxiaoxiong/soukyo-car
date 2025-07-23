@@ -1,23 +1,27 @@
-import type { NextConfig } from "next";
+import createNextIntlPlugin from 'next-intl/plugin';
+import type { NextConfig } from 'next';
+
+const withNextIntl = createNextIntlPlugin('./i18n.ts');
 
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
+        protocol: 'https',
+        hostname: 'ai-public.mastergo.com',
+        port: '',
+        pathname: '/**',
       },
       {
-        protocol: "https",
-        hostname: "0nrui4uhjcvewjzb.public.blob.vercel-storage.com",
-      },
-      {
-        protocol: "https",
-        hostname: "ai-public.mastergo.com",
-      },
+        protocol: 'https',
+        hostname: '**.vercel-storage.com',
+        port: '',
+        pathname: '/**',
+      }
     ],
   },
-  /* config options here */
+  reactStrictMode: true,
+  output: 'standalone'
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig); 

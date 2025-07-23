@@ -1,15 +1,16 @@
 import { Card } from '@/components/ui/card'
-import { Store, Car, Users, FileText } from 'lucide-react'
+import { Store, Car, Users, FileText, Package } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 
 async function getStats() {
   try {
-    const [storeCount, vehicleCount, userCount, orderCount] = await Promise.all([
+    const [storeCount, vehicleCount, userCount, orderCount, packageCount] = await Promise.all([
       prisma.store.count(),
       prisma.vehicle.count(),
       prisma.user.count(),
       prisma.order.count(),
+      prisma.package.count(),
     ])
 
     return {
@@ -17,6 +18,7 @@ async function getStats() {
       vehicles: vehicleCount,
       users: userCount,
       orders: orderCount,
+      packages: packageCount,
     }
   } catch (error) {
     console.error('获取统计数据失败:', error)
@@ -25,6 +27,7 @@ async function getStats() {
       vehicles: 0,
       users: 0,
       orders: 0,
+      packages: 0,
     }
   }
 }
@@ -42,11 +45,19 @@ export default async function AdminDashboard() {
       href: '/admin/stores',
     },
     {
+      title: '套餐总数',
+      value: stats.packages,
+      icon: Package,
+      color: 'text-green-600',
+      bgColor: 'bg-green-100',
+      href: '/admin/packages',
+    },
+    {
       title: '车辆总数',
       value: stats.vehicles,
       icon: Car,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100',
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-100',
       href: '/admin/vehicles',
     },
     {
@@ -74,7 +85,7 @@ export default async function AdminDashboard() {
         <p className="text-gray-600 mt-2">欢迎来到Soukyo汽车管理后台</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
         {statCards.map((stat) => (
           <Link key={stat.title} href={stat.href}>
             <Card className="p-6 hover:shadow-md transition-shadow">
