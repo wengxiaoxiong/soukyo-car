@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Card, CardContent } from '@/components/ui/card'
-import { Eye, User, Car, CreditCard, Calendar, Phone, Mail } from 'lucide-react'
+import { Eye, User, Car, CreditCard, Calendar, Phone, Mail, Package } from 'lucide-react'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
@@ -33,7 +33,13 @@ type OrderData = {
     brand: string
     model: string
     plateNumber: string | null
-  }
+  } | null
+  package: {
+    id: string
+    name: string
+    description: string | null
+    price: number
+  } | null
   store: {
     id: string
     name: string
@@ -133,7 +139,7 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
             <TableRow>
               <TableHead>订单信息</TableHead>
               <TableHead>客户信息</TableHead>
-              <TableHead>车辆信息</TableHead>
+              <TableHead>商品信息</TableHead>
               <TableHead>租期</TableHead>
               <TableHead>金额</TableHead>
               <TableHead>状态</TableHead>
@@ -173,17 +179,40 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
                 </TableCell>
                 <TableCell>
                   <div className="space-y-1">
-                    <div className="flex items-center gap-1">
-                      <Car className="w-3 h-3" />
-                      <span className="text-sm font-medium">{order.vehicle.name}</span>
-                    </div>
-                    <p className="text-sm text-gray-500">
-                      {order.vehicle.brand} {order.vehicle.model}
-                    </p>
-                    {order.vehicle.plateNumber && (
-                      <p className="text-sm text-gray-500">
-                        车牌: {order.vehicle.plateNumber}
-                      </p>
+                    {order.vehicle ? (
+                      <>
+                        <div className="flex items-center gap-1">
+                          <Car className="w-3 h-3" />
+                          <span className="text-sm font-medium">{order.vehicle.name}</span>
+                        </div>
+                        <p className="text-sm text-gray-500">
+                          {order.vehicle.brand} {order.vehicle.model}
+                        </p>
+                        {order.vehicle.plateNumber && (
+                          <p className="text-sm text-gray-500">
+                            车牌: {order.vehicle.plateNumber}
+                          </p>
+                        )}
+                      </>
+                    ) : order.package ? (
+                      <>
+                        <div className="flex items-center gap-1">
+                          <Package className="w-3 h-3" />
+                          <span className="text-sm font-medium">{order.package.name}</span>
+                        </div>
+                        {order.package.description && (
+                          <p className="text-sm text-gray-500">
+                            {order.package.description}
+                          </p>
+                        )}
+                        <p className="text-sm text-blue-600">
+                          套餐订单
+                        </p>
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <span className="text-sm text-gray-500">无商品信息</span>
+                      </div>
                     )}
                   </div>
                 </TableCell>
@@ -270,16 +299,35 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
                   </div>
                 </div>
 
-                {/* 车辆信息 */}
+                {/* 商品信息 */}
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-gray-700">车辆信息</p>
-                  <div className="flex items-center gap-1">
-                    <Car className="w-3 h-3" />
-                    <span className="text-sm">{order.vehicle.name}</span>
-                  </div>
-                  <p className="text-sm text-gray-500">
-                    {order.vehicle.brand} {order.vehicle.model}
-                  </p>
+                  <p className="text-sm font-medium text-gray-700">商品信息</p>
+                  {order.vehicle ? (
+                    <>
+                      <div className="flex items-center gap-1">
+                        <Car className="w-3 h-3" />
+                        <span className="text-sm">{order.vehicle.name}</span>
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        {order.vehicle.brand} {order.vehicle.model}
+                      </p>
+                    </>
+                  ) : order.package ? (
+                    <>
+                      <div className="flex items-center gap-1">
+                        <Package className="w-3 h-3" />
+                        <span className="text-sm">{order.package.name}</span>
+                      </div>
+                      {order.package.description && (
+                        <p className="text-sm text-gray-500">
+                          {order.package.description}
+                        </p>
+                      )}
+                      <p className="text-sm text-blue-600">套餐订单</p>
+                    </>
+                  ) : (
+                    <span className="text-sm text-gray-500">无商品信息</span>
+                  )}
                 </div>
 
                 {/* 租期和金额 */}

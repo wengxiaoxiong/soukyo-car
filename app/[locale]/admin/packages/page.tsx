@@ -1,28 +1,67 @@
-import React from 'react'
+"use client"
+import React, { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Package, Plus, Edit, Trash2, Eye, EyeOff, Star } from 'lucide-react'
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
-import { togglePackageStatus, deletePackage } from '@/lib/actions/packages'
+import { getPackages, togglePackageStatus, deletePackage, type Package as PackageType } from '@/lib/actions/packages'
 
-async function getPackages() {
-  try {
-    const packages = await prisma.package.findMany({
-      orderBy: {
-        createdAt: 'desc'
+export default function AdminPackagesPage() {
+  const [packages, setPackages] = useState<PackageType[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchPackages() {
+      try {
+        const fetchedPackages = await getPackages()
+        setPackages(fetchedPackages)
+      } catch (error) {
+        console.error('获取套餐列表失败:', error)
+      } finally {
+        setLoading(false)
       }
-    })
-    return packages
-  } catch (error) {
-    console.error('获取套餐列表失败:', error)
-    return []
-  }
-}
+    }
 
-export default async function AdminPackagesPage() {
-  const packages = await getPackages()
+    fetchPackages()
+  }, [])
+
+  const handleToggleStatus = async (packageId: string) => {
+    try {
+      await togglePackageStatus(packageId)
+      // 重新获取数据
+      const updatedPackages = await getPackages()
+      setPackages(updatedPackages)
+    } catch (error) {
+      console.error('切换套餐状态失败:', error)
+    }
+  }
+
+  const handleDeletePackage = async (packageId: string) => {
+    if (!confirm('确定要删除这个套餐吗？')) {
+      return
+    }
+    
+    try {
+      await deletePackage(packageId)
+      // 重新获取数据
+      const updatedPackages = await getPackages()
+      setPackages(updatedPackages)
+    } catch (error) {
+      console.error('删除套餐失败:', error)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Package className="w-16 h-16 text-gray-400 mx-auto mb-4 animate-pulse" />
+          <p className="text-gray-600">加载中...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -178,32 +217,23 @@ export default async function AdminPackagesPage() {
                           </Button>
                         </Link>
                         
-                        <form action={togglePackageStatus.bind(null, pkg.id)}>
-                          <Button
-                            type="submit"
-                            variant="ghost"
-                            size="sm"
-                            className="text-blue-600 hover:text-blue-800"
-                          >
-                            {pkg.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          </Button>
-                        </form>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-blue-600 hover:text-blue-800"
+                          onClick={() => handleToggleStatus(pkg.id)}
+                        >
+                          {pkg.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </Button>
                         
-                        <form action={deletePackage.bind(null, pkg.id)}>
-                          <Button
-                            type="submit"
-                            variant="ghost"
-                            size="sm"
-                            className="text-red-600 hover:text-red-800"
-                            onClick={(e) => {
-                              if (!confirm('确定要删除这个套餐吗？')) {
-                                e.preventDefault()
-                              }
-                            }}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </form>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-600 hover:text-red-800"
+                          onClick={() => handleDeletePackage(pkg.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </div>
                     </td>
                   </tr>

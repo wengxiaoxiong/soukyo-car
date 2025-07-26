@@ -18,6 +18,21 @@ export interface Package {
   updatedAt: Date
 }
 
+// 获取所有套餐（管理端使用）
+export async function getPackages(): Promise<Package[]> {
+  try {
+    const packages = await prisma.package.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+    return packages
+  } catch (error) {
+    console.error('获取套餐列表失败:', error)
+    return []
+  }
+}
+
 // 获取推荐套餐
 export async function getFeaturedPackages(): Promise<Package[]> {
   try {
