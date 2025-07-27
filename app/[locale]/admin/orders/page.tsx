@@ -203,7 +203,7 @@ function AdminOrdersContent() {
           <div className="flex gap-2">
             <div className="flex-1">
               <Input
-                placeholder="搜索订单ID、用户名、邮箱或电话..."
+                placeholder="搜索订单ID、用户名、邮箱、电话、车辆或套餐..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}

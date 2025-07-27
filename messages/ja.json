@@ -109,14 +109,15 @@
   },
   "navigation": {
     "vehicles": "車両レンタル",
-    "packages": "パッケージサービス",
+    "packages": "車種・料金",
     "stores": "店舗情報",
     "orders": "マイオーダー",
     "profile": "プロフィール",
     "admin": "管理パネル"
   },
   "home": {
-    "title": "日本を探索、レンタカーから始めよう",
+    "title": "SOUKYOレンタカー",
+    "soukyo": "美しい日本に出会う旅、レンタカーから始めよう",
     "subtitle": "質の高いレンタカーサービスを提供し、あなたの日本旅行をより便利にします",
     "hero_cta": "今すぐレンタル",
     "featured_vehicles": "おすすめ車両",
@@ -139,8 +140,8 @@
     "view_details": "詳細を見る"
   },
   "packages": {
-    "title": "パッケージサービス",
-    "description": "完全な旅行ソリューションを提供する、精心に設計された旅行パッケージ",
+    "title": "車種・料金",
+    "description": "お客様に最適な高品質のレンタカーサービスをご提供いたします。",
     "view_details": "詳細を見る",
     "book_package": "パッケージを予約",
     "includes": "含まれるサービス",
@@ -365,7 +366,7 @@
     "features": {
       "car_models": "豊富な車種",
       "airport_pickup": "空港での受け取り",
-      "flexible_booking": "柔軟な予約"
+      "flexible_booking": "いつでもご予約可能"
     },
     "search_form": {
       "title": "プランを選択",
@@ -447,7 +448,7 @@
       },
       "peace_of_mind": {
         "title": "安心",
-        "description": "包括的な保証で、あなたの旅をより安心に"
+        "description": "充実したサポート体制で、あなたの旅をより安心に"
       },
       "high_quality": {
         "title": "高品質",

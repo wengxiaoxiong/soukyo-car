@@ -109,7 +109,11 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                             </p>
                             {notification.relatedOrder && (
                               <p className="text-xs text-blue-600 mt-1">
-                                订单: {notification.relatedOrder.orderNumber} - {notification.relatedOrder.vehicle.name}
+                                订单: {notification.relatedOrder.orderNumber} - {
+                                  notification.relatedOrder.package?.name || 
+                                  notification.relatedOrder.vehicle?.name || 
+                                  '未知商品'
+                                }
                               </p>
                             )}
                             <p className="text-xs text-gray-400 mt-1">

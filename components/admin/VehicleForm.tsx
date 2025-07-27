@@ -18,8 +18,9 @@ import {
   type VehicleFormData, 
   type VehicleWithStore 
 } from '@/lib/schemas/vehicle'
-import { createVehicle, updateVehicle, getStoresForSelect } from '@/app/admin/vehicles/actions'
+
 import { MultiImageUpload } from '@/components/ui/multi-image-upload'
+import { getStoresForSelect, createVehicle, updateVehicle } from '@/app/[locale]/admin/vehicles/actions'
 
 interface VehicleFormProps {
   vehicle?: VehicleWithStore

@@ -71,7 +71,8 @@ export async function getAdminOrders(filters: OrderFilters = {}) {
         { orderNumber: { contains: search, mode: 'insensitive' } },
         { user: { name: { contains: search, mode: 'insensitive' } } },
         { user: { email: { contains: search, mode: 'insensitive' } } },
-        { vehicle: { name: { contains: search, mode: 'insensitive' } } }
+        { vehicle: { name: { contains: search, mode: 'insensitive' } } },
+        { package: { name: { contains: search, mode: 'insensitive' } } }
       ]
     }
 
@@ -98,6 +99,14 @@ export async function getAdminOrders(filters: OrderFilters = {}) {
               brand: true,
               model: true,
               plateNumber: true
+            }
+          },
+          package: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              price: true
             }
           },
           store: {
@@ -316,6 +325,7 @@ export async function getAdminOrderDetails(orderId: string) {
             store: true
           }
         },
+        package: true,
         store: true,
         payments: true
       }

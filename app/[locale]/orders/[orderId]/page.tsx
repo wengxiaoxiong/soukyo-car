@@ -24,7 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
-import { Separator } from '@radix-ui/react-dropdown-menu'
+import { Separator } from '@/components/ui/separator'
 
 type OrderDetails = {
   id: string
@@ -46,7 +46,7 @@ type OrderDetails = {
   dropoffTime?: Date
   notes?: string
   createdAt: Date
-  vehicle: {
+  vehicle?: {
     id: string
     name: string
     brand: string
@@ -62,6 +62,13 @@ type OrderDetails = {
       address: string
       phone: string
     }
+  }
+  package?: {
+    id: string
+    name: string
+    description: string
+    price: number
+    images: string[]
   }
   store: {
     id: string
@@ -276,46 +283,77 @@ export default function OrderDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* 主要信息 */}
           <div className="lg:col-span-2 space-y-6">
-            {/* 车辆信息 */}
+            {/* 订单项目信息 */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Car className="w-5 h-5" />
-                  车辆信息
+                  {order.vehicle ? '车辆信息' : order.package ? '套餐信息' : '订单项目'}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col md:flex-row gap-4">
-                  {/* 车辆图片 */}
-                  {order.vehicle.images?.[0] && (
-                    <div className="w-full md:w-48 h-32 md:h-36 relative rounded-lg overflow-hidden bg-gray-100">
-                      <img
-                        src={order.vehicle.images[0]}
-                        alt={order.vehicle.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                  
-                  {/* 车辆详情 */}
-                  <div className="flex-1 space-y-2">
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      {order.vehicle.name}
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
-                      <div>品牌: {order.vehicle.brand}</div>
-                      <div>型号: {order.vehicle.model}</div>
-                      <div>年份: {order.vehicle.year}</div>
-                      <div>座位数: {order.vehicle.seats}</div>
-                      {order.vehicle.color && (
-                        <div>颜色: {order.vehicle.color}</div>
-                      )}
-                      {order.vehicle.plateNumber && (
-                        <div>车牌: {order.vehicle.plateNumber}</div>
-                      )}
+                {order.vehicle ? (
+                  <div className="flex flex-col md:flex-row gap-4">
+                    {/* 车辆图片 */}
+                    {order.vehicle.images?.[0] && (
+                      <div className="w-full md:w-48 h-32 md:h-36 relative rounded-lg overflow-hidden bg-gray-100">
+                        <img
+                          src={order.vehicle.images[0]}
+                          alt={order.vehicle.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* 车辆详情 */}
+                    <div className="flex-1 space-y-2">
+                      <h3 className="text-xl font-semibold text-gray-900">
+                        {order.vehicle.name}
+                      </h3>
+                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                        <div>品牌: {order.vehicle.brand}</div>
+                        <div>型号: {order.vehicle.model}</div>
+                        <div>年份: {order.vehicle.year}</div>
+                        <div>座位数: {order.vehicle.seats}</div>
+                        {order.vehicle.color && (
+                          <div>颜色: {order.vehicle.color}</div>
+                        )}
+                        {order.vehicle.plateNumber && (
+                          <div>车牌: {order.vehicle.plateNumber}</div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : order.package ? (
+                  <div className="flex flex-col md:flex-row gap-4">
+                    {/* 套餐图片 */}
+                    {order.package.images?.[0] && (
+                      <div className="w-full md:w-48 h-32 md:h-36 relative rounded-lg overflow-hidden bg-gray-100">
+                        <img
+                          src={order.package.images[0]}
+                          alt={order.package.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* 套餐详情 */}
+                    <div className="flex-1 space-y-2">
+                      <h3 className="text-xl font-semibold text-gray-900">
+                        {order.package.name}
+                      </h3>
+                      <div className="text-sm text-gray-600 space-y-1">
+                        <div>套餐描述: {order.package.description}</div>
+                        <div>价格: ¥{order.package.price}</div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <Car className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>订单信息不完整</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

@@ -18,7 +18,10 @@ interface NotificationItem {
     orderNumber: string;
     vehicle: {
       name: string;
-    };
+    } | null;
+    package: {
+      name: string;
+    } | null;
   } | null;
 }
 

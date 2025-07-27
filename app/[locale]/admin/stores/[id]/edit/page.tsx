@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { StoreForm } from '@/components/admin/StoreForm'
-import { getStore } from '@/app/admin/stores/actions'
+import { getStore } from '../../actions'
 
 export default async function EditStorePage({
   params,

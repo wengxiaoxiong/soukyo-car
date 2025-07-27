@@ -5,18 +5,15 @@ import { useTranslations } from 'next-intl'
 import { PackageCard } from '@/components/PackageCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Search, MapPin, Package, Filter, X } from 'lucide-react'
-import { getAllPackages, PackageWithStore } from '@/lib/actions/packages'
-import { getActiveStores, StoreWithOpeningHours } from '@/app/actions/stores'
+import { Search, Package, Filter, X } from 'lucide-react'
+import { getAllPackages, Package as PackageType } from '@/lib/actions/packages'
+
 
 export default function PackagePage() {
   const t = useTranslations()
-  const [packages, setPackages] = useState<PackageWithStore[]>([])
-  const [stores, setStores] = useState<StoreWithOpeningHours[]>([])
+  const [packages, setPackages] = useState<PackageType[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedStore, setSelectedStore] = useState('')
   const [priceRange, setPriceRange] = useState({ min: '', max: '' })
   const [showFilters, setShowFilters] = useState(false)
 
@@ -24,12 +21,8 @@ export default function PackagePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [packagesData, storesData] = await Promise.all([
-          getAllPackages(),
-          getActiveStores()
-        ])
+        const packagesData = await getAllPackages()
         setPackages(packagesData)
-        setStores(storesData)
       } catch (error) {
         console.error('Failed to fetch data:', error)
       } finally {
@@ -46,7 +39,6 @@ export default function PackagePage() {
     try {
       const params = {
         ...(searchTerm && { search: searchTerm }),
-        ...(selectedStore && { storeId: selectedStore }),
         ...(priceRange.min && { minPrice: parseFloat(priceRange.min) }),
         ...(priceRange.max && { maxPrice: parseFloat(priceRange.max) })
       }
@@ -63,7 +55,6 @@ export default function PackagePage() {
   // 清除筛选
   const clearFilters = () => {
     setSearchTerm('')
-    setSelectedStore('')
     setPriceRange({ min: '', max: '' })
     setShowFilters(false)
   }
@@ -75,7 +66,7 @@ export default function PackagePage() {
     }, 500)
 
     return () => clearTimeout(timeoutId)
-  }, [searchTerm, selectedStore, priceRange])
+  }, [searchTerm, priceRange])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -132,30 +123,7 @@ export default function PackagePage() {
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* 门店选择 */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('stores.title')}
-                    </label>
-                    <Select value={selectedStore} onValueChange={setSelectedStore}>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('common.select')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">{t('common.all')}</SelectItem>
-                        {stores.map((store) => (
-                          <SelectItem key={store.id} value={store.id}>
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4" />
-                              {store.name} - {store.city}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* 价格范围 */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -213,11 +181,11 @@ export default function PackagePage() {
             <Package className="w-24 h-24 text-gray-400 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-gray-900 mb-2">{t('packages.title')}</h3>
             <p className="text-gray-600 mb-6">
-              {searchTerm || selectedStore || priceRange.min || priceRange.max
+              {searchTerm || priceRange.min || priceRange.max
                 ? t('search.no_results')
                 : t('packages.description')}
             </p>
-            {(searchTerm || selectedStore || priceRange.min || priceRange.max) && (
+            {(searchTerm || priceRange.min || priceRange.max) && (
               <Button onClick={clearFilters} variant="outline">
                 {t('common.clear')}
               </Button>

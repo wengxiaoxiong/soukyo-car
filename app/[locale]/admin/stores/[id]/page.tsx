@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
 
 import { StoreForm } from '@/components/admin/StoreForm'
-import { getStoreWithCounts } from '@/app/admin/stores/actions'
+import { getStoreWithCounts } from '../actions'
+
 
 export default async function StoreDetailPage({
   params,
