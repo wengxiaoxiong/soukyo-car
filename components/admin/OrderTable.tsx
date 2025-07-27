@@ -84,7 +84,7 @@ export function OrderTable({ orders, onRefresh }: OrderTableProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('zh-CN', {
       style: 'currency',
-      currency: 'CNY'
+      currency: 'JPY'
     }).format(amount)
   }
 
