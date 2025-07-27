@@ -709,7 +709,7 @@ export async function createPaymentLink(orderId: string) {
       line_items: [
         {
           price_data: {
-            currency: 'cny',
+            currency: 'jpy',
             product_data: {
               name: isPackageOrder 
                 ? `套餐服务 - ${order.package!.name}`
@@ -721,7 +721,7 @@ export async function createPaymentLink(orderId: string) {
                 ? (order.package!.images?.length > 0 ? [order.package!.images[0]] : undefined)
                 : (order.vehicle!.images?.length > 0 ? [order.vehicle!.images[0]] : undefined),
             },
-            unit_amount: order.totalAmount
+            unit_amount: Math.round(order.totalAmount * 100) // Stripe JPY需要以分为单位
           },
           quantity: 1,
         },

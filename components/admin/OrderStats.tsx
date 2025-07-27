@@ -22,7 +22,7 @@ export function OrderStats({ stats, loading }: OrderStatsProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('zh-CN', {
       style: 'currency',
-      currency: 'CNY'
+      currency: 'JPY'
     }).format(amount)
   }
 
