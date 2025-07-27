@@ -72,7 +72,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({
   }
 
   return (
-    <Card className="overflow-hidden flex-shrink-0 w-[300px] md:w-auto mx-2 first:ml-0 last:mr-0 md:mx-0 hover:shadow-lg transition-all duration-300 group">
+    <Card className="pt-0 overflow-hidden flex-shrink-0 w-[300px] md:w-auto mx-2 first:ml-0 last:mr-0 md:mx-0 hover:shadow-lg transition-all duration-300 group">
       <div className="relative aspect-[4/3] overflow-hidden">
         {/* 图片轮播 */}
         {images.length > 0 ? (

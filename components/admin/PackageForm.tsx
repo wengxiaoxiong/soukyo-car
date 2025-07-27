@@ -7,9 +7,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
+import { MultiImageUpload } from '@/components/ui/multi-image-upload'
 import { ArrowLeft, Edit, Save, X, Package as PackageIcon, Eye, EyeOff, Star } from 'lucide-react'
 import Link from 'next/link'
 import { createPackage, updatePackage, togglePackageStatus, type Package } from '@/lib/actions/packages'
+import { toast } from 'sonner'
 
 interface PackageFormProps {
   package?: Package
@@ -18,36 +20,32 @@ interface PackageFormProps {
 
 export function PackageForm({ package: packageData, mode }: PackageFormProps) {
   const [isEditing, setIsEditing] = useState(mode === 'edit' || mode === 'create')
-  const [images, setImages] = useState<string[]>(packageData?.images || ['', '', '', ''])
+  const [images, setImages] = useState<string[]>(packageData?.images || [])
 
-  const handleImageChange = (index: number, value: string) => {
-    const newImages = [...images]
-    newImages[index] = value
-    setImages(newImages)
-  }
-
-  const handleAddImage = () => {
-    setImages([...images, ''])
-  }
-
-  const handleRemoveImage = (index: number) => {
-    const newImages = images.filter((_, i) => i !== index)
+  const handleImagesChange = (newImages: string[]) => {
     setImages(newImages)
   }
 
   const handleSubmit = async (formData: FormData) => {
-    // 添加图片数据到 formData
-    images.forEach(img => {
-      if (img.trim()) {
-        formData.append('images', img.trim())
-      }
-    })
+    try {
+      // 添加图片数据到 formData
+      images.forEach(img => {
+        if (img.trim()) {
+          formData.append('images', img.trim())
+        }
+      })
 
-    if (mode === 'create') {
-      await createPackage(formData)
-    } else if (packageData) {
-      await updatePackage(packageData.id, formData)
-      setIsEditing(false)
+      if (mode === 'create') {
+        await createPackage(formData)
+        toast.success('套餐创建成功！')
+      } else if (packageData) {
+        await updatePackage(packageData.id, formData)
+        toast.success('套餐修改已保存！')
+        setIsEditing(false)
+      }
+    } catch (error) {
+      console.error('Package form submission error:', error)
+      toast.error('操作失败，请重试。')
     }
   }
 
@@ -287,42 +285,17 @@ export function PackageForm({ package: packageData, mode }: PackageFormProps) {
                 )}
               </div>
             ) : (
-              <div className="space-y-3">
-                {images.map((image, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <Input
-                      value={image}
-                      onChange={(e) => handleImageChange(index, e.target.value)}
-                      type="url"
-                      placeholder={`https://example.com/image${index + 1}.jpg`}
-                      className="flex-1"
-                    />
-                    {images.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleRemoveImage(index)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-                
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAddImage}
-                  className="w-full"
-                >
-                  添加更多图片
-                </Button>
-                
-                <p className="text-sm text-gray-500">
-                  请输入图片的完整URL地址。第一张图片将作为封面图片。
+              <div>
+                <MultiImageUpload
+                  value={images}
+                  onChange={handleImagesChange}
+                  disabled={false}
+                  placeholder="点击上传套餐图片或拖拽图片到此处"
+                  maxSize={5}
+                  maxImages={8}
+                />
+                <p className="text-sm text-gray-500 mt-2">
+                  第一张图片将作为封面图片。支持 JPEG, PNG, GIF, WEBP 格式。
                 </p>
               </div>
             )}
