@@ -8,7 +8,10 @@ import { Badge } from '@/components/ui/badge'
 import { Package, ShoppingCart, Eye, ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Package as PackageType } from '@/lib/actions/packages'
+import { Package as PackageType, createPackageBooking } from '@/lib/actions/packages'
+import { toast } from 'sonner'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 interface PackageCardProps extends PackageType {
   showPurchaseButton?: boolean
@@ -27,6 +30,8 @@ export const PackageCard: React.FC<PackageCardProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const t = useTranslations()
   const locale = useLocale()
+  const { data: session } = useSession()
+  const router = useRouter()
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length)
@@ -37,11 +42,33 @@ export const PackageCard: React.FC<PackageCardProps> = ({
   }
 
   const handlePurchase = async () => {
+    if (!session) {
+      toast.error('请先登录')
+      router.push(`/${locale}/auth/signin`)
+      return
+    }
+
+    if (stock <= 0) {
+      toast.error('库存不足')
+      return
+    }
+
     setIsLoading(true)
-    // 这里可以添加购买逻辑
-    setTimeout(() => {
+    try {
+      const result = await createPackageBooking(id)
+      
+      if (result.success && 'checkoutUrl' in result && result.checkoutUrl) {
+        // 直接跳转到Stripe Checkout页面
+        window.location.href = result.checkoutUrl
+      } else {
+        toast.error(result.error || '创建订单失败')
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.error('购买套餐失败:', error)
+      toast.error('购买套餐失败')
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   return (

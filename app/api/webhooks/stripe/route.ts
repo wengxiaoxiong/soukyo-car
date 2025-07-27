@@ -173,34 +173,76 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
 
     const order = payment.order
 
+    // 获取订单的完整信息，包括套餐信息
+    const fullOrder = await prisma.order.findUnique({
+      where: { id: order.id },
+      include: {
+        package: {
+          select: { id: true, name: true, stock: true }
+        }
+      }
+    })
+
     // 更新订单状态和支付信息
-    await prisma.$transaction([
-      prisma.order.update({
-        where: { id: order.id },
-        data: { 
-          status: 'CONFIRMED',
-          stripePaymentIntentId: paymentIntent.id // 更新为正确的payment_intent_id
-        }
-      }),
-      prisma.payment.updateMany({
-        where: { 
-          orderId: order.id,
-          id: payment.id
-        },
-        data: { 
-          status: 'SUCCESS',
-          stripePaymentIntentId: paymentIntent.id, // 更新为正确的payment_intent_id
-          stripeChargeId: paymentIntent.latest_charge as string // 更新为正确的charge_id
-        }
-      })
-    ])
+    if (fullOrder?.package) {
+      // 如果是套餐订单，同时扣减库存
+      await prisma.$transaction([
+        prisma.order.update({
+          where: { id: order.id },
+          data: { 
+            status: 'CONFIRMED',
+            stripePaymentIntentId: paymentIntent.id // 更新为正确的payment_intent_id
+          }
+        }),
+        prisma.payment.updateMany({
+          where: { 
+            orderId: order.id,
+            id: payment.id
+          },
+          data: { 
+            status: 'SUCCESS',
+            stripePaymentIntentId: paymentIntent.id, // 更新为正确的payment_intent_id
+            stripeChargeId: paymentIntent.latest_charge as string // 更新为正确的charge_id
+          }
+        }),
+        prisma.package.update({
+          where: { id: fullOrder.package.id },
+          data: { stock: Math.max(0, fullOrder.package.stock - 1) }
+        })
+      ])
+    } else {
+      // 如果是车辆订单，只更新订单和支付状态
+      await prisma.$transaction([
+        prisma.order.update({
+          where: { id: order.id },
+          data: { 
+            status: 'CONFIRMED',
+            stripePaymentIntentId: paymentIntent.id // 更新为正确的payment_intent_id
+          }
+        }),
+        prisma.payment.updateMany({
+          where: { 
+            orderId: order.id,
+            id: payment.id
+          },
+          data: { 
+            status: 'SUCCESS',
+            stripePaymentIntentId: paymentIntent.id, // 更新为正确的payment_intent_id
+            stripeChargeId: paymentIntent.latest_charge as string // 更新为正确的charge_id
+          }
+        })
+      ])
+    }
 
     // 创建通知
+    const isPackageOrder = !!fullOrder?.package
     await prisma.notification.create({
       data: {
         userId: order.userId,
         title: '支付成功',
-        message: `您的订单 ${order.orderNumber} 支付成功，订单已确认。`,
+        message: isPackageOrder
+          ? `您的套餐订单 ${order.orderNumber} 支付成功，感谢您的购买。`
+          : `您的订单 ${order.orderNumber} 支付成功，订单已确认。`,
         type: 'ORDER',
         relatedOrderId: order.id
       }

@@ -45,6 +45,11 @@ export async function getUserNotifications(limit: number = 10, offset: number = 
               select: {
                 name: true
               }
+            },
+            package: {
+              select: {
+                name: true
+              }
             }
           }
         }

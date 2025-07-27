@@ -353,6 +353,7 @@ export async function getUserOrders() {
       where: { userId: session.user.id },
       include: {
         vehicle: true,
+        package: true,
         store: true,
         payments: true
       },
@@ -394,6 +395,7 @@ export async function getOrderDetails(orderId: string) {
             store: true
           }
         },
+        package: true,
         store: true,
         payments: {
           orderBy: {
@@ -522,6 +524,11 @@ export async function handleCheckoutSuccess(sessionId: string, orderId: string) 
       where: {
         id: orderId,
         userId: session.user.id
+      },
+      include: {
+        package: {
+          select: { id: true, name: true, stock: true }
+        }
       }
     })
 
@@ -533,29 +540,57 @@ export async function handleCheckoutSuccess(sessionId: string, orderId: string) 
     }
 
     // 更新订单和支付状态
-    await prisma.$transaction([
-      prisma.order.update({
-        where: { id: order.id },
-        data: { status: 'CONFIRMED' }
-      }),
-      prisma.payment.updateMany({
-        where: { 
-          orderId: order.id,
-          stripePaymentIntentId: sessionId
-        },
-        data: { 
-          status: 'SUCCESS',
-          stripeChargeId: checkoutSession.payment_intent as string
-        }
-      })
-    ])
+    if (order.package) {
+      // 如果是套餐订单，同时扣减库存
+      await prisma.$transaction([
+        prisma.order.update({
+          where: { id: order.id },
+          data: { status: 'CONFIRMED' }
+        }),
+        prisma.payment.updateMany({
+          where: { 
+            orderId: order.id,
+            stripePaymentIntentId: sessionId
+          },
+          data: { 
+            status: 'SUCCESS',
+            stripeChargeId: checkoutSession.payment_intent as string
+          }
+        }),
+        prisma.package.update({
+          where: { id: order.package.id },
+          data: { stock: Math.max(0, order.package.stock - 1) }
+        })
+      ])
+    } else {
+      // 如果是车辆订单，只更新订单和支付状态
+      await prisma.$transaction([
+        prisma.order.update({
+          where: { id: order.id },
+          data: { status: 'CONFIRMED' }
+        }),
+        prisma.payment.updateMany({
+          where: { 
+            orderId: order.id,
+            stripePaymentIntentId: sessionId
+          },
+          data: { 
+            status: 'SUCCESS',
+            stripeChargeId: checkoutSession.payment_intent as string
+          }
+        })
+      ])
+    }
 
     // 创建通知
+    const isPackageOrder = !!order.package
     await prisma.notification.create({
       data: {
         userId: session.user.id,
         title: '订单确认成功',
-        message: `您的订单 ${order.orderNumber} 已确认，请按时取车。`,
+        message: isPackageOrder
+          ? `您的套餐订单 ${order.orderNumber} 已确认，感谢您的购买。`
+          : `您的订单 ${order.orderNumber} 已确认，请按时取车。`,
         type: 'ORDER',
         relatedOrderId: order.id
       }
@@ -654,7 +689,8 @@ export async function createPaymentLink(orderId: string) {
         status: 'PENDING'
       },
       include: {
-        vehicle: true
+        vehicle: true,
+        package: true
       }
     })
 
@@ -666,6 +702,7 @@ export async function createPaymentLink(orderId: string) {
     }
 
     // 创建新的Stripe Checkout Session
+    const isPackageOrder = !!order.package
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       customer_email: session.user.email || undefined,
@@ -674,9 +711,15 @@ export async function createPaymentLink(orderId: string) {
           price_data: {
             currency: 'cny',
             product_data: {
-              name: `租车服务 - ${order.vehicle.brand} ${order.vehicle.model}`,
-              description: `租期：${order.startDate.toLocaleDateString()} 至 ${order.endDate.toLocaleDateString()}（${order.totalDays}天）`,
-              images: order.vehicle.images?.length > 0 ? [order.vehicle.images[0]] : undefined,
+              name: isPackageOrder 
+                ? `套餐服务 - ${order.package!.name}`
+                : `租车服务 - ${order.vehicle!.brand} ${order.vehicle!.model}`,
+              description: isPackageOrder
+                ? `购买套餐：${order.package!.name}`
+                : `租期：${order.startDate.toLocaleDateString()} 至 ${order.endDate.toLocaleDateString()}（${order.totalDays}天）`,
+              images: isPackageOrder
+                ? (order.package!.images?.length > 0 ? [order.package!.images[0]] : undefined)
+                : (order.vehicle!.images?.length > 0 ? [order.vehicle!.images[0]] : undefined),
             },
             unit_amount: order.totalAmount
           },
@@ -689,7 +732,8 @@ export async function createPaymentLink(orderId: string) {
       metadata: {
         orderId: order.id,
         userId: session.user.id,
-        vehicleId: order.vehicleId,
+        ...(order.vehicleId && { vehicleId: order.vehicleId }),
+        ...(order.packageId && { packageId: order.packageId }),
       },
       expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // 30分钟后过期
     })

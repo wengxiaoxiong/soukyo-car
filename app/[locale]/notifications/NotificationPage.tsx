@@ -130,7 +130,11 @@ export const NotificationPage: React.FC = () => {
                                   <div className="mt-3 p-3 bg-blue-50 rounded-lg">
                                     <p className="text-sm text-blue-700">
                                       <strong>相关订单：</strong>
-                                      {notification.relatedOrder.orderNumber} - {notification.relatedOrder.vehicle.name}
+                                      {notification.relatedOrder.orderNumber} - {
+                                        notification.relatedOrder.package?.name || 
+                                        notification.relatedOrder.vehicle?.name || 
+                                        '未知商品'
+                                      }
                                     </p>
                                   </div>
                                 )}

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Edit, Save, X, Package, Eye, EyeOff, Star } from 'lucide-react'
+import { ArrowLeft, Edit, Save, X, Package as PackageIcon, Eye, EyeOff, Star } from 'lucide-react'
 import Link from 'next/link'
 import { createPackage, updatePackage, togglePackageStatus, type Package } from '@/lib/actions/packages'
 
@@ -122,7 +122,7 @@ export function PackageForm({ package: packageData, mode }: PackageFormProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-lg bg-blue-100">
-                <Package className="w-8 h-8 text-blue-600" />
+                <PackageIcon className="w-8 h-8 text-blue-600" />
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-gray-900">{packageData.name}</h3>

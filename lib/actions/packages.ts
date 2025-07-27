@@ -3,6 +3,14 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import Stripe from 'stripe'
+
+// 初始化Stripe
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2025-05-28.basil',
+})
 
 export interface Package {
   id: string
@@ -253,5 +261,152 @@ export async function purchasePackage(packageId: string) {
   } catch (error) {
     console.error('购买套餐失败:', error)
     throw new Error('购买套餐失败')
+  }
+}
+
+// 创建套餐订单和支付
+export async function createPackageBooking(packageId: string) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        error: '请先登录'
+      }
+    }
+
+    // 获取套餐信息
+    const packageData = await prisma.package.findUnique({
+      where: { id: packageId },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        stock: true,
+        images: true,
+        isActive: true
+      }
+    })
+
+    if (!packageData) {
+      return {
+        success: false,
+        error: '套餐不存在'
+      }
+    }
+
+    if (!packageData.isActive) {
+      return {
+        success: false,
+        error: '套餐已下架'
+      }
+    }
+
+    if (packageData.stock <= 0) {
+      return {
+        success: false,
+        error: '库存不足'
+      }
+    }
+
+    // 获取第一个可用店面
+    const firstStore = await prisma.store.findFirst({
+      where: { isActive: true },
+      select: { id: true }
+    })
+
+    if (!firstStore) {
+      return {
+        success: false,
+        error: '系统暂时不可用，请稍后再试'
+      }
+    }
+
+    // 计算价格（套餐价格 + 税费）
+    const subtotal = packageData.price
+    const taxAmount = subtotal * 0.1 // 10% 税费
+    const totalAmount = Math.round((subtotal + taxAmount) * 100) // Stripe 需要以分为单位
+
+    // 创建订单（支付状态为PENDING）
+    const order = await prisma.order.create({
+      data: {
+        userId: session.user.id,
+        packageId: packageId,
+        storeId: firstStore.id, // 使用第一个可用店面
+        startDate: new Date(), // 套餐购买当天生效
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30天有效期
+        totalDays: 1, // 套餐购买按单次计算
+        pricePerDay: packageData.price,
+        subtotal: subtotal,
+        taxAmount: taxAmount,
+        totalAmount: totalAmount / 100, // 数据库存储以元为单位
+        driverLicense: 'N/A', // 套餐不需要驾驶证
+        status: 'PENDING'
+      },
+      include: {
+        package: true,
+        user: true
+      }
+    })
+
+    // 创建Stripe Checkout Session
+    const checkoutSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      customer_email: session.user.email || undefined,
+      line_items: [
+        {
+          price_data: {
+            currency: 'jpy',
+            product_data: {
+              name: `套餐服务 - ${packageData.name}`,
+              description: packageData.description || `购买套餐：${packageData.name}`,
+              images: packageData.images?.length > 0 ? [packageData.images[0]] : undefined,
+            },
+            unit_amount: totalAmount
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${process.env.NEXTAUTH_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/payment/cancel?order_id=${order.id}`,
+      metadata: {
+        orderId: order.id,
+        userId: session.user.id,
+        packageId: packageId,
+      },
+      expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // 30分钟后过期
+    })
+
+    // 更新订单，保存checkout session ID
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { 
+        stripePaymentIntentId: checkoutSession.id // 复用这个字段存储session ID
+      }
+    })
+
+    // 创建支付记录
+    await prisma.payment.create({
+      data: {
+        orderId: order.id,
+        amount: totalAmount / 100, // 数据库存储以元为单位
+        stripePaymentIntentId: checkoutSession.id,
+        status: 'PENDING'
+      }
+    })
+
+    return {
+      success: true,
+      order,
+      checkoutUrl: checkoutSession.url
+    }
+  } catch (error) {
+    console.error('创建套餐订单失败:', error)
+    return {
+      success: false,
+      error: '创建订单失败'
+    }
   }
 }

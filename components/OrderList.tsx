@@ -17,14 +17,21 @@ interface Order {
   totalDays: number
   totalAmount: number
   createdAt: string
-  vehicle: {
+  vehicle?: {
     id: string
     name: string
     brand: string
     model: string
     year: number
     images: string[]
-  }
+  } | null
+  package?: {
+    id: string
+    name: string
+    description?: string
+    images: string[]
+    price: number
+  } | null
   store: {
     id: string
     name: string
@@ -82,7 +89,7 @@ export function OrderList({ orders, onViewDetails, onCancelOrder, onPayOrder, lo
       <div className="text-center py-12">
         <Car className="w-16 h-16 text-gray-400 mx-auto mb-4" />
         <h3 className="text-lg font-medium text-gray-900 mb-2">暂无订单</h3>
-        <p className="text-gray-500">您还没有任何租车订单</p>
+        <p className="text-gray-500">您还没有任何订单</p>
       </div>
     )
   }
@@ -112,13 +119,19 @@ export function OrderList({ orders, onViewDetails, onCancelOrder, onPayOrder, lo
             </CardHeader>
 
             <CardContent className="space-y-4">
-              {/* 车辆信息 */}
+              {/* 车辆/套餐信息 */}
               <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
                 <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-                  {order.vehicle.images.length > 0 ? (
+                  {order.vehicle?.images && order.vehicle.images.length > 0 ? (
                     <img 
                       src={order.vehicle.images[0]} 
-                      alt={order.vehicle.name}
+                      alt={order.vehicle?.name || '车辆图片'}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : order.package?.images && order.package.images.length > 0 ? (
+                    <img 
+                      src={order.package.images[0]} 
+                      alt={order.package?.name || '套餐图片'}
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -126,10 +139,26 @@ export function OrderList({ orders, onViewDetails, onCancelOrder, onPayOrder, lo
                   )}
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-medium text-gray-900">{order.vehicle.name}</h4>
-                  <p className="text-sm text-gray-600">
-                    {order.vehicle.brand} {order.vehicle.model} • {order.vehicle.year}年
-                  </p>
+                  {order.vehicle ? (
+                    <>
+                      <h4 className="font-medium text-gray-900">{order.vehicle.name}</h4>
+                      <p className="text-sm text-gray-600">
+                        {order.vehicle.brand} {order.vehicle.model} • {order.vehicle.year}年
+                      </p>
+                    </>
+                  ) : order.package ? (
+                    <>
+                      <h4 className="font-medium text-gray-900">{order.package.name}</h4>
+                      <p className="text-sm text-gray-600">
+                        {order.package.description || '套餐服务'}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <h4 className="font-medium text-gray-900">订单信息不可用</h4>
+                      <p className="text-sm text-gray-600">详情不可用</p>
+                    </>
+                  )}
                   <div className="flex items-center gap-1 mt-1 text-sm text-gray-500">
                     <MapPin className="w-4 h-4" />
                     <span>{order.store.name}</span>
@@ -142,14 +171,14 @@ export function OrderList({ orders, onViewDetails, onCancelOrder, onPayOrder, lo
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-blue-500" />
                   <div>
-                    <p className="text-gray-500">取车日期</p>
+                    <p className="text-gray-500">{order.vehicle ? '取车日期' : '购买日期'}</p>
                     <p className="font-medium">{format(new Date(order.startDate), 'PPP', { locale: zhCN })}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-red-500" />
                   <div>
-                    <p className="text-gray-500">还车日期</p>
+                    <p className="text-gray-500">{order.vehicle ? '还车日期' : '有效期至'}</p>
                     <p className="font-medium">{format(new Date(order.endDate), 'PPP', { locale: zhCN })}</p>
                   </div>
                 </div>
