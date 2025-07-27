@@ -326,7 +326,8 @@ export async function createPackageBooking(packageId: string) {
     // 计算价格（套餐价格 + 税费）
     const subtotal = packageData.price
     const taxAmount = subtotal * 0.1 // 10% 税费
-    const totalAmount = Math.round((subtotal + taxAmount) * 100) // Stripe 需要以分为单位
+    // Stripe 美元、欧元 需要以分为单位 需要*100 但是日元不需要！
+    const totalAmount = Math.round((subtotal + taxAmount)) 
 
     // 创建订单（支付状态为PENDING）
     const order = await prisma.order.create({
