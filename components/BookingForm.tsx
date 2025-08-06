@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Loader2, Car, MapPin, CreditCard } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface Vehicle {
   id: string
@@ -120,12 +121,13 @@ export function BookingForm({ vehicle, onSubmit, loading = false }: BookingFormP
       {/* 车辆信息摘要 */}
       <div className="bg-white rounded-lg border p-6">
         <div className="flex items-start gap-4">
-          <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
+          <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center relative">
             {vehicle.images.length > 0 ? (
-              <img 
+              <Image 
                 src={vehicle.images[0]} 
                 alt={vehicle.name}
-                className="w-full h-full object-cover rounded-lg"
+                fill
+                className="object-cover rounded-lg"
               />
             ) : (
               <Car className="w-8 h-8 text-gray-400" />

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar, MapPin, Car, CreditCard, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 import { zhCN } from 'date-fns/locale'
+import Image from 'next/image'
 
 interface Order {
   id: string
@@ -121,18 +122,20 @@ export function OrderList({ orders, onViewDetails, onCancelOrder, onPayOrder, lo
             <CardContent className="space-y-4">
               {/* 车辆/套餐信息 */}
               <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
-                <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden relative">
                   {order.vehicle?.images && order.vehicle.images.length > 0 ? (
-                    <img 
+                    <Image 
                       src={order.vehicle.images[0]} 
                       alt={order.vehicle?.name || '车辆图片'}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   ) : order.package?.images && order.package.images.length > 0 ? (
-                    <img 
+                    <Image 
                       src={order.package.images[0]} 
                       alt={order.package?.name || '套餐图片'}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   ) : (
                     <Car className="w-8 h-8 text-gray-400" />

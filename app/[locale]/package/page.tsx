@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { PackageCard } from '@/components/PackageCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Search, Package, Filter, X } from 'lucide-react'
+import { Search, Package, Filter, X, SortAsc } from 'lucide-react'
 import { getAllPackages, Package as PackageType } from '@/lib/actions/packages'
 
 
@@ -16,6 +16,7 @@ export default function PackagePage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [priceRange, setPriceRange] = useState({ min: '', max: '' })
   const [showFilters, setShowFilters] = useState(false)
+  const [sortBy, setSortBy] = useState<'default' | 'capacity'>('default')
 
   // 获取初始数据
   useEffect(() => {
@@ -57,6 +58,24 @@ export default function PackagePage() {
     setSearchTerm('')
     setPriceRange({ min: '', max: '' })
     setShowFilters(false)
+  }
+
+  // 从套餐名称中提取人数
+  const extractCapacity = (name: string): number => {
+    const match = name.match(/(\d+)人/)
+    return match ? parseInt(match[1]) : 0
+  }
+
+  // 排序套餐
+  const sortPackages = (packagesToSort: PackageType[]) => {
+    if (sortBy === 'capacity') {
+      return [...packagesToSort].sort((a, b) => {
+        const capacityA = extractCapacity(a.name)
+        const capacityB = extractCapacity(b.name)
+        return capacityA - capacityB // 从小到大排序
+      })
+    }
+    return packagesToSort
   }
 
   // 当筛选条件改变时自动筛选
@@ -104,6 +123,16 @@ export default function PackagePage() {
               >
                 <Filter className="w-4 h-4" />
                 {t('common.filter')}
+              </Button>
+
+              {/* 排序选择器 */}
+              <Button
+                variant="outline"
+                onClick={() => setSortBy(sortBy === 'default' ? 'capacity' : 'default')}
+                className="h-12 px-6 flex items-center gap-2"
+              >
+                <SortAsc className="w-4 h-4" />
+                {sortBy === 'default' ? '默认排序' : '按人数排序'}
               </Button>
             </div>
 
@@ -171,7 +200,7 @@ export default function PackagePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {packages.map((pkg) => (
+              {sortPackages(packages).map((pkg) => (
                 <PackageCard key={pkg.id} {...pkg} />
               ))}
             </div>

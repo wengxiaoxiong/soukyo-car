@@ -13,6 +13,21 @@ export const FeaturedPackages: React.FC = () => {
   const [packages, setPackages] = useState<PackageType[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // 从套餐名称中提取人数
+  const extractCapacity = (name: string): number => {
+    const match = name.match(/(\d+)人/)
+    return match ? parseInt(match[1]) : 0
+  }
+
+  // 排序套餐（按人数从小到大）
+  const sortPackages = (packagesToSort: PackageType[]) => {
+    return [...packagesToSort].sort((a, b) => {
+      const capacityA = extractCapacity(a.name)
+      const capacityB = extractCapacity(b.name)
+      return capacityA - capacityB // 从小到大排序
+    })
+  }
+
   useEffect(() => {
     const fetchPackages = async () => {
       try {
@@ -67,10 +82,10 @@ export const FeaturedPackages: React.FC = () => {
           )}
           
           {/* 套餐卡片容器 */}
-          <div className="flex overflow-x-auto pb-6 md:pb-0 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 scrollbar-hide">
+          <div className="flex overflow-x-auto pb-6 scrollbar-hide md:overflow-x-visible md:pb-0 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
             {packages.length > 0 ? (
               <>
-                {packages.map((pkg) => (
+                {sortPackages(packages).map((pkg) => (
                   <PackageCard key={pkg.id} {...pkg} />
                 ))}
                 

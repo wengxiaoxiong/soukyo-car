@@ -128,15 +128,15 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* 图片展示区域 */}
-          <div className="space-y-4">
-            <div className="relative aspect-[4/3] bg-gray-200 rounded-lg overflow-hidden">
+          <div className="space-y-6">
+            <div className="relative aspect-[3/2] bg-gray-50 rounded-lg overflow-hidden">
               {packageData.images && packageData.images.length > 0 ? (
                 <>
                   <Image
                     src={packageData.images[currentImageIndex]}
                     alt={packageData.name}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                   />
                   
                   {packageData.images.length > 1 && (
@@ -165,12 +165,12 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
 
             {/* 缩略图 */}
             {packageData.images && packageData.images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto">
+              <div className="flex gap-2 overflow-x-auto p-2 relative z-10">
                 {packageData.images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
-                    className={`relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 ${
+                    className={`relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-50 ${
                       index === currentImageIndex ? 'ring-2 ring-blue-500' : ''
                     }`}
                   >
@@ -178,7 +178,7 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
                       src={image}
                       alt={`${packageData.name} ${index + 1}`}
                       fill
-                      className="object-cover"
+                      className="object-contain"
                     />
                   </button>
                 ))}
@@ -209,21 +209,21 @@ export default function PackageDetailPage({ params }: PackageDetailPageProps) {
 
             {/* 套餐特点 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card>
+              <Card className="hover:bg-gray-50 transition-colors duration-200 cursor-pointer group">
                 <CardContent className="p-4 text-center">
-                  <Star className="w-6 h-6 text-yellow-500 mx-auto mb-2" />
+                  <Star className="w-6 h-6 text-yellow-500 mx-auto mb-2 group-hover:scale-110 transition-transform duration-200" />
                   <p className="text-sm font-medium">精选套餐</p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="hover:bg-gray-50 transition-colors duration-200 cursor-pointer group">
                 <CardContent className="p-4 text-center">
-                  <Shield className="w-6 h-6 text-green-500 mx-auto mb-2" />
+                  <Shield className="w-6 h-6 text-green-500 mx-auto mb-2 group-hover:scale-110 transition-transform duration-200" />
                   <p className="text-sm font-medium">品质保证</p>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="hover:bg-gray-50 transition-colors duration-200 cursor-pointer group">
                 <CardContent className="p-4 text-center">
-                  <Clock className="w-6 h-6 text-blue-500 mx-auto mb-2" />
+                  <Clock className="w-6 h-6 text-blue-500 mx-auto mb-2 group-hover:scale-110 transition-transform duration-200" />
                   <p className="text-sm font-medium">快速交付</p>
                 </CardContent>
               </Card>

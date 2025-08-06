@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Button } from "@/components/ui/button";
-import { Phone, Mail, Instagram, Twitter } from "lucide-react";
+import { Phone, Mail, Instagram } from "lucide-react";
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const Footer: React.FC = () => {
   const t = useTranslations();
@@ -55,8 +56,14 @@ export const Footer: React.FC = () => {
               <Button variant="ghost" size="icon" className="!rounded-button">
                 <Instagram className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="!rounded-button">
-                <Twitter className="w-5 h-5" />
+              <Button variant="ghost" size="icon" className="!rounded-button group">
+                <Image 
+                  src="/icons8-推特x.svg" 
+                  alt="Twitter X" 
+                  width={20} 
+                  height={20}
+                  className="filter brightness-0 invert group-hover:brightness-0 group-hover:invert-0 transition-all duration-200"
+                />
               </Button>
               <Button variant="ghost" size="icon" className="!rounded-button">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -64,6 +71,25 @@ export const Footer: React.FC = () => {
                   <path d="M22 11.4c.11-.81.19-1.64.19-2.49" />
                   <path d="M15.26 18.11c-1.06.16-1.76.22-2.76.22" />
                 </svg>
+              </Button>
+              
+              <Button variant="ghost" size="icon" className="!rounded-button group">
+                <Image 
+                  src="/icons8-微信.svg" 
+                  alt="微信" 
+                  width={20} 
+                  height={20}
+                  className="filter brightness-0 invert group-hover:brightness-0 group-hover:invert-0 transition-all duration-200"
+                />
+              </Button>
+              <Button variant="ghost" size="icon" className="!rounded-button group">
+                <Image 
+                  src="/小红书.svg" 
+                  alt="小红书" 
+                  width={26} 
+                  height={26}
+                  className="filter brightness-0 invert group-hover:brightness-0 group-hover:invert-0 transition-all duration-200"
+                />
               </Button>
             </div>
           </div>

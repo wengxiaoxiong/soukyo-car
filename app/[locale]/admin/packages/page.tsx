@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Package, Plus, Edit, Trash2, Eye, EyeOff, Star } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { getPackages, togglePackageStatus, deletePackage, type Package as PackageType } from '@/lib/actions/packages'
 
 export default function AdminPackagesPage() {
@@ -168,12 +169,14 @@ export default function AdminPackagesPage() {
                   <tr key={pkg.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-12 w-12">
+                        <div className="flex-shrink-0 h-12 w-12 relative">
                           {pkg.images.length > 0 ? (
-                            <img
+                            <Image
                               className="h-12 w-12 rounded-lg object-cover"
                               src={pkg.images[0]}
                               alt={pkg.name}
+                              width={48}
+                              height={48}
                             />
                           ) : (
                             <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">

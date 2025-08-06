@@ -57,7 +57,7 @@ export const StoreCard: React.FC<StoreCardProps> = ({
 
   return (
     <Card className="overflow-hidden flex-shrink-0 w-[300px] md:w-auto mx-2 first:ml-0 last:mr-0 md:mx-0 bg-white hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] group border-0 shadow-lg">
-      <div className="relative h-52 md:h-60 overflow-hidden">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-t-lg">
         <Image
           src={image || '/placeholder-store.jpg'}
           alt={name}

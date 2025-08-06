@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Users, ArrowRight } from "lucide-react";
 import type { CarCardData } from '@/lib/actions/cars';
+import Image from 'next/image';
 
 interface CarCardProps extends Omit<CarCardData, 'originalData'> {
   // 可以选择性地添加点击回调等额外功能
@@ -44,10 +45,11 @@ export const CarCard: React.FC<CarCardProps> = ({
   return (
     <Card className="overflow-hidden flex-shrink-0 w-[300px] md:w-auto mx-2 first:ml-0 last:mr-0 md:mx-0 bg-white hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] group border-0 shadow-lg">
       <div className="relative h-52 md:h-60 overflow-hidden">
-        <img
+        <Image
           src={image}
           alt={name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="absolute top-4 right-4">

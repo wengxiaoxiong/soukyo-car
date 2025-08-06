@@ -92,7 +92,7 @@ export const StoreLocations: React.FC = () => {
           )}
           
           {/* 门店卡片容器 */}
-          <div className="flex overflow-x-auto pb-6 md:pb-0 md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 scrollbar-hide">
+          <div className="flex overflow-x-auto pb-6 scrollbar-hide md:overflow-x-visible md:pb-0 md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {stores.length > 0 ? (
               stores.map((store) => (
                 <StoreCard key={store.id} {...store} />

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useTranslations, useLocale } from 'next-intl';
+import { usePathname } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,12 +18,20 @@ import { User, Menu, X, LogOut, Settings, Shield } from "lucide-react";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { NotificationMobileMenu } from "@/components/NotificationMobileMenu";
+import { ScrollProgressBar } from "@/components/ScrollProgressBar";
 
 export const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { data: session, status } = useSession();
   const t = useTranslations();
   const locale = useLocale();
+  const pathname = usePathname();
+
+  // 检测当前页面
+  const isCurrentPage = (path: string) => {
+    const currentPath = pathname.replace(`/${locale}`, '') || '/';
+    return currentPath === path;
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm">
@@ -36,10 +45,46 @@ export const Header: React.FC = () => {
               </Link>
             </h1>
             <nav className="hidden md:flex items-center gap-8">
-              <Link href={`/${locale}`} className="text-gray-600 hover:text-gray-900">{t('common.home')}</Link>
-              <Link href={`/${locale}/package`} className="text-gray-600 hover:text-gray-900">{t('navigation.packages')}</Link>
-              <Link href={`/${locale}/store`} className="text-gray-600 hover:text-gray-900">{t('navigation.stores')}</Link>
-              <Link href={`/${locale}/about`} className="text-gray-600 hover:text-gray-900">{t('common.about')}</Link>
+              <Link 
+                href={`/${locale}`} 
+                className={`transition-colors duration-200 ${
+                  isCurrentPage('/') 
+                    ? 'text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {t('common.home')}
+              </Link>
+              <Link 
+                href={`/${locale}/package`} 
+                className={`transition-colors duration-200 ${
+                  isCurrentPage('/package') 
+                    ? 'text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {t('navigation.packages')}
+              </Link>
+              <Link 
+                href={`/${locale}/store`} 
+                className={`transition-colors duration-200 ${
+                  isCurrentPage('/store') 
+                    ? 'text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {t('navigation.stores')}
+              </Link>
+              <Link 
+                href={`/${locale}/about`} 
+                className={`transition-colors duration-200 ${
+                  isCurrentPage('/about') 
+                    ? 'text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {t('common.about')}
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-4">
@@ -135,10 +180,46 @@ export const Header: React.FC = () => {
         <div className="md:hidden bg-white border-t border-gray-100 shadow-sm">
           <div className="max-w-[1440px] mx-auto px-4 py-4">
             <nav className="flex flex-col space-y-4">
-              <Link href={`/${locale}`} className="text-gray-600 hover:text-gray-900 py-2">{t('common.home')}</Link>
-              <Link href={`/${locale}/package`} className="text-gray-600 hover:text-gray-900 py-2">{t('navigation.packages')}</Link>
-              <Link href={`/${locale}/store`} className="text-gray-600 hover:text-gray-900 py-2">{t('navigation.stores')}</Link>
-              <Link href={`/${locale}/about`} className="text-gray-600 hover:text-gray-900 py-2">{t('common.about')}</Link>
+              <Link 
+                href={`/${locale}`} 
+                className={`py-2 transition-colors duration-200 ${
+                  isCurrentPage('/') 
+                    ? 'text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {t('common.home')}
+              </Link>
+              <Link 
+                href={`/${locale}/package`} 
+                className={`py-2 transition-colors duration-200 ${
+                  isCurrentPage('/package') 
+                    ? 'text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {t('navigation.packages')}
+              </Link>
+              <Link 
+                href={`/${locale}/store`} 
+                className={`py-2 transition-colors duration-200 ${
+                  isCurrentPage('/store') 
+                    ? 'text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {t('navigation.stores')}
+              </Link>
+              <Link 
+                href={`/${locale}/about`} 
+                className={`py-2 transition-colors duration-200 ${
+                  isCurrentPage('/about') 
+                    ? 'text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {t('common.about')}
+              </Link>
 
               {/* 移动端通知 */}
               {session?.user && (
@@ -196,6 +277,9 @@ export const Header: React.FC = () => {
           </div>
         </div>
       )}
+      
+      {/* 滚动进度条 */}
+      <ScrollProgressBar />
     </header>
   );
 }; 

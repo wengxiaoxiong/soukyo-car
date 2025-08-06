@@ -72,8 +72,8 @@ export const PackageCard: React.FC<PackageCardProps> = ({
   }
 
   return (
-    <Card className="pt-0 overflow-hidden flex-shrink-0 w-[300px] md:w-auto mx-2 first:ml-0 last:mr-0 md:mx-0 hover:shadow-lg transition-all duration-300 group">
-      <div className="relative aspect-[4/3] overflow-hidden">
+    <Card className="pt-0 overflow-hidden flex-shrink-0 w-[300px] md:w-auto mx-2 first:ml-0 last:mr-0 md:mx-0 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group transform">
+      <div className="relative aspect-[2/1] overflow-hidden">
         {/* 图片轮播 */}
         {images.length > 0 ? (
           <div className="relative w-full h-full">
@@ -81,7 +81,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({
               src={images[currentImageIndex]}
               alt={name}
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              className="object-contain transition-transform duration-300 group-hover:scale-110"
             />
             
             {/* 图片导航 */}
@@ -89,13 +89,13 @@ export const PackageCard: React.FC<PackageCardProps> = ({
               <>
                 <button
                   onClick={prevImage}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full transition-colors"
+                  className="absolute left-2 top-2/3 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-md transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={nextImage}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full transition-colors"
+                  className="absolute right-2 top-2/3 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-md transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -136,31 +136,33 @@ export const PackageCard: React.FC<PackageCardProps> = ({
       <div className="p-6">
         {/* 套餐标题 */}
         <div className="mb-3">
-          <h3 className="text-xl font-bold text-gray-900 mb-1 line-clamp-2">{name}</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-1 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">{name}</h3>
         </div>
         
         {/* 套餐描述 */}
-        {description && (
-          <p className="text-gray-600 text-sm mb-4 line-clamp-3">{description}</p>
-        )}
+        <div className="min-h-[3.5rem] mb-4">
+          {description && (
+            <p className="text-gray-600 text-sm line-clamp-3">{description}</p>
+          )}
+        </div>
         
         {/* 价格 */}
         <div className="mb-4">
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-blue-600">{t('common.currency')}{price.toLocaleString()}</span>
-            <span className="text-sm text-gray-500">/ {t('packages.title')}</span>
+            <span className="text-2xl font-bold text-blue-600 group-hover:text-blue-700 transition-colors duration-300">{t('common.currency')}{price.toLocaleString()}</span>
+            <span className="text-sm text-gray-500 group-hover:text-gray-600 transition-colors duration-300">/ {t('packages.title')}</span>
           </div>
         </div>
         
         {/* 操作按钮 */}
-        <div className="flex gap-2">
-          <Link href={`/${locale}/package/${id}`} className="flex-1">
+        <div className="flex flex-col gap-2">
+          <Link href={`/${locale}/package/${id}`} className="w-full">
             <Button 
               variant="outline" 
-              className="w-full flex items-center gap-2 hover:bg-gray-50"
+              className="w-full flex items-center justify-center gap-2 hover:bg-gray-50 text-sm"
             >
               <Eye className="w-4 h-4" />
-              {t('packages.view_details')}
+              <span className="truncate">{t('packages.view_details')}</span>
             </Button>
           </Link>
           
@@ -168,10 +170,12 @@ export const PackageCard: React.FC<PackageCardProps> = ({
             <Button 
               onClick={handlePurchase}
               disabled={stock <= 0 || isLoading}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2 text-sm"
             >
               <ShoppingCart className="w-4 h-4" />
-              {isLoading ? t('common.loading') : stock <= 0 ? t('common.unavailable') : t('packages.book_package')}
+              <span className="truncate">
+                {isLoading ? t('common.loading') : stock <= 0 ? t('common.unavailable') : t('packages.book_package')}
+              </span>
             </Button>
           )}
         </div>
