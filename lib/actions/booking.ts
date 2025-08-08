@@ -9,9 +9,7 @@ import { z } from 'zod'
 // import { emailService } from '@/lib/email/emailService'
 
 // 初始化Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-07-30.basil',
-})
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 // 租车预订表单验证模式
 const BookingFormSchema = z.object({
