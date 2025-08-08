@@ -6,10 +6,11 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import Stripe from 'stripe'
 import { z } from 'zod'
+// import { emailService } from '@/lib/email/emailService'
 
 // 初始化Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-05-28.basil',
+  apiVersion: '2025-07-30.basil',
 })
 
 // 租车预订表单验证模式
@@ -244,6 +245,8 @@ export async function createBooking(formData: BookingFormData) {
       }
     })
 
+    // 注意：订单创建时不发送邮件，等待支付完成后发送确认邮件
+
     return {
       success: true,
       order,
@@ -312,16 +315,67 @@ export async function confirmPayment(paymentIntentId: string) {
       })
     ])
 
-    // 创建通知
-    await prisma.notification.create({
-      data: {
-        userId: session.user.id,
-        title: '订单确认成功',
-        message: `您的订单 ${order.orderNumber} 已确认，请按时取车。`,
-        type: 'ORDER',
-        relatedOrderId: order.id
-      }
+    // 创建更丰富的通知（包含车型/时间/门店，并可跳转订单详情）
+    const orderDetailForNotify = await prisma.order.findUnique({
+      where: { id: order.id },
+      include: { vehicle: true, package: true, store: true }
     })
+
+    if (orderDetailForNotify) {
+      const vehicleName = orderDetailForNotify.package?.name || orderDetailForNotify.vehicle?.name || '未指定'
+      const user = await prisma.user.findUnique({ where: { id: session.user.id }, select: { preferredLanguage: true } })
+      const lang = (user?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+      const { formatDateParts, buildOrderNotification } = await import('@/lib/utils/notification-i18n')
+      const { dateText, timeText } = formatDateParts(orderDetailForNotify.startDate, lang)
+      const built = buildOrderNotification(lang, 'order_confirmed', {
+        orderNumber: orderDetailForNotify.orderNumber,
+        vehicleName,
+        storeName: orderDetailForNotify.store?.name ?? undefined,
+        dateText,
+        timeText,
+      })
+
+      await prisma.notification.create({
+        data: {
+          userId: session.user.id,
+          title: built.title,
+          message: built.message,
+          type: 'ORDER',
+          relatedOrderId: orderDetailForNotify.id,
+          link: `/orders/${orderDetailForNotify.id}`
+        }
+      })
+    }
+
+    // 发送订单确认邮件
+    try {
+      const { emailService } = await import('@/lib/email/emailService')
+      const user = await prisma.user.findUnique({ 
+        where: { id: session.user.id }, 
+        select: { email: true, name: true, preferredLanguage: true } 
+      })
+      
+      if (user) {
+        const vehicleName = orderDetailForNotify?.package?.name || orderDetailForNotify?.vehicle?.name || '未指定'
+        
+        await emailService.sendOrderStatusEmail({
+          to: user.email,
+          userName: user.name || '用户',
+          orderNumber: order.orderNumber,
+          status: 'CONFIRMED',
+          vehicleName,
+          startDate: order.startDate,
+          endDate: order.endDate,
+          storeName: orderDetailForNotify?.store?.name || '门店',
+          orderId: order.id,
+          userLanguage: user.preferredLanguage as string
+        })
+        
+        console.log('Order confirmation email sent for order:', order.id)
+      }
+    } catch (emailError) {
+      console.error('Failed to send order confirmation email:', emailError)
+    }
 
     revalidatePath('/orders')
     
@@ -376,6 +430,7 @@ export async function getUserOrders() {
 // 获取订单详情
 export async function getOrderDetails(orderId: string) {
   try {
+    // 获取用户会话
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return {
@@ -384,10 +439,11 @@ export async function getOrderDetails(orderId: string) {
       }
     }
 
+    // 获取订单详情（包含用户信息）
     const order = await prisma.order.findFirst({
-      where: { 
+      where: {
         id: orderId,
-        userId: session.user.id 
+        userId: session.user.id
       },
       include: {
         vehicle: {
@@ -397,12 +453,14 @@ export async function getOrderDetails(orderId: string) {
         },
         package: true,
         store: true,
-        payments: {
-          orderBy: {
-            createdAt: 'desc'
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            preferredLanguage: true
           }
-        },
-        user: true
+        }
       }
     })
 
@@ -441,6 +499,12 @@ export async function cancelOrder(orderId: string) {
       where: { 
         id: orderId,
         userId: session.user.id 
+      },
+      include: {
+        vehicle: true,
+        package: true,
+        store: true,
+        user: true
       }
     })
 
@@ -473,16 +537,51 @@ export async function cancelOrder(orderId: string) {
       data: { status: 'CANCELLED' }
     })
 
-    // 创建通知
+    // 创建更丰富的通知（包含车型/时间/门店，并可跳转订单详情）
+    const vehicleName2 = order.package?.name || order.vehicle?.name || '未指定'
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id }, select: { preferredLanguage: true } })
+    const lang2 = (currentUser?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+    const { formatDateParts: format2, buildOrderNotification: build2 } = await import('@/lib/utils/notification-i18n')
+    const { dateText: date2, timeText: time2 } = format2(order.startDate, lang2)
+    const built2 = build2(lang2, 'order_cancelled', {
+      orderNumber: order.orderNumber,
+      vehicleName: vehicleName2,
+      storeName: order.store.name,
+      dateText: date2,
+      timeText: time2,
+    })
     await prisma.notification.create({
       data: {
         userId: session.user.id,
-        title: '订单已取消',
-        message: `您的订单 ${order.orderNumber} 已取消。`,
+        title: built2.title,
+        message: built2.message,
         type: 'ORDER',
-        relatedOrderId: order.id
+        relatedOrderId: order.id,
+        link: `/orders/${order.id}`
       }
     })
+
+    // 发送订单取消邮件（用户主动取消）
+    try {
+      const { emailService } = await import('@/lib/email/emailService')
+      await emailService.sendOrderStatusEmail({
+        to: order.user.email,
+        userName: order.user.name || '用户',
+        orderNumber: order.orderNumber,
+        status: 'CANCELLED',
+        vehicleName: order.vehicle?.name,
+        packageName: order.package?.name,
+        startDate: order.startDate,
+        endDate: order.endDate,
+        storeName: order.store.name,
+        orderId: order.id,
+        isUserCancelled: true, // 标记为用户主动取消
+        userLanguage: order.user.preferredLanguage || 'en'
+      })
+    } catch (emailError) {
+      console.error('邮件发送失败:', emailError)
+      // 邮件发送失败不影响订单取消
+    }
 
     revalidatePath('/orders')
     
@@ -539,13 +638,29 @@ export async function handleCheckoutSuccess(sessionId: string, orderId: string) 
       }
     }
 
+    // 检查是否已经处理过（避免重复处理）
+    const existingPayment = await prisma.payment.findFirst({
+      where: {
+        orderId: order.id,
+        status: 'SUCCESS'
+      }
+    })
+
+    if (existingPayment) {
+      // 如果已经处理过，直接返回成功，不重复发送邮件和通知
+      return {
+        success: true,
+        orderId: order.id
+      }
+    }
+
     // 更新订单和支付状态
     if (order.package) {
       // 如果是套餐订单，同时扣减库存
       await prisma.$transaction([
         prisma.order.update({
           where: { id: order.id },
-          data: { status: 'CONFIRMED' }
+          data: { status: 'PENDING' } // 保持PENDING状态，等待商家确认
         }),
         prisma.payment.updateMany({
           where: { 
@@ -567,7 +682,7 @@ export async function handleCheckoutSuccess(sessionId: string, orderId: string) 
       await prisma.$transaction([
         prisma.order.update({
           where: { id: order.id },
-          data: { status: 'CONFIRMED' }
+          data: { status: 'PENDING' } // 保持PENDING状态，等待商家确认
         }),
         prisma.payment.updateMany({
           where: { 
@@ -582,19 +697,99 @@ export async function handleCheckoutSuccess(sessionId: string, orderId: string) 
       ])
     }
 
-    // 创建通知
-    const isPackageOrder = !!order.package
-    await prisma.notification.create({
-      data: {
-        userId: session.user.id,
-        title: '订单确认成功',
-        message: isPackageOrder
-          ? `您的套餐订单 ${order.orderNumber} 已确认，感谢您的购买。`
-          : `您的订单 ${order.orderNumber} 已确认，请按时取车。`,
-        type: 'ORDER',
-        relatedOrderId: order.id
-      }
+    // 创建更丰富的通知（包含车型/时间/门店，并可跳转订单详情）
+    const orderDetailForNotify2 = await prisma.order.findUnique({
+      where: { id: order.id },
+      include: { vehicle: true, package: true, store: true }
     })
+    if (orderDetailForNotify2) {
+      // 检查是否已经创建过通知（避免重复通知）
+      const existingNotification = await prisma.notification.findFirst({
+        where: {
+          userId: session.user.id,
+          relatedOrderId: order.id,
+          title: {
+            contains: '支付成功'
+          },
+          createdAt: {
+            gte: new Date(Date.now() - 60 * 60 * 1000) // 1小时内
+          }
+        }
+      })
+
+      if (!existingNotification) {
+        const vehicleName = orderDetailForNotify2.package?.name || orderDetailForNotify2.vehicle?.name || '未指定'
+        const me = await prisma.user.findUnique({ where: { id: session.user.id }, select: { preferredLanguage: true } })
+        const lang3 = (me?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+        const { formatDateParts: format3, buildOrderNotification: build3 } = await import('@/lib/utils/notification-i18n')
+        const { dateText: d3, timeText: t3 } = format3(orderDetailForNotify2.startDate, lang3)
+        const built3 = build3(lang3, 'payment_success', {
+          orderNumber: orderDetailForNotify2.orderNumber,
+          vehicleName,
+          storeName: orderDetailForNotify2.store?.name ?? undefined,
+          dateText: d3,
+          timeText: t3,
+        })
+        await prisma.notification.create({
+          data: {
+            userId: session.user.id,
+            title: built3.title,
+            message: built3.message,
+            type: 'ORDER',
+            relatedOrderId: orderDetailForNotify2.id,
+            link: `/orders/${orderDetailForNotify2.id}`
+          }
+        })
+      }
+    }
+
+    // 发送订单确认邮件
+    try {
+      const { emailService } = await import('@/lib/email/emailService')
+      const user = await prisma.user.findUnique({ 
+        where: { id: session.user.id }, 
+        select: { email: true, name: true, preferredLanguage: true } 
+      })
+      
+      if (user) {
+        // 检查是否已经发送过邮件（避免重复发送）
+        const existingEmailNotification = await prisma.notification.findFirst({
+          where: {
+            userId: session.user.id,
+            relatedOrderId: order.id,
+            title: {
+              contains: '订单已下单'
+            },
+            createdAt: {
+              gte: new Date(Date.now() - 60 * 60 * 1000) // 1小时内
+            }
+          }
+        })
+
+        if (!existingEmailNotification) {
+          const vehicleName = orderDetailForNotify2?.package?.name || orderDetailForNotify2?.vehicle?.name || '未指定'
+          
+          await emailService.sendOrderStatusEmail({
+            to: user.email,
+            userName: user.name || '用户',
+            orderNumber: order.orderNumber,
+            status: 'PENDING',
+            vehicleName,
+            startDate: order.startDate,
+            endDate: order.endDate,
+            storeName: orderDetailForNotify2?.store?.name || '门店',
+            orderId: order.id,
+            language: user.preferredLanguage as string
+          })
+          
+          console.log('Checkout success email sent for order:', order.id)
+        } else {
+          console.log('Email already sent for order:', order.id)
+        }
+      }
+    } catch (emailError) {
+      console.error('Failed to send checkout success email:', emailError)
+    }
 
     revalidatePath('/orders')
     

@@ -18,6 +18,7 @@ function PaymentSuccessContent() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [orderId, setOrderId] = useState<string | null>(null)
+  const [processed, setProcessed] = useState(false) // 添加处理状态，防止重复处理
 
   useEffect(() => {
     const sessionId = searchParams.get('session_id')
@@ -37,6 +38,12 @@ function PaymentSuccessContent() {
       return
     }
 
+    // 如果已经处理过，直接显示结果，不重复处理
+    if (processed) {
+      setLoading(false)
+      return
+    }
+
     const processPayment = async () => {
       try {
         const result = await handleCheckoutSuccess(sessionId, orderIdParam)
@@ -44,13 +51,16 @@ function PaymentSuccessContent() {
         if (result.success) {
           setSuccess(true)
           setOrderId(result.orderId || null)
-          toast.success('支付成功！订单已确认')
+          setProcessed(true) // 标记为已处理
+          toast.success('支付成功！订单已下单，等待商家确认')
         } else {
           setError(result.error || '处理支付失败')
+          setProcessed(true) // 即使失败也标记为已处理
           toast.error(result.error || '处理支付失败')
         }
       } catch {
         setError('处理支付时发生错误')
+        setProcessed(true) // 即使出错也标记为已处理
         toast.error('处理支付时发生错误')
       }
       
@@ -58,7 +68,7 @@ function PaymentSuccessContent() {
     }
 
     processPayment()
-  }, [status, searchParams, router])
+  }, [status, searchParams, router, processed]) // 添加 processed 到依赖数组
 
   if (status === 'loading' || loading) {
     return (
@@ -81,12 +91,12 @@ function PaymentSuccessContent() {
               <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
               <h1 className="text-3xl font-bold text-gray-900 mb-4">支付成功！</h1>
               <p className="text-lg text-gray-600 mb-8">
-                您的租车订单已确认，感谢您的信任！
+                您的租车订单已下单，正在等待商家确认。
               </p>
               
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8">
-                <p className="text-green-800">
-                  订单确认邮件已发送至您的邮箱，请按时取车。
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
+                <p className="text-blue-800">
+                  我们已向您的邮箱发送邮件。商家确认后，我们会再次通过邮件通知您。
                 </p>
               </div>
 

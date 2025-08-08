@@ -6,8 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell, Loader2, RefreshCw, ArrowLeft } from "lucide-react";
 import { NotificationRenderer } from '@/components/NotificationRenderer';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export const NotificationPage: React.FC = () => {
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
@@ -104,7 +106,14 @@ export const NotificationPage: React.FC = () => {
                         className={`p-6 hover:bg-gray-50 cursor-pointer transition-colors ${
                           !notification.isRead ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
                         }`}
-                        onClick={() => !notification.isRead && markAsRead(notification.id)}
+                        onClick={() => {
+                          if (!notification.isRead) {
+                            markAsRead(notification.id);
+                          }
+                          if (notification.link) {
+                            router.push(notification.link);
+                          }
+                        }}
                       >
                         <div className="flex items-start gap-4">
                           <div className="mt-1">

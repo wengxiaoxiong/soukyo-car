@@ -89,7 +89,14 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                     <DropdownMenuItem key={notification.id} className="p-0">
                       <div 
                         className={`w-full p-3 hover:bg-gray-50 cursor-pointer ${!notification.isRead ? 'bg-blue-50' : ''}`}
-                        onClick={() => !notification.isRead && markAsRead(notification.id)}
+                        onClick={() => {
+                          if (!notification.isRead) {
+                            markAsRead(notification.id);
+                          }
+                          if (notification.link) {
+                            window.location.href = notification.link;
+                          }
+                        }}
                       >
                         <div className="flex items-start gap-3">
                           <div className="mt-1">

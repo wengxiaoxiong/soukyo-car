@@ -170,13 +170,15 @@ export async function createNotification({
   title,
   message,
   type,
-  relatedOrderId
+  relatedOrderId,
+  link
 }: {
   userId: string
   title: string
   message: string
   type: NotificationType
   relatedOrderId?: string
+  link?: string
 }) {
   try {
     const notification = await prisma.notification.create({
@@ -185,7 +187,8 @@ export async function createNotification({
         title,
         message,
         type,
-        relatedOrderId
+        relatedOrderId,
+        link
       }
     })
 

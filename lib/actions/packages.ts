@@ -9,7 +9,7 @@ import Stripe from 'stripe'
 
 // 初始化Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-05-28.basil',
+  apiVersion: '2025-07-30.basil',
 })
 
 export interface Package {
@@ -234,6 +234,33 @@ export async function togglePackageStatus(id: string) {
   }
 }
 
+// 切换套餐推荐状态
+export async function togglePackageFeatured(id: string) {
+  try {
+    const packageData = await prisma.package.findUnique({
+      where: { id },
+      select: { isFeatured: true }
+    })
+
+    if (!packageData) {
+      throw new Error('套餐不存在')
+    }
+
+    await prisma.package.update({
+      where: { id },
+      data: {
+        isFeatured: !packageData.isFeatured
+      }
+    })
+
+    revalidatePath('/admin/packages')
+    revalidatePath('/')
+  } catch (error) {
+    console.error('切换套餐推荐状态失败:', error)
+    throw new Error('切换套餐推荐状态失败')
+  }
+}
+
 // 购买套餐（库存减一）
 export async function purchasePackage(packageId: string) {
   try {
@@ -397,6 +424,8 @@ export async function createPackageBooking(packageId: string) {
         status: 'PENDING'
       }
     })
+
+    // 注意：套餐订单创建时不发送邮件，等待支付完成后发送确认邮件
 
     return {
       success: true,

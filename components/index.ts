@@ -6,7 +6,7 @@ export { StoreLocations } from './StoreLocations';
 export { StoreCard } from './StoreCard';
 export { CompanyInfo } from './CompanyInfo';
 export { Footer } from './Footer';
-export { LanguageSelector } from './LanguageSelector'; 
+export { default as LanguageSelector } from './LanguageSelector'; 
 export { ChatwootWidget } from './ChatwootWidget';
 export { NotificationCenter } from './NotificationCenter';
 export { NotificationMobileMenu } from './NotificationMobileMenu';

@@ -15,7 +15,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { User, Menu, X, LogOut, Settings, Shield } from "lucide-react";
-import { LanguageSelector } from "@/components/LanguageSelector";
+import LanguageSelector from "@/components/LanguageSelector";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { NotificationMobileMenu } from "@/components/NotificationMobileMenu";
 import { ScrollProgressBar } from "@/components/ScrollProgressBar";

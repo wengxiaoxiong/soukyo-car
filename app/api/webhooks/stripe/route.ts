@@ -4,7 +4,7 @@ import Stripe from 'stripe'
 import { prisma } from '@/lib/prisma'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-05-28.basil',
+  apiVersion: '2025-07-30.basil',
 })
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
@@ -72,7 +72,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         prisma.order.update({
           where: { id: order.id },
           data: { 
-            status: 'CONFIRMED',
+            status: 'PENDING', // 保持PENDING状态，等待商家确认
             stripePaymentIntentId: session.payment_intent as string // 更新为真正的payment intent id
           }
         }),
@@ -89,16 +89,46 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         })
       ])
 
-      // 创建通知
-      await prisma.notification.create({
-        data: {
+    // 创建更丰富的通知（包含车型/时间/门店，并可跳转订单详情）
+    const fullOrderForNotify = await prisma.order.findUnique({
+      where: { id: order.id },
+      include: { vehicle: true, package: true, store: true }
+    })
+    if (fullOrderForNotify) {
+      const vehicleName = fullOrderForNotify.package?.name || fullOrderForNotify.vehicle?.name || '未指定'
+      const user = await prisma.user.findUnique({ where: { id: order.userId }, select: { preferredLanguage: true } })
+      const lang = (user?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+      const { formatDateParts, buildOrderNotification } = await import('@/lib/utils/notification-i18n')
+      const { dateText, timeText } = formatDateParts(fullOrderForNotify.startDate, lang)
+      const built = buildOrderNotification(lang, 'payment_success', {
+        orderNumber: fullOrderForNotify.orderNumber,
+        vehicleName,
+        storeName: fullOrderForNotify.store?.name ?? undefined,
+        dateText,
+        timeText,
+      })
+      // 避免重复创建相同的“支付成功”通知
+      const exists = await prisma.notification.findFirst({
+        where: {
           userId: order.userId,
-          title: '支付成功',
-          message: `您的订单 ${order.orderNumber} 支付成功，订单已确认。`,
+          relatedOrderId: order.id,
+          title: built.title,
           type: 'ORDER',
-          relatedOrderId: order.id
         }
       })
+      if (!exists) {
+        await prisma.notification.create({
+          data: {
+            userId: order.userId,
+            title: built.title,
+            message: built.message,
+            type: 'ORDER',
+            relatedOrderId: order.id,
+            link: `/orders/${order.id}`
+          }
+        })
+      }
+    }
 
       console.log('Checkout completed handled for order:', order.id)
     }
@@ -190,7 +220,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
         prisma.order.update({
           where: { id: order.id },
           data: { 
-            status: 'CONFIRMED',
+            status: 'PENDING', // 保持PENDING状态，等待商家确认
             stripePaymentIntentId: paymentIntent.id // 更新为正确的payment_intent_id
           }
         }),
@@ -216,7 +246,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
         prisma.order.update({
           where: { id: order.id },
           data: { 
-            status: 'CONFIRMED',
+            status: 'PENDING', // 保持PENDING状态，等待商家确认
             stripePaymentIntentId: paymentIntent.id // 更新为正确的payment_intent_id
           }
         }),
@@ -234,19 +264,76 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
       ])
     }
 
-    // 创建通知
-    const isPackageOrder = !!fullOrder?.package
-    await prisma.notification.create({
-      data: {
-        userId: order.userId,
-        title: '支付成功',
-        message: isPackageOrder
-          ? `您的套餐订单 ${order.orderNumber} 支付成功，感谢您的购买。`
-          : `您的订单 ${order.orderNumber} 支付成功，订单已确认。`,
-        type: 'ORDER',
-        relatedOrderId: order.id
-      }
+    // 创建更丰富的通知（包含车型/时间/门店，并可跳转订单详情）
+    const fullOrderForNotify2 = await prisma.order.findUnique({
+      where: { id: order.id },
+      include: { vehicle: true, package: true, store: true }
     })
+    if (fullOrderForNotify2) {
+      const vehicleName = fullOrderForNotify2.package?.name || fullOrderForNotify2.vehicle?.name || '未指定'
+      const user2 = await prisma.user.findUnique({ where: { id: order.userId }, select: { preferredLanguage: true } })
+      const lang2 = (user2?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+      const { formatDateParts: format2, buildOrderNotification: build2 } = await import('@/lib/utils/notification-i18n')
+      const { dateText: d2, timeText: t2 } = format2(fullOrderForNotify2.startDate, lang2)
+      const built2 = build2(lang2, 'payment_success', {
+        orderNumber: fullOrderForNotify2.orderNumber,
+        vehicleName,
+        storeName: fullOrderForNotify2.store?.name ?? undefined,
+        dateText: d2,
+        timeText: t2,
+      })
+      // 避免重复创建相同的“支付成功”通知
+      const exists2 = await prisma.notification.findFirst({
+        where: {
+          userId: order.userId,
+          relatedOrderId: order.id,
+          title: built2.title,
+          type: 'ORDER',
+        }
+      })
+      if (!exists2) {
+        await prisma.notification.create({
+          data: {
+            userId: order.userId,
+            title: built2.title,
+            message: built2.message,
+            type: 'ORDER',
+            relatedOrderId: order.id,
+            link: `/orders/${order.id}`
+          }
+        })
+      }
+    }
+
+    // 发送支付成功邮件（PENDING状态，表示已下单但未确认）
+    const user = await prisma.user.findUnique({ 
+      where: { id: order.userId }, 
+      select: { email: true, name: true, preferredLanguage: true } 
+    })
+    
+    if (user) {
+      try {
+        const { emailService } = await import('@/lib/email/emailService')
+        const vehicleName = fullOrderForNotify2?.package?.name || fullOrderForNotify2?.vehicle?.name || '未指定'
+        
+        await emailService.sendOrderStatusEmail({
+          to: user.email,
+          userName: user.name || '用户',
+          orderNumber: order.orderNumber,
+          status: 'PENDING',
+          vehicleName,
+          startDate: order.startDate,
+          endDate: order.endDate,
+          storeName: fullOrderForNotify2?.store?.name || '门店',
+          orderId: order.id,
+          language: user.preferredLanguage as string
+        })
+        
+        console.log('Payment success email sent for order:', order.id)
+      } catch (emailError) {
+        console.error('Failed to send payment success email:', emailError)
+      }
+    }
 
     console.log('Payment success handled for order:', order.id)
   } catch (error) {
@@ -322,14 +409,19 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
       }
     })
 
-    // 创建通知
+    // 创建更丰富的通知（可跳转订单详情）
+    const user3 = await prisma.user.findUnique({ where: { id: order.userId }, select: { preferredLanguage: true } })
+    const lang3 = (user3?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+    const { buildOrderNotification: build3 } = await import('@/lib/utils/notification-i18n')
+    const built3 = build3(lang3, 'payment_failed', { orderNumber: order.orderNumber })
     await prisma.notification.create({
       data: {
         userId: order.userId,
-        title: '支付失败',
-        message: `您的订单 ${order.orderNumber} 支付失败，请重新尝试支付。`,
+        title: built3.title,
+        message: built3.message,
         type: 'ORDER',
-        relatedOrderId: order.id
+        relatedOrderId: order.id,
+        link: `/orders/${order.id}`
       }
     })
 

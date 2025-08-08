@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Package, Plus, Edit, Trash2, Eye, EyeOff, Star } from 'lucide-react'
+import { Package, Plus, Edit, Trash2, Eye, EyeOff, Star, StarOff } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { getPackages, togglePackageStatus, deletePackage, type Package as PackageType } from '@/lib/actions/packages'
+import { getPackages, togglePackageStatus, togglePackageFeatured, deletePackage, type Package as PackageType } from '@/lib/actions/packages'
 
 export default function AdminPackagesPage() {
   const [packages, setPackages] = useState<PackageType[]>([])
@@ -35,6 +35,17 @@ export default function AdminPackagesPage() {
       setPackages(updatedPackages)
     } catch (error) {
       console.error('切换套餐状态失败:', error)
+    }
+  }
+
+  const handleToggleFeatured = async (packageId: string) => {
+    try {
+      await togglePackageFeatured(packageId)
+      // 重新获取数据
+      const updatedPackages = await getPackages()
+      setPackages(updatedPackages)
+    } catch (error) {
+      console.error('切换套餐推荐状态失败:', error)
     }
   }
 
@@ -185,9 +196,13 @@ export default function AdminPackagesPage() {
                           )}
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{pkg.name}</div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {pkg.name.length > 20 ? `${pkg.name.substring(0, 20)}...` : pkg.name}
+                          </div>
                           <div className="text-sm text-gray-500 line-clamp-2">
-                            {pkg.description || '暂无描述'}
+                            {(pkg.description || '暂无描述').length > 20 
+                              ? `${(pkg.description || '暂无描述').substring(0, 20)}...` 
+                              : (pkg.description || '暂无描述')}
                           </div>
                         </div>
                       </div>
@@ -227,6 +242,16 @@ export default function AdminPackagesPage() {
                           onClick={() => handleToggleStatus(pkg.id)}
                         >
                           {pkg.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </Button>
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-purple-600 hover:text-purple-800"
+                          onClick={() => handleToggleFeatured(pkg.id)}
+                          title={pkg.isFeatured ? '取消推荐' : '设为推荐'}
+                        >
+                          {pkg.isFeatured ? <StarOff className="w-4 h-4" /> : <Star className="w-4 h-4" />}
                         </Button>
                         
                         <Button

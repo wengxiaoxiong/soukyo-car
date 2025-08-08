@@ -65,11 +65,11 @@ function AdminOrdersContent() {
       const filtersToUse = newFilters || filters
       const result = await getAdminOrders(filtersToUse)
       
-      if (result.success && result.data) {
+      if (result && result.success && result.data) {
         setOrders(result.data.orders)
         setPagination(result.data.pagination)
       } else {
-        toast.error(result.error || '获取订单列表失败')
+        toast.error(result?.error || '获取订单列表失败')
       }
     } catch (error) {
       console.error('获取订单列表失败:', error)
@@ -84,10 +84,10 @@ function AdminOrdersContent() {
     try {
       const result = await getOrderStats()
       
-      if (result.success && result.stats) {
+      if (result && result.success && result.stats) {
         setStats(result.stats)
       } else {
-        toast.error(result.error || '获取统计数据失败')
+        toast.error(result?.error || '获取统计数据失败')
       }
     } catch (error) {
       console.error('获取统计数据失败:', error)

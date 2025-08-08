@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { UserRole, OrderStatus } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
+import { emailService } from '@/lib/email/emailService'
 
 // 订单筛选参数类型
 export interface OrderFilters {
@@ -183,7 +184,19 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus) {
     // 检查订单是否存在
     const order = await prisma.order.findUnique({
       where: { id: orderId },
-      include: { user: true }
+      include: { 
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            preferredLanguage: true
+          }
+        },
+        vehicle: true,
+        package: true,
+        store: true
+      }
     })
 
     if (!order) {
@@ -200,24 +213,61 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus) {
     })
 
     // 创建通知给用户
-    const statusMessages = {
-      PENDING: '订单待处理',
-      CONFIRMED: '订单已确认',
-      ONGOING: '订单进行中',
-      COMPLETED: '订单已完成',
-      CANCELLED: '订单已取消',
-      REFUNDED: '订单已退款'
-    }
+    // const statusMessages = {
+    //   PENDING: '订单待处理',
+    //   CONFIRMED: '订单已确认',
+    //   ONGOING: '订单进行中',
+    //   COMPLETED: '订单已完成',
+    //   CANCELLED: '订单已取消',
+    //   REFUNDED: '订单已退款'
+    // }
 
+    // 创建通知
+    const vehicleName = order.vehicle?.name || order.package?.name || '未指定'
+    const user = await prisma.user.findUnique({ where: { id: order.userId }, select: { preferredLanguage: true } })
+    const lang = (user?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+    const { formatDateParts, buildOrderNotification } = await import('@/lib/utils/notification-i18n')
+    const { dateText, timeText } = formatDateParts(order.startDate, lang)
+    const built = buildOrderNotification(lang, 'status_updated', {
+      orderNumber: order.orderNumber,
+      vehicleName,
+      storeName: order.store.name,
+      dateText,
+      timeText,
+      status,
+    })
+    
     await prisma.notification.create({
       data: {
         userId: order.userId,
-        title: '订单状态更新',
-        message: `您的订单 ${order.orderNumber} 状态已更新为：${statusMessages[status]}`,
+        title: built.title,
+        message: built.message,
         type: 'ORDER',
-        relatedOrderId: order.id
+        relatedOrderId: order.id,
+        link: `/orders/${order.id}`
       }
     })
+
+    // 发送邮件通知（管理员操作）
+    try {
+      await emailService.sendOrderStatusEmail({
+        to: order.user.email,
+        userName: order.user.name || '用户',
+        orderNumber: order.orderNumber,
+        status: status,
+        vehicleName: order.vehicle?.name,
+        packageName: order.package?.name,
+        startDate: order.startDate,
+        endDate: order.endDate,
+        storeName: order.store.name,
+        orderId: order.id,
+        isUserCancelled: false, // 管理员操作，不是用户主动取消
+        language: order.user.preferredLanguage || 'en'
+      })
+    } catch (emailError) {
+      console.error('邮件发送失败:', emailError)
+      // 邮件发送失败不影响订单状态更新
+    }
 
     revalidatePath('/admin/orders')
     

@@ -10,7 +10,9 @@ import {
   FileText, 
   BarChart3, 
   Settings,
-  Package
+  Package,
+  Mail,
+  Clock
 } from 'lucide-react'
 
 const navigation = [
@@ -20,6 +22,8 @@ const navigation = [
   // { name: '车辆管理', href: '/admin/vehicles', icon: Car },
   { name: '用户管理', href: '/admin/users', icon: Users },
   { name: '订单管理', href: '/admin/orders', icon: FileText },
+  { name: '邮件模板', href: '/admin/email-templates', icon: Mail },
+  { name: '邮件队列', href: '/admin/email-queue', icon: Clock },
   { name: '设置', href: '/admin/settings', icon: Settings },
 ]
 

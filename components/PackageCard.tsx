@@ -134,9 +134,9 @@ export const PackageCard: React.FC<PackageCardProps> = ({
       </div>
       
       <div className="p-6">
-        {/* 套餐标题 */}
+        {/* 套餐标题（固定两行高度，避免按钮错位） */}
         <div className="mb-3">
-          <h3 className="text-xl font-bold text-gray-900 mb-1 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">{name}</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-1 line-clamp-2 h-[3.5rem] group-hover:text-blue-600 transition-colors duration-300">{name}</h3>
         </div>
         
         {/* 套餐描述 */}

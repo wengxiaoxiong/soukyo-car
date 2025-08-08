@@ -7,6 +7,7 @@ declare module "next-auth" {
       id: string
       role: UserRole
       isActive: boolean
+      preferredLanguage: string
     } & DefaultSession["user"]
   }
 
@@ -14,6 +15,7 @@ declare module "next-auth" {
     id: string
     role: UserRole
     isActive?: boolean
+    preferredLanguage?: string
   }
 }
 
@@ -22,6 +24,7 @@ declare module "next-auth/jwt" {
     id: string
     role: UserRole
     isActive: boolean
+    preferredLanguage: string
     lastRefresh?: number
   }
 } 

@@ -60,6 +60,7 @@ export const authOptions: NextAuthOptions = {
           image: user.image,
           role: user.role,
           isActive: user.isActive,
+          preferredLanguage: user.preferredLanguage || 'en',
         }
       }
     })
@@ -80,6 +81,7 @@ export const authOptions: NextAuthOptions = {
           token.id = dbUser.id
           token.role = dbUser.role
           token.isActive = dbUser.isActive
+          token.preferredLanguage = dbUser.preferredLanguage || 'en'
           
           // 如果是新用户没有角色，设置默认角色
           if (!dbUser.role) {
@@ -106,6 +108,7 @@ export const authOptions: NextAuthOptions = {
         if (dbUser) {
           token.role = dbUser.role
           token.isActive = dbUser.isActive
+          token.preferredLanguage = dbUser.preferredLanguage || 'en'
           token.lastRefresh = Date.now()
         }
       }
@@ -117,6 +120,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id
         session.user.role = token.role
         session.user.isActive = token.isActive
+        session.user.preferredLanguage = token.preferredLanguage
       }
       return session
     },

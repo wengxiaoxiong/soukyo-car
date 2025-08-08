@@ -76,7 +76,7 @@ type OrderDetails = {
     address: string
     phone: string
   }
-  payments: Array<{
+  payments?: Array<{
     id: string
     amount: number
     status: string
@@ -554,13 +554,13 @@ export default function OrderDetailPage() {
             </Card>
 
             {/* 支付信息 */}
-            {order.payments.length > 0 && (
+            {(order.payments?.length ?? 0) > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle>支付信息</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {order.payments.map((payment) => (
+                  {(order.payments ?? []).map((payment) => (
                     <div key={payment.id} className="flex justify-between items-center">
                       <div>
                         <div className="text-sm font-medium">

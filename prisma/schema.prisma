@@ -65,6 +65,9 @@ model User {
   // 用户角色
   role          UserRole @default(USER)
   
+  // 语言偏好设置
+  preferredLanguage String @default("en") // en, ja, zh
+  
   // 是否激活
   isActive      Boolean  @default(true)
   
@@ -311,6 +314,9 @@ model Notification {
   message         String
   type            NotificationType
   
+  // 跳转链接（可选）
+  link            String?
+  
   // 阅读状态
   isRead          Boolean          @default(false)
   readAt          DateTime?
@@ -439,5 +445,35 @@ model PackageReview {
   createdAt DateTime @default(now())
   
   @@map("package_reviews")
-  @@unique([userId, packageId]) // 一个用户对同一套餐只能评价一次
+  @@unique([userId, packageId]) // 一个用户对同一车辆只能评价一次
+}
+
+// 11. 邮件模板表（支持多语言）
+model EmailTemplate {
+  id          String   @id @default(cuid())
+  
+  // 模板标识
+  status      String   // PENDING, CONFIRMED, CANCELLED, ONGOING, COMPLETED, REFUNDED
+  
+  // 语言代码
+  language    String   @default("en") // en, ja, zh
+  
+  // 邮件标题
+  subject     String
+  
+  // 邮件正文模板
+  content     String   @db.Text
+  
+  // 表情符号
+  emoji       String?
+  
+  // 是否启用
+  isActive    Boolean  @default(true)
+  
+  // 创建和更新时间
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([status, language])
+  @@map("email_templates")
 }

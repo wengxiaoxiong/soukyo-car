@@ -13,6 +13,7 @@ interface NotificationItem {
   isRead: boolean;
   readAt: Date | null;
   relatedOrderId: string | null;
+  link?: string | null;
   createdAt: Date;
   relatedOrder?: {
     orderNumber: string;
@@ -105,6 +106,31 @@ export const NotificationRenderer: React.FC<NotificationRendererProps> = ({
     setPage(0);
     fetchNotifications(0, false);
   }, [fetchNotifications]);
+
+  // 前端事件驱动刷新 + 轮询刷新 + 焦点恢复刷新
+  useEffect(() => {
+    const handleCustomRefresh = () => refresh();
+    const handleFocus = () => refresh();
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') refresh();
+    };
+
+    window.addEventListener('soukyo:notifications:refresh', handleCustomRefresh);
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    const intervalId = window.setInterval(() => {
+      // 定时拉取，确保无需手动点击也能看到最新通知
+      refresh();
+    }, 5000);
+
+    return () => {
+      window.removeEventListener('soukyo:notifications:refresh', handleCustomRefresh);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.clearInterval(intervalId);
+    };
+  }, [refresh]);
 
   // 标记单个通知为已读
   const markAsRead = useCallback(async (notificationId: string) => {
