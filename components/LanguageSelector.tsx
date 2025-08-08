@@ -7,9 +7,9 @@ import { useRouter, usePathname } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 const LANGUAGES = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'ja', name: '日本語', flag: '🇯🇵' },
-  { code: 'zh', name: '中文', flag: '🇨🇳' }
+  { code: 'en', name: 'English' },
+  { code: 'ja', name: '日本語' },
+  { code: 'zh', name: '中文' }
 ]
 
 export default function LanguageSelector() {
@@ -59,7 +59,7 @@ export default function LanguageSelector() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-gray-600">语言:</span>
+      <span className="text-sm text-gray-600">Language:</span>
       <Select value={locale} onValueChange={handleLanguageChange} disabled={isUpdating}>
         <SelectTrigger className="w-32">
           <SelectValue />
@@ -67,7 +67,7 @@ export default function LanguageSelector() {
         <SelectContent>
           {LANGUAGES.map(lang => (
             <SelectItem key={lang.code} value={lang.code}>
-              {lang.flag} {lang.name}
+              {lang.name}
             </SelectItem>
           ))}
         </SelectContent>
