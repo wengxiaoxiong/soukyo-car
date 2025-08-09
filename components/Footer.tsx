@@ -58,19 +58,12 @@ export const Footer: React.FC = () => {
               </Button>
               <Button variant="ghost" size="icon" className="!rounded-button group">
                 <Image 
-                  src="/icons8-推特x.svg" 
-                  alt="Twitter X" 
+                  src="/icons8-line-me.svg" 
+                  alt="LINE" 
                   width={20} 
                   height={20}
                   className="filter brightness-0 invert group-hover:brightness-0 group-hover:invert-0 transition-all duration-200"
                 />
-              </Button>
-              <Button variant="ghost" size="icon" className="!rounded-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 8.01c0-4.42-4.48-8-10-8s-10 3.58-10 8c0 4.13 3.67 7.55 8.62 7.95l1.37.06c.97 0 1.88.31 2.26.87.38.57.1 1.38-.57 2.12" />
-                  <path d="M22 11.4c.11-.81.19-1.64.19-2.49" />
-                  <path d="M15.26 18.11c-1.06.16-1.76.22-2.76.22" />
-                </svg>
               </Button>
               
               <Button variant="ghost" size="icon" className="!rounded-button group">
