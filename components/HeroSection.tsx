@@ -11,9 +11,9 @@ export const HeroSection: React.FC = () => {
   const router = useRouter();
 
   const locationCards = [
-    { title: t('locations.narita.title'), bg: '/chengtian.png' },
-    { title: t('locations.haneda.title'), bg: '/yutian.png' },
-    { title: t('locations.kami_ikebukuro.title'), bg: '/chidai.JPG' },
+    { title: t('locations.narita.title'), bg: 'https://0nrui4uhjcvewjzb.public.blob.vercel-storage.com/hero-images/chengtian.webp' },
+    { title: t('locations.haneda.title'), bg: 'https://0nrui4uhjcvewjzb.public.blob.vercel-storage.com/hero-images/yutian.webp' },
+    { title: t('locations.kami_ikebukuro.title'), bg: 'https://0nrui4uhjcvewjzb.public.blob.vercel-storage.com/hero-images/chidai.webp' },
   ];
 
   const handleCardClick = () => {

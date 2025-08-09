@@ -5,16 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Bell } from "lucide-react";
 import { NotificationRenderer } from './NotificationRenderer';
 import Link from 'next/link';
+import { useLocale } from 'next-intl';
 
 interface NotificationMobileMenuProps {
   className?: string;
 }
 
 export const NotificationMobileMenu: React.FC<NotificationMobileMenuProps> = ({ className }) => {
+  const locale = useLocale();
   return (
     <NotificationRenderer pageSize={1}>
       {({ unreadCount }) => (
-        <Link href="/notifications" className={`flex items-center gap-2 ${className}`}>
+        <Link href={`/${locale}/notifications`} className={`flex items-center gap-2 ${className}`}>
           <div className="relative">
             <Bell className="w-4 h-4 text-gray-600" />
             {unreadCount > 0 && (

@@ -9,6 +9,7 @@ import { Loader2, Car, MapPin, CreditCard } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useLocale } from 'next-intl'
 
 interface Vehicle {
   id: string
@@ -45,6 +46,7 @@ interface BookingFormProps {
 }
 
 export function BookingForm({ vehicle, onSubmit, loading = false }: BookingFormProps) {
+  const locale = useLocale()
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [driverLicense, setDriverLicense] = useState('')
@@ -283,7 +285,7 @@ export function BookingForm({ vehicle, onSubmit, loading = false }: BookingFormP
           
           <div className="text-center mt-4">
             <Link 
-              href="/legal/commerce" 
+              href={`/${locale}/legal/commerce`} 
               className="text-xs text-blue-600 hover:text-blue-800 underline"
               target="_blank"
               rel="noopener noreferrer"

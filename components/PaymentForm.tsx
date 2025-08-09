@@ -13,6 +13,7 @@ import { Loader2, CreditCard, CheckCircle, XCircle } from 'lucide-react'
 import { confirmPayment } from '@/lib/actions/booking'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import { useLocale } from 'next-intl'
 
 // 初始化Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
@@ -26,6 +27,7 @@ interface PaymentFormProps {
 }
 
 function CheckoutForm({ clientSecret, amount, onSuccess, onError }: PaymentFormProps) {
+  const locale = useLocale()
   const stripe = useStripe()
   const elements = useElements()
   const [processing, setProcessing] = useState(false)
@@ -153,12 +155,12 @@ function CheckoutForm({ clientSecret, amount, onSuccess, onError }: PaymentFormP
           <p>您的支付信息通过SSL加密保护</p>
           <p>支持Visa、Mastercard、American Express等主要银行卡</p>
           <Link 
-            href="/legal/commerce" 
+            href={`/${locale}/legal/commerce`} 
             className="block text-blue-600 hover:text-blue-800 underline"
             target="_blank"
             rel="noopener noreferrer"
           >
-            特定商取引法に基づく表記
+            特定商取引法に基づく表记
           </Link>
         </div>
       </div>

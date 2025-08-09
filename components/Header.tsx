@@ -39,8 +39,7 @@ export const Header: React.FC = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4 md:gap-12">
             <h1 className="text-lg md:text-xl font-bold">
-
-              <Link href="/">
+              <Link href={`/${locale}`}>
                 <Image src="/logo.png" alt="Soukyo租车" width={100} height={100} />
               </Link>
             </h1>

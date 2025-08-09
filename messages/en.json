@@ -466,9 +466,62 @@
       "link": "Contact Us Now →"
     }
   },
+  "StoreGallery": {
+    "top_banner": "Store Gallery",
+    "title": "Professional Service, Quality Guaranteed",
+    "subtitle": "Modern store facilities, professional team service, providing you with the highest quality car rental experience",
+    "features": {
+      "customer_service": "Professional Service",
+      "customer_service_desc": "24/7 professional customer service team",
+      "safety": "Safety Guarantee",
+      "safety_desc": "Strict safety inspection standards",
+      "convenience": "Convenient Service",
+      "convenience_desc": "Simplified rental process",
+      "quality": "Quality Assurance",
+      "quality_desc": "Carefully selected quality vehicles"
+    },
+    "images": {
+      "anquan": {
+        "title": "Safety Assurance",
+        "description": "Strict safety inspection standards ensuring every vehicle is safe and reliable"
+      },
+      "jiaofu1": {
+        "title": "Professional Delivery",
+        "description": "Professional vehicle delivery service for your peace of mind pickup"
+      },
+      "jiaofu": {
+        "title": "Convenient Delivery",
+        "description": "Streamlined delivery process for quick pickup procedures"
+      },
+      "qingjie": {
+        "title": "Clean & Tidy",
+        "description": "Every vehicle thoroughly cleaned for a comfortable driving environment"
+      },
+      "weihu": {
+        "title": "Professional Maintenance",
+        "description": "Regular maintenance and care ensuring optimal vehicle performance"
+      },
+      "xuanche": {
+        "title": "Premium Vehicles",
+        "description": "Carefully selected premium vehicles meeting diverse needs"
+      },
+      "fenwei": {
+        "title": "Warm Service",
+        "description": "We strive to serve you wholeheartedly, creating a warm and comfortable car rental experience"
+      },
+      "diannei": {
+        "title": "Store Environment",
+        "description": "Modern store facilities with professional team service"
+      }
+    },
+    "cta": {
+      "text": "Want to learn more about our services?",
+      "link": "View Store Details →"
+    }
+  },
   "VideoTutorials": {
     "top_banner": "Video Tutorials",
-    "title": "🎥 Complete Car Pickup Guide for Tokyo's Two Major Airports",
+    "title": "Complete Car Pickup Guide for Tokyo's Two Major Airports",
     "subtitle": "First time picking up a car at Narita or Haneda Airport? Don't worry!",
     "description": "We've prepared detailed video tutorials to guide you through the car pickup process step by step, covering pickup locations, procedures, and important notes for each airport. Please select your preferred language to watch and start your journey with confidence.",
     "languages": {

@@ -52,11 +52,12 @@ export const NotificationRenderer: React.FC<NotificationRendererProps> = ({
 }) => {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => typeof window !== 'undefined');
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
+  const [isClient, setIsClient] = useState(false);
 
   // 获取通知数据
   const fetchNotifications = useCallback(async (offset: number = 0, append: boolean = false) => {
@@ -109,6 +110,9 @@ export const NotificationRenderer: React.FC<NotificationRendererProps> = ({
 
   // 前端事件驱动刷新 + 轮询刷新 + 焦点恢复刷新
   useEffect(() => {
+    // 只在客户端执行
+    if (!isClient) return;
+    
     const handleCustomRefresh = () => refresh();
     const handleFocus = () => refresh();
     const handleVisibility = () => {
@@ -130,7 +134,7 @@ export const NotificationRenderer: React.FC<NotificationRendererProps> = ({
       document.removeEventListener('visibilitychange', handleVisibility);
       window.clearInterval(intervalId);
     };
-  }, [refresh]);
+  }, [isClient, refresh]);
 
   // 标记单个通知为已读
   const markAsRead = useCallback(async (notificationId: string) => {
@@ -184,8 +188,18 @@ export const NotificationRenderer: React.FC<NotificationRendererProps> = ({
     }
   }, []);
 
-  // 格式化时间
+  // 格式化时间 - 修复SSR水合错误
   const formatTime = useCallback((date: Date) => {
+    // 在服务端渲染或客户端未初始化时使用固定格式，避免水合错误
+    if (!isClient) {
+      return new Date(date).toLocaleDateString('zh-CN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+    }
+    
+    // 客户端渲染时使用相对时间
     const now = new Date();
     const diff = now.getTime() - new Date(date).getTime();
     const minutes = Math.floor(diff / (1000 * 60));
@@ -201,7 +215,7 @@ export const NotificationRenderer: React.FC<NotificationRendererProps> = ({
       month: 'short',
       day: 'numeric',
     });
-  }, []);
+  }, [isClient]);
 
   // 无限滚动监听
   useEffect(() => {
@@ -221,10 +235,17 @@ export const NotificationRenderer: React.FC<NotificationRendererProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [enableInfiniteScroll, loadMore]);
 
-  // 初始加载
+  // 客户端检测
   useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications]);
+    setIsClient(true);
+  }, []);
+
+  // 初始加载 - 只在客户端执行
+  useEffect(() => {
+    if (isClient) {
+      fetchNotifications();
+    }
+  }, [isClient, fetchNotifications]);
 
   return (
     <>

@@ -466,9 +466,62 @@
       "link": "立即联系我们 →"
     }
   },
+  "StoreGallery": {
+    "top_banner": "店面展示",
+    "title": "专业服务，品质保证",
+    "subtitle": "现代化店面设施，专业团队服务，为您提供最优质的租车体验",
+    "features": {
+      "customer_service": "专业客服",
+      "customer_service_desc": "24小时专业客服团队",
+      "safety": "安全保障",
+      "safety_desc": "严格的安全检查标准",
+      "convenience": "便捷服务",
+      "convenience_desc": "简化的租车流程",
+      "quality": "品质保证",
+      "quality_desc": "精选优质车辆"
+    },
+    "images": {
+      "anquan": {
+        "title": "安全保障",
+        "description": "严格的安全检查标准，确保每辆车都安全可靠"
+      },
+      "jiaofu1": {
+        "title": "专业交付",
+        "description": "专业的车辆交付服务，让您安心取车"
+      },
+      "jiaofu": {
+        "title": "便捷交付",
+        "description": "简化的交付流程，快速完成取车手续"
+      },
+      "qingjie": {
+        "title": "清洁整洁",
+        "description": "每辆车都经过严格清洁，提供干净舒适的驾驶环境"
+      },
+      "weihu": {
+        "title": "专业维护",
+        "description": "定期维护保养，确保车辆性能最佳"
+      },
+      "xuanche": {
+        "title": "精选车辆",
+        "description": "精选优质车辆，满足不同需求"
+      },
+      "fenwei": {
+        "title": "温馨服务",
+        "description": "车行竭力为您服务，用心打造温馨舒适的租车体验"
+      },
+      "diannei": {
+        "title": "店内环境",
+        "description": "现代化店内设施，专业团队服务"
+      }
+    },
+    "cta": {
+      "text": "想了解更多我们的服务？",
+      "link": "查看门店详情 →"
+    }
+  },
   "VideoTutorials": {
     "top_banner": "视频教程",
-    "title": "🎥 东京两大机场取车全攻略",
+    "title": "东京两大机场取车全攻略",
     "subtitle": "首次在成田或羽田机场取车？不用担心！",
     "description": "我们为您准备了详细的视频教程，手把手带您完成取车流程，涵盖各机场的取车位置、手续办理及注意事项。请选择您熟悉的语言观看，让旅程从容开启。",
     "languages": {

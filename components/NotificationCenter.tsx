@@ -12,6 +12,7 @@ import {
 import { Bell, Loader2 } from "lucide-react";
 import { NotificationRenderer } from './NotificationRenderer';
 import Link from 'next/link';
+import { useLocale } from 'next-intl';
 
 interface NotificationCenterProps {
   className?: string;
@@ -19,6 +20,7 @@ interface NotificationCenterProps {
 
 export const NotificationCenter: React.FC<NotificationCenterProps> = ({ className }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const locale = useLocale();
 
   return (
     <NotificationRenderer pageSize={10}>
@@ -36,7 +38,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
       }) => (
         <DropdownMenu open={isOpen} onOpenChange={(open) => {
           setIsOpen(open);
-          if (open) refresh(); // 打开时刷新数据
+          if (open) refresh();
         }}>
           <DropdownMenuTrigger asChild>
             <Button 
@@ -94,7 +96,11 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                             markAsRead(notification.id);
                           }
                           if (notification.link) {
-                            window.location.href = notification.link;
+                            // 确保链接包含当前语言前缀
+                            const linkWithLocale = notification.link.startsWith('/') 
+                              ? `/${locale}${notification.link}`
+                              : notification.link;
+                            window.location.href = linkWithLocale;
                           }
                         }}
                       >
@@ -154,8 +160,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
             </div>
             
             {notifications.length > 0 && (
-              <div className="p-3 border-t">
-                <Link href="/notifications" className="block">
+              <div className="p-3 text-center border-t">
+                <Link href={`/${locale}/notifications`} className="block">
                   <Button 
                     variant="outline" 
                     size="sm" 

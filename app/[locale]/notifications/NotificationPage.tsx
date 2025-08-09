@@ -7,16 +7,18 @@ import { Bell, Loader2, RefreshCw, ArrowLeft } from "lucide-react";
 import { NotificationRenderer } from '@/components/NotificationRenderer';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 
 export const NotificationPage: React.FC = () => {
   const router = useRouter();
+  const locale = useLocale();
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* 页面头部 */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
-            <Link href="/">
+            <Link href={`/${locale}`}>
               <Button variant="ghost" size="icon" className="!rounded-button">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
@@ -111,7 +113,11 @@ export const NotificationPage: React.FC = () => {
                             markAsRead(notification.id);
                           }
                           if (notification.link) {
-                            router.push(notification.link);
+                            // 确保链接包含当前语言前缀
+                            const linkWithLocale = notification.link.startsWith('/') 
+                              ? `/${locale}${notification.link}`
+                              : notification.link;
+                            router.push(linkWithLocale);
                           }
                         }}
                       >
