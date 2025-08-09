@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useLocale } from 'next-intl'
 import { useRouter, usePathname } from 'next/navigation'
@@ -20,7 +20,7 @@ export default function LanguageSelector() {
   const router = useRouter()
   const pathname = usePathname()
   const [isUpdating, setIsUpdating] = useState(false)
-  const [hasSynced, setHasSynced] = useState(false)
+  const hasInitialized = useRef(false)
 
   // 保存语言到localStorage
   const saveLanguageToStorage = (language: string) => {
@@ -61,56 +61,65 @@ export default function LanguageSelector() {
     }
   }
 
-  // 当用户登录后，处理语言同步逻辑
+  // 初始化语言同步逻辑（只在组件首次加载时执行一次）
   useEffect(() => {
-    if (status === 'loading') return // 等待session加载完成
+    if (status === 'loading' || hasInitialized.current) return
 
-    if (session?.user && !hasSynced) {
+    if (session?.user) {
       const storedLanguage = getLanguageFromStorage()
       const userPreferredLanguage = session.user.preferredLanguage
 
-      // 优先级：本地存储 > 数据库偏好 > 当前页面语言
-      // 如果本地存储有语言
-      if (storedLanguage) {
-        // 如果本地语言与数据库不同，同步到数据库
-        if (storedLanguage !== userPreferredLanguage) {
-          syncLanguageToDatabase(storedLanguage)
-        }
-        // 如果本地语言与当前页面语言不同，跳转到本地语言
-        if (storedLanguage !== locale) {
-          const newPath = pathname.replace(`/${locale}`, `/${storedLanguage}`)
+      // 只在首次加载时进行语言同步，避免后续强制切换
+      if (userPreferredLanguage && !storedLanguage) {
+        // 如果数据库中有语言偏好但本地存储没有，保存到本地存储
+        saveLanguageToStorage(userPreferredLanguage)
+        // 如果数据库语言与当前页面语言不同，跳转到数据库语言
+        if (userPreferredLanguage !== locale) {
+          const newPath = pathname.replace(`/${locale}`, `/${userPreferredLanguage}`)
           router.push(newPath)
         }
-      }
-      // 如果没有本地存储但用户数据库中有语言偏好
-      else if (userPreferredLanguage && userPreferredLanguage !== locale) {
-        // 保存用户偏好到本地存储
-        saveLanguageToStorage(userPreferredLanguage)
-        // 跳转到用户偏好语言
-        const newPath = pathname.replace(`/${locale}`, `/${userPreferredLanguage}`)
-        router.push(newPath)
-      }
-      // 如果都没有，保存当前语言到本地存储
-      else if (!storedLanguage) {
+      } else if (!userPreferredLanguage && storedLanguage) {
+        // 如果数据库中没有语言偏好，但本地存储有语言，同步到数据库
+        syncLanguageToDatabase(storedLanguage)
+      } else if (!userPreferredLanguage && !storedLanguage) {
+        // 如果都没有，保存当前语言到本地存储和数据库
         saveLanguageToStorage(locale)
+        syncLanguageToDatabase(locale)
       }
 
-      setHasSynced(true)
+      hasInitialized.current = true
     }
-  }, [session, status, locale, pathname, router, hasSynced])
+  }, [session, status])
 
   const handleLanguageChange = async (newLanguage: string) => {
     // 1. 保存到localStorage（无论是否登录都保存）
     saveLanguageToStorage(newLanguage)
 
-    // 2. 切换前端页面语言
+    // 2. 如果用户已登录，立即更新数据库中的语言偏好
+    if (session?.user) {
+      setIsUpdating(true)
+      try {
+        const response = await fetch('/api/user/language', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ language: newLanguage })
+        })
+
+        if (!response.ok) {
+          console.error('更新语言偏好失败')
+        }
+      } catch (error) {
+        console.error('更新语言偏好失败:', error)
+      } finally {
+        setIsUpdating(false)
+      }
+    }
+
+    // 3. 最后切换前端页面语言
     const newPath = pathname.replace(`/${locale}`, `/${newLanguage}`)
     router.push(newPath)
-
-    // 3. 如果用户已登录，同时更新用户的语言偏好
-    if (session?.user) {
-      await syncLanguageToDatabase(newLanguage)
-    }
   }
 
   return (

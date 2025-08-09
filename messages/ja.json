@@ -110,6 +110,7 @@
   "navigation": {
     "vehicles": "車両レンタル",
     "packages": "車種・料金",
+    "pickup_guide": "受取ガイド",
     "stores": "店舗情報",
     "orders": "マイオーダー",
     "profile": "プロフィール",
@@ -368,6 +369,11 @@
       "airport_pickup": "空港での受け取り",
       "flexible_booking": "いつでもご予約可能"
     },
+    "locations": {
+      "narita": { "title": "成田空港" },
+      "haneda": { "title": "羽田空港" },
+      "kami_ikebukuro": { "title": "上池袋" }
+    },
     "search_form": {
       "title": "プランを選択",
       "subtitle": "あなたのニーズに合ったプランをすぐに見つけましょう",
@@ -458,6 +464,29 @@
     "cta": {
       "text": "さらにサポートが必要ですか？",
       "link": "今すぐお問い合わせ →"
+    }
+  },
+  "VideoTutorials": {
+    "top_banner": "ビデオチュートリアル",
+    "title": "🎥 東京2大空港レンタカー受取完全ガイド",
+    "subtitle": "成田空港や羽田空港で初めてレンタカーを受け取りますか？ご心配なく！",
+    "description": "各空港での受取場所、手続き、注意事項を網羅した詳細なビデオチュートリアルをご用意しました。お馴染みの言語を選択してご覧いただき、安心して旅を始めましょう。",
+    "languages": {
+      "japanese": "日本語",
+      "english": "英語", 
+      "chinese": "中国語"
+    },
+    "airports": {
+      "narita": "成田空港",
+      "haneda": "羽田空港"
+    },
+    "video_alt": "レンタカー受取チュートリアル動画",
+    "video_duration": "チュートリアル",
+    "video_title": "{airport}受取ガイド",
+    "video_description": "{airport}でのレンタカー受取プロセスを詳しく紹介。場所案内、手続き、注意事項を含みます。",
+    "cta": {
+      "text": "旅を始める準備はできましたか？",
+      "link": "今すぐプランを予約 →"
     }
   },
   "AboutPage": {

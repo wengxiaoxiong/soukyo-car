@@ -5,7 +5,7 @@ import { UserRole } from "@prisma/client"
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, name } = await request.json()
+    const { email, password, name, preferredLanguage } = await request.json()
 
     if (!email || !password) {
       return NextResponse.json(
@@ -26,6 +26,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // 验证语言代码（如果提供）
+    const validLanguages = ['en', 'ja', 'zh']
+    const languageToSave = preferredLanguage && validLanguages.includes(preferredLanguage) 
+      ? preferredLanguage 
+      : 'ja' // 默认语言
+
     // 加密密码
     const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -36,6 +42,7 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         name: name || null,
         role: UserRole.USER,
+        preferredLanguage: languageToSave,
       }
     })
 

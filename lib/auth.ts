@@ -108,7 +108,10 @@ export const authOptions: NextAuthOptions = {
         if (dbUser) {
           token.role = dbUser.role
           token.isActive = dbUser.isActive
-          token.preferredLanguage = dbUser.preferredLanguage || 'ja'
+          // 只有在手动更新时才更新语言偏好，避免自动刷新时覆盖用户当前选择
+          if (trigger === "update") {
+            token.preferredLanguage = dbUser.preferredLanguage || 'ja'
+          }
           token.lastRefresh = Date.now()
         }
       }

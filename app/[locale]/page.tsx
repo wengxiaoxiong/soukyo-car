@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/HeroSection";
 import { FeaturedPackages } from "@/components/FeaturedPackages";
 import { StoreLocations } from "@/components/StoreLocations";
 import { CompanyInfo } from "@/components/CompanyInfo";
+import { VideoTutorials } from "@/components/VideoTutorials";
 
 const App: React.FC = () => {
   return (
@@ -10,6 +11,7 @@ const App: React.FC = () => {
       <HeroSection />
       <FeaturedPackages />
       <StoreLocations />
+      <VideoTutorials />
       <CompanyInfo />
     </main>
   );

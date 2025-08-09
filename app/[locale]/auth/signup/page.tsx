@@ -9,10 +9,11 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 
 export default function SignUpPage() {
   const router = useRouter()
+  const locale = useLocale()
   const t = useTranslations('auth')
   const commonT = useTranslations('common')
   const [isLoading, setIsLoading] = useState(false)
@@ -25,6 +26,15 @@ export default function SignUpPage() {
     confirmPassword: '',
   })
   const [error, setError] = useState('')
+
+  // 获取当前用户的语言偏好（localStorage中可能存储的或当前页面语言）
+  const getPreferredLanguage = () => {
+    if (typeof window !== 'undefined') {
+      const storedLanguage = localStorage.getItem('preferred-language')
+      return storedLanguage || locale
+    }
+    return locale
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,6 +63,7 @@ export default function SignUpPage() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
+          preferredLanguage: getPreferredLanguage(),
         }),
       })
 

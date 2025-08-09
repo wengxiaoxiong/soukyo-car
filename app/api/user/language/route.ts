@@ -30,7 +30,10 @@ export async function PUT(request: NextRequest) {
       data: { preferredLanguage: language }
     })
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ 
+      success: true,
+      message: '语言偏好已更新，session将在下次请求时自动更新'
+    })
   } catch (error) {
     console.error('更新用户语言偏好失败:', error)
     return NextResponse.json(

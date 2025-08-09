@@ -110,6 +110,7 @@
   "navigation": {
     "vehicles": "Vehicle Rental",
     "packages": "Package Services",
+    "pickup_guide": "Pickup Guide",
     "stores": "Store Information",
     "orders": "My Orders",
     "profile": "Profile",
@@ -368,6 +369,11 @@
       "airport_pickup": "Airport Pickup",
       "flexible_booking": "Flexible Booking"
     },
+    "locations": {
+      "narita": { "title": "Narita Airport" },
+      "haneda": { "title": "Haneda Airport" },
+      "kami_ikebukuro": { "title": "Kami-Ikebukuro" }
+    },
     "search_form": {
       "title": "Select Package",
       "subtitle": "Choose your needs and find the right package now",
@@ -458,6 +464,29 @@
     "cta": {
       "text": "Need more help?",
       "link": "Contact Us Now →"
+    }
+  },
+  "VideoTutorials": {
+    "top_banner": "Video Tutorials",
+    "title": "🎥 Complete Car Pickup Guide for Tokyo's Two Major Airports",
+    "subtitle": "First time picking up a car at Narita or Haneda Airport? Don't worry!",
+    "description": "We've prepared detailed video tutorials to guide you through the car pickup process step by step, covering pickup locations, procedures, and important notes for each airport. Please select your preferred language to watch and start your journey with confidence.",
+    "languages": {
+      "japanese": "Japanese",
+      "english": "English", 
+      "chinese": "Chinese"
+    },
+    "airports": {
+      "narita": "Narita Airport",
+      "haneda": "Haneda Airport"
+    },
+    "video_alt": "Car pickup tutorial video",
+    "video_duration": "Tutorial",
+    "video_title": "{airport} Pickup Guide",
+    "video_description": "Detailed demonstration of the car pickup process at {airport}, including location guidance, procedures, and important notes.",
+    "cta": {
+      "text": "Ready to start your journey?",
+      "link": "Book Package Now →"
     }
   },  
   "AboutPage": {

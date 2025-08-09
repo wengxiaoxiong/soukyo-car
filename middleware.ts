@@ -37,23 +37,15 @@ export default async function middleware(request: NextRequest) {
       (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     );
 
-    // 如果路径没有语言前缀或者语言前缀与用户偏好不匹配
+    // 只在路径没有语言前缀时重定向（如访问根路径 /）
     if (!pathnameHasLocale) {
-      // 重定向到用户偏好语言
       return NextResponse.redirect(
         new URL(`/${userLanguage}${pathname}`, request.url)
       );
-    } else {
-      // 检查当前语言是否与用户偏好匹配
-      const currentLocale = pathname.split('/')[1];
-      if (currentLocale !== userLanguage && locales.includes(currentLocale as any)) {
-        // 如果不匹配，重定向到用户偏好语言
-        const newPathname = pathname.replace(`/${currentLocale}`, `/${userLanguage}`);
-        return NextResponse.redirect(
-          new URL(newPathname, request.url)
-        );
-      }
     }
+    
+    // 对于已有语言前缀的路径，不进行自动重定向
+    // 让用户可以自由切换语言，语言选择器会负责同步到数据库
   }
 
   // 使用默认的国际化中间件

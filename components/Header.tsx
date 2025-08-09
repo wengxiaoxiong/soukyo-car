@@ -76,6 +76,16 @@ export const Header: React.FC = () => {
                 {t('navigation.stores')}
               </Link>
               <Link 
+                href={`/${locale}/pickup-guide`} 
+                className={`transition-colors duration-200 ${
+                  isCurrentPage('/pickup-guide') 
+                    ? 'text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {t('navigation.pickup_guide')}
+              </Link>
+              <Link 
                 href={`/${locale}/about`} 
                 className={`transition-colors duration-200 ${
                   isCurrentPage('/about') 
@@ -209,6 +219,16 @@ export const Header: React.FC = () => {
                 }`}
               >
                 {t('navigation.stores')}
+              </Link>
+              <Link 
+                href={`/${locale}/pickup-guide`} 
+                className={`py-2 transition-colors duration-200 ${
+                  isCurrentPage('/pickup-guide') 
+                    ? 'text-gray-900 font-medium' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {t('navigation.pickup_guide')}
               </Link>
               <Link 
                 href={`/${locale}/about`} 

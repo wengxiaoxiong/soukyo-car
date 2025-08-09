@@ -1,88 +1,24 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Users, Search, MapPin, Sparkles, Car } from "lucide-react";
+import React from 'react';
+import { Users, MapPin, Sparkles, Car } from "lucide-react";
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { getActiveStores, StoreWithOpeningHours } from '@/app/actions/stores';
-import { useTranslations } from 'next-intl';
-
-interface SearchFormData {
-  startDate: string;
-  endDate: string;
-  passengers: number;
-  storeId: string;
-}
 
 export const HeroSection: React.FC = () => {
-  const router = useRouter();
   const t = useTranslations('HeroSection');
-  const [searchData, setSearchData] = useState<SearchFormData>({
-    startDate: '',
-    endDate: '',
-    passengers: 4,
-    storeId: ''
-  });
-  const [stores, setStores] = useState<StoreWithOpeningHours[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [storesLoading, setStoresLoading] = useState(true);
+  const locale = useLocale();
+  const router = useRouter();
 
-  // 获取店面数据
-  useEffect(() => {
-    const fetchStores = async () => {
-      try {
-        const storesData = await getActiveStores();
-        setStores(storesData);
-      } catch (error) {
-        console.error('获取店面数据失败:', error);
-      } finally {
-        setStoresLoading(false);
-      }
-    };
+  const locationCards = [
+    { title: t('locations.narita.title'), bg: '/chengtian.png' },
+    { title: t('locations.haneda.title'), bg: '/yutian.png' },
+    { title: t('locations.kami_ikebukuro.title'), bg: '/chidai.JPG' },
+  ];
 
-    fetchStores();
-  }, []);
-
-  // 处理输入变化
-  const handleInputChange = (field: keyof SearchFormData, value: string | number) => {
-    setSearchData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleCardClick = () => {
+    router.push(`/${locale}/package`);
   };
-
-  // 处理搜索
-  const handleSearch = async () => {
-    if (!searchData.startDate || !searchData.endDate || !searchData.storeId) {
-      alert(t('alert.fill_all_fields'));
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      // 构建搜索参数，直接跳转到package页面
-      const searchParams = new URLSearchParams({
-        startDate: searchData.startDate,
-        endDate: searchData.endDate,
-        passengers: searchData.passengers.toString(),
-        storeId: searchData.storeId
-      });
-
-      // 直接跳转到package页面
-      router.push(`/package?${searchParams.toString()}`);
-    } catch (error) {
-      console.error('搜索失败:', error);
-      alert(t('alert.search_failed'));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // 获取今天和明天的日期
-  const today = new Date().toISOString().split('T')[0];
-  const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
@@ -148,108 +84,32 @@ export const HeroSection: React.FC = () => {
             </div>
           </div>
 
-          {/* 右侧：搜索表单 - 移动端优化 */}
-          <div className="w-full max-w-sm sm:max-w-md mx-auto lg:max-w-none order-2 lg:order-2">
-            <div className="bg-white/95 backdrop-blur-xl p-4 sm:p-6 rounded-2xl shadow-2xl border border-white/20 mx-2 sm:mx-0">
-              <div className="mb-4 sm:mb-6">
-                <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 flex items-center gap-2">
-                  <Search className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
-                  {t('search_form.title')}
-                </h3>
-                <p className="text-gray-600 text-sm sm:text-base">{t('search_form.subtitle')}</p>
-              </div>
-
-              <div className="space-y-3 sm:space-y-4">
-                {/* 店面选择 */}
-                <div className="space-y-1.5 sm:space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">{t('search_form.pickup_store')}</label>
-                  <Select 
-                    value={searchData.storeId} 
-                    onValueChange={(value) => handleInputChange('storeId', value)}
-                    disabled={storesLoading}
-                  >
-                    <SelectTrigger className="h-11 sm:h-12 bg-gray-50 border-gray-200 hover:border-blue-400 transition-colors rounded-xl text-sm sm:text-base">
-                      <SelectValue placeholder={storesLoading ? t('search_form.loading') : t('search_form.select_pickup_store')} />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      {stores.map((store) => (
-                        <SelectItem key={store.id} value={store.id} className="py-2 text-sm sm:text-base">
-                          <div className="flex items-center gap-2">
-                            <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400" />
-                            <span>{store.name} - {store.city}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                {/* 日期选择 - 移动端垂直排列 */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-1.5 sm:space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">{t('search_form.pickup_date')}</label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
-                      <Input
-                        className="pl-10 h-11 sm:h-12 bg-gray-50 border-gray-200 hover:border-blue-400 transition-colors rounded-xl text-sm sm:text-base"
-                        type="date"
-                        value={searchData.startDate}
-                        min={today}
-                        onChange={(e) => handleInputChange('startDate', e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5 sm:space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">{t('search_form.return_date')}</label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
-                      <Input
-                        className="pl-10 h-11 sm:h-12 bg-gray-50 border-gray-200 hover:border-blue-400 transition-colors rounded-xl text-sm sm:text-base"
-                        type="date"
-                        value={searchData.endDate}
-                        min={searchData.startDate || tomorrow}
-                        onChange={(e) => handleInputChange('endDate', e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </div>
-                
-                {/* 乘客数 */}
-                <div className="space-y-1.5 sm:space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">{t('search_form.passengers')}</label>
-                  <div className="relative">
-                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
-                    <Input
-                      className="pl-10 h-11 sm:h-12 bg-gray-50 border-gray-200 hover:border-blue-400 transition-colors rounded-xl text-sm sm:text-base"
-                      type="number"
-                      placeholder={t('search_form.enter_passengers_placeholder')}
-                      value={searchData.passengers}
-                      min="1"
-                      max="9"
-                      onChange={(e) => handleInputChange('passengers', parseInt(e.target.value) || 1)}
-                    />
-                  </div>
-                </div>
-
-                {/* 搜索按钮 */}
-                <Button 
-                  className="w-full h-11 sm:h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 text-sm sm:text-base mt-4 sm:mt-6" 
-                  onClick={handleSearch}
-                  disabled={isLoading || storesLoading}
+          {/* 右侧：三张目的地卡片 */}
+          <div className="w-full order-2 lg:order-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-6">
+              {locationCards.map((card, index) => (
+                <div
+                  key={card.title}
+                  onClick={handleCardClick}
+                  className={`relative rounded-2xl overflow-hidden shadow-lg bg-gray-200 cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl group ${index === 2 ? 'sm:col-span-2' : ''}`}
+                  style={{
+                    backgroundImage: card.bg ? `url(${card.bg})` : undefined,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }}
                 >
-                  {isLoading ? (
-                    <>
-                      <Search className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-spin" />
-                      {t('search_button.searching')}
-                    </>
-                  ) : (
-                    <>
-                      <Search className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                      {t('search_button.find_package')}
-                    </>
-                  )}
-                </Button>
-              </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent group-hover:from-black/70 group-hover:via-black/30 transition-all duration-300" />
+                  <div className="relative p-5 sm:p-6 h-40 sm:h-48 flex flex-col justify-end">
+                    <h3 className="text-white text-xl sm:text-2xl font-bold tracking-wide transform group-hover:translate-y-[-2px] transition-transform duration-300">{card.title}</h3>
+                  </div>
+                  {/* 悬浮指示器 */}
+                  <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                      <Car className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
