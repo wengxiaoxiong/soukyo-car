@@ -57,7 +57,7 @@ export class EmailService {
             where: { email: to },
             select: { preferredLanguage: true }
           })
-          finalLanguage = (user?.preferredLanguage as string | undefined) || 'en'
+          finalLanguage = (user?.preferredLanguage as string | undefined) || 'ja'
         } catch {
           finalLanguage = 'en'
         }
@@ -142,7 +142,7 @@ export class EmailService {
             where: { email: to },
             select: { preferredLanguage: true }
           })
-          finalLanguage = (user?.preferredLanguage as string | undefined) || 'en'
+          finalLanguage = (user?.preferredLanguage as string | undefined) || 'ja'
         } catch {
           finalLanguage = 'en'
         }

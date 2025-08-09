@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
           endDate: order.endDate,
           storeName: order.store.name,
           orderId: order.id,
-          language: order.user.preferredLanguage || 'en'
+          language: order.user.preferredLanguage || 'ja'
         })
 
         // 创建通知记录

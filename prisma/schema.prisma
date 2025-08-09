@@ -66,7 +66,7 @@ model User {
   role          UserRole @default(USER)
   
   // 语言偏好设置
-  preferredLanguage String @default("en") // en, ja, zh
+  preferredLanguage String @default("ja") // en, ja, zh
   
   // 是否激活
   isActive      Boolean  @default(true)

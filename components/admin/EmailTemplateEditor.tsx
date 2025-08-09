@@ -35,9 +35,9 @@ const ORDER_STATUSES = [
 ]
 
 const LANGUAGES = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'ja', name: '日本語', flag: '🇯🇵' },
-  { code: 'zh', name: '中文', flag: '🇨🇳' }
+  { code: 'en', name: 'English' },
+  { code: 'ja', name: '日本語' },
+  { code: 'zh', name: '中文' }
 ]
 
 export default function EmailTemplateEditor() {
@@ -172,7 +172,7 @@ export default function EmailTemplateEditor() {
 
       if (response.ok) {
         const langInfo = getLanguageInfo(selectedTemplate.language)
-        toast.success(`${langInfo.flag} ${langInfo.name} 测试邮件已添加到队列！`)
+        toast.success(`${langInfo.name} 测试邮件已添加到队列！`)
         // 重新加载队列统计
         await loadQueueStats()
       } else {
@@ -270,7 +270,7 @@ export default function EmailTemplateEditor() {
               <SelectContent>
                 {LANGUAGES.map(lang => (
                   <SelectItem key={lang.code} value={lang.code}>
-                    {lang.flag} {lang.name}
+                    {lang.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -371,7 +371,7 @@ export default function EmailTemplateEditor() {
                     <SelectContent>
                       {LANGUAGES.map(lang => (
                         <SelectItem key={lang.code} value={lang.code}>
-                          {lang.flag} {lang.name}
+                          {lang.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -457,7 +457,7 @@ export default function EmailTemplateEditor() {
                         <div className="flex items-center gap-2">
                           <span>{template.emoji || '📧'}</span>
                           <span className="truncate">{getStatusLabel(template.status)}</span>
-                          <span className="text-xs text-gray-500 flex-shrink-0">({langInfo.flag})</span>
+                          <span className="text-xs text-gray-500 flex-shrink-0">({langInfo.name})</span>
                         </div>
                       </SelectItem>
                     )
@@ -469,7 +469,7 @@ export default function EmailTemplateEditor() {
               <div className="p-3 bg-blue-50 rounded-lg">
                 <div className="text-sm text-blue-800">
                   <strong>当前选择：</strong>
-                  {getLanguageInfo(selectedTemplate.language).flag} {getLanguageInfo(selectedTemplate.language).name} - {getStatusLabel(selectedTemplate.status)}
+                  {getLanguageInfo(selectedTemplate.language).name} - {getStatusLabel(selectedTemplate.status)}
                 </div>
                 <div className="text-xs text-blue-600 mt-1">
                   将发送 {getLanguageInfo(selectedTemplate.language).name} 版本的邮件

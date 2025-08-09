@@ -225,7 +225,7 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus) {
     // 创建通知
     const vehicleName = order.vehicle?.name || order.package?.name || '未指定'
     const user = await prisma.user.findUnique({ where: { id: order.userId }, select: { preferredLanguage: true } })
-    const lang = (user?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+    const lang = (user?.preferredLanguage ?? 'ja') as 'en' | 'ja' | 'zh'
     const { formatDateParts, buildOrderNotification } = await import('@/lib/utils/notification-i18n')
     const { dateText, timeText } = formatDateParts(order.startDate, lang)
     const built = buildOrderNotification(lang, 'status_updated', {
@@ -262,7 +262,7 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus) {
         storeName: order.store.name,
         orderId: order.id,
         isUserCancelled: false, // 管理员操作，不是用户主动取消
-        language: order.user.preferredLanguage || 'en'
+        language: order.user.preferredLanguage || 'ja'
       })
     } catch (emailError) {
       console.error('邮件发送失败:', emailError)

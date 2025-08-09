@@ -322,7 +322,7 @@ export async function confirmPayment(paymentIntentId: string) {
     if (orderDetailForNotify) {
       const vehicleName = orderDetailForNotify.package?.name || orderDetailForNotify.vehicle?.name || '未指定'
       const user = await prisma.user.findUnique({ where: { id: session.user.id }, select: { preferredLanguage: true } })
-      const lang = (user?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+      const lang = (user?.preferredLanguage ?? 'ja') as 'en' | 'ja' | 'zh'
       const { formatDateParts, buildOrderNotification } = await import('@/lib/utils/notification-i18n')
       const { dateText, timeText } = formatDateParts(orderDetailForNotify.startDate, lang)
       const built = buildOrderNotification(lang, 'order_confirmed', {
@@ -538,7 +538,7 @@ export async function cancelOrder(orderId: string) {
     // 创建更丰富的通知（包含车型/时间/门店，并可跳转订单详情）
     const vehicleName2 = order.package?.name || order.vehicle?.name || '未指定'
     const currentUser = await prisma.user.findUnique({ where: { id: session.user.id }, select: { preferredLanguage: true } })
-    const lang2 = (currentUser?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+    const lang2 = (currentUser?.preferredLanguage ?? 'ja') as 'en' | 'ja' | 'zh'
     const { formatDateParts: format2, buildOrderNotification: build2 } = await import('@/lib/utils/notification-i18n')
     const { dateText: date2, timeText: time2 } = format2(order.startDate, lang2)
     const built2 = build2(lang2, 'order_cancelled', {
@@ -574,7 +574,7 @@ export async function cancelOrder(orderId: string) {
         storeName: order.store.name,
         orderId: order.id,
         isUserCancelled: true, // 标记为用户主动取消
-        userLanguage: order.user.preferredLanguage || 'en'
+        userLanguage: order.user.preferredLanguage || 'ja'
       })
     } catch (emailError) {
       console.error('邮件发送失败:', emailError)
@@ -718,7 +718,7 @@ export async function handleCheckoutSuccess(sessionId: string, orderId: string) 
       if (!existingNotification) {
         const vehicleName = orderDetailForNotify2.package?.name || orderDetailForNotify2.vehicle?.name || '未指定'
         const me = await prisma.user.findUnique({ where: { id: session.user.id }, select: { preferredLanguage: true } })
-        const lang3 = (me?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+        const lang3 = (me?.preferredLanguage ?? 'ja') as 'en' | 'ja' | 'zh'
         const { formatDateParts: format3, buildOrderNotification: build3 } = await import('@/lib/utils/notification-i18n')
         const { dateText: d3, timeText: t3 } = format3(orderDetailForNotify2.startDate, lang3)
         const built3 = build3(lang3, 'payment_success', {

@@ -1,6 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { emailService } from '@/lib/email/emailService'
+import { getQueueStatus } from '@/lib/email/emailQueue'
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const detailed = searchParams.get('detailed') === 'true'
+    
+    if (detailed) {
+      return await getDetailedQueueStatus()
+    } else {
+      return await getQueueStats()
+    }
+  } catch (error) {
+    console.error('Email queue GET API error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,6 +34,21 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Email queue API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+// 获取详细的队列状态
+async function getDetailedQueueStatus() {
+  try {
+    const queueStatus = getQueueStatus()
+    
+    return NextResponse.json({
+      success: true,
+      data: queueStatus
+    })
+  } catch (error) {
+    console.error('获取详细队列状态失败:', error)
+    return NextResponse.json({ error: '获取详细队列状态失败' }, { status: 500 })
   }
 }
 
@@ -117,7 +149,7 @@ async function processPaymentReminders() {
           endDate: order.endDate,
           storeName: order.store.name,
           orderId: order.id,
-          language: order.user.preferredLanguage || 'en'
+          language: order.user.preferredLanguage || 'ja'
         })
 
         // 创建通知记录

@@ -17,8 +17,8 @@ export default getRequestConfig(async ({requestLocale}) => {
   // 等待requestLocale解析
   const requestedLocale = await requestLocale;
   
-  // 如果没有请求的locale，使用默认的zh
-  const locale = requestedLocale || 'zh';
+  // 如果没有请求的locale，使用默认的ja
+  const locale = requestedLocale || 'ja';
   
   // 验证传入的语言是否支持
   if (!locales.includes(locale as Locale)) notFound();

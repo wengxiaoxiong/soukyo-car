@@ -95,7 +95,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     if (fullOrderForNotify) {
       const vehicleName = fullOrderForNotify.package?.name || fullOrderForNotify.vehicle?.name || '未指定'
       const user = await prisma.user.findUnique({ where: { id: order.userId }, select: { preferredLanguage: true } })
-      const lang = (user?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+      const lang = (user?.preferredLanguage ?? 'ja') as 'en' | 'ja' | 'zh'
       const { formatDateParts, buildOrderNotification } = await import('@/lib/utils/notification-i18n')
       const { dateText, timeText } = formatDateParts(fullOrderForNotify.startDate, lang)
       const built = buildOrderNotification(lang, 'payment_success', {
@@ -270,7 +270,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     if (fullOrderForNotify2) {
       const vehicleName = fullOrderForNotify2.package?.name || fullOrderForNotify2.vehicle?.name || '未指定'
       const user2 = await prisma.user.findUnique({ where: { id: order.userId }, select: { preferredLanguage: true } })
-      const lang2 = (user2?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+      const lang2 = (user2?.preferredLanguage ?? 'ja') as 'en' | 'ja' | 'zh'
       const { formatDateParts: format2, buildOrderNotification: build2 } = await import('@/lib/utils/notification-i18n')
       const { dateText: d2, timeText: t2 } = format2(fullOrderForNotify2.startDate, lang2)
       const built2 = build2(lang2, 'payment_success', {
@@ -409,7 +409,7 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
 
     // 创建更丰富的通知（可跳转订单详情）
     const user3 = await prisma.user.findUnique({ where: { id: order.userId }, select: { preferredLanguage: true } })
-    const lang3 = (user3?.preferredLanguage ?? 'en') as 'en' | 'ja' | 'zh'
+    const lang3 = (user3?.preferredLanguage ?? 'ja') as 'en' | 'ja' | 'zh'
     const { buildOrderNotification: build3 } = await import('@/lib/utils/notification-i18n')
     const built3 = build3(lang3, 'payment_failed', { orderNumber: order.orderNumber })
     await prisma.notification.create({
